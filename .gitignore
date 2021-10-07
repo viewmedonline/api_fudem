@@ -1,0 +1,17 @@
+# _ _ _ _ _ _ _ _ _ _ _
+#                      #
+# Extensions to ignore #
+#_ _ _ _ _ _ _ _ _ _ _ #
+
+.logs
+.log
+package-lock.json
+npm-debug.log*
+
+#_ _ _ _ _ _ _ _ _ _ _ _
+#                       #
+# Dependecy directories #
+#_ _ _ _ _ _ _ _ _ _ _  #
+
+node_modules/
+
