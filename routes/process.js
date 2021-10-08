@@ -75,7 +75,6 @@ router.post('/consultations/:active', (request, response) => {
             'message': null,
             'documents': result
           })
-          mongoose.connection.close()
         })
         .catch(error =>{
           console.log('Microservice[consultation_query]: ' + error)
@@ -84,7 +83,6 @@ router.post('/consultations/:active', (request, response) => {
             'message': 'ConsultationNotFound',
             'documents': []
           })
-          mongoose.connection.close()
         })
 })
 
