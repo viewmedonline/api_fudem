@@ -7,10 +7,21 @@ exports.loggerInstance = bunyan.createLogger({
         res: bunyan.stdSerializers.res,
         err: bunyan.stdSerializers.err
     },
-    level: 30,
-    streams: [{
-            path: './foo.log',
+    streams: [
+        {
+            type: 'rotating-file',
+            level: 'info',
+            path: './api.log',
+            period: '1d',   // daily rotation
+            count: 10        // keep 10 back copies
         },
+        {
+            type: 'rotating-file',
+            level: 'error',
+            path: './api-error.log',
+            period: '1d',   // daily rotation
+            count: 10       // keep 10 back copies
+        },        
         {
             stream: process.stdout
         }
