@@ -5,7 +5,7 @@ let fs = require('fs')
 let jwt = require('jsonwebtoken')
 let model = require('../model/database_schemas.js')
 let mongoose = require('mongoose')
-let https = require('http');
+const https = require('http');
 
 router.post('/sucursal', (request, response) => {
       let currentSucursal = new model.branchOffice(request.body)
@@ -129,7 +129,8 @@ router.put('/sucursalUpdate/:sucursalId', (request, response) => {
             })
         })
 })
-router.get('/sucursalListFudem', async  (request, response) => {
+router.get('/sucursalListFudem', (request, response) => {
+  let data = ''
   https.get('http://192.168.1.32/QFlow/Patients/Units.aspx', (resp) => {
     resp.on('data', (chunk) => {
       data += chunk;
@@ -145,4 +146,5 @@ router.get('/sucursalListFudem', async  (request, response) => {
       console.log("Error: " + err.message);
   });
 })
+
 module.exports = router;
