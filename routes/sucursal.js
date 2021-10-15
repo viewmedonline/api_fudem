@@ -130,34 +130,19 @@ router.put('/sucursalUpdate/:sucursalId', (request, response) => {
         })
 })
 router.get('/sucursalListFudem', async  (request, response) => {
-
-  try {
-    let data = await request.get('http://192.168.1.32/QFlow/Patients/Units.aspx')
-    if(typeof data == "string"){
-      data = JSON.parse(data);
-    }    
-    return response.status(200).json({
-        'status': 'Ok',
-        'message': "Success",
-        'documents': data
-    })    
-  } catch (error) {
-    console.log("Error: " + error);
-  }
-  
-  // https.get('http://192.168.1.32/QFlow/Patients/Units.aspx', (resp) => {
-  //   resp.on('data', (chunk) => {
-  //     data += chunk;
-  //   });
-  //   resp.on('end', () => {
-  //     return response.status(200).json({
-  //         'status': 'Ok',
-  //         'message': "Success",
-  //         'documents': JSON.parse(data)
-  //     })
-  //   });
-  // }).on("error", (err) => {
-  //     console.log("Error: " + err.message);
-  // });
+  https.get('http://192.168.1.32/QFlow/Patients/Units.aspx', (resp) => {
+    resp.on('data', (chunk) => {
+      data += chunk;
+    });
+    resp.on('end', () => {
+      return response.status(200).json({
+          'status': 'Ok',
+          'message': "Success",
+          'documents': JSON.parse(data)
+      })
+    });
+  }).on("error", (err) => {
+      console.log("Error: " + err.message);
+  });
 })
 module.exports = router;
