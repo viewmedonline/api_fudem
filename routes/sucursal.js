@@ -5,7 +5,7 @@ let fs = require('fs')
 let jwt = require('jsonwebtoken')
 let model = require('../model/database_schemas.js')
 let mongoose = require('mongoose')
-let http = require('http');
+let https = require('http');
 
 router.post('/sucursal', (request, response) => {
       let currentSucursal = new model.branchOffice(request.body)
