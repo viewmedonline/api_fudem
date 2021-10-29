@@ -802,9 +802,34 @@ app.use(function(err, req, res, next) {
     // ⚙️ our function to catch errors from body-parser
     if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
       // do your own thing here 👍
-      logger.loggerInstance.error("error el ruta",req.protocol + '://' + req.get('host') + req.originalUrl)
-      logger.loggerInstance.error("Error body: ",err.body)
+      logger.loggerInstance.error("error el ruta", req.protocol + '://' + req.get('host') + req.originalUrl)
+      logger.loggerInstance.error(err.body)
       logger.loggerInstance.error("Error message: ",err.message)
+      if(req.method=='POST'){
+        fs.readFile("./error_post.log", 'utf8', function readFileCallback(err2, data) {
+            if (err2) {
+              console.log(err2);
+            } else {
+              data = data+"\n"+err.body
+              fs.writeFile("./error_post.log",data, err3 => {
+                if (err3) throw err3;
+                console.log('File has been saved!');
+              });
+            }
+          });
+      }else{
+        fs.readFile("./error_put.log", 'utf8', function readFileCallback(err2, data) {
+            if (err2) {
+              console.log(err2);
+            } else {
+              data = data+"\n"+err.body
+              fs.writeFile("./error_put.log", data, err3 => {
+                if (err3) throw err3;
+                console.log('File has been saved!');
+              });
+            }
+          });          
+      }
       res.status(400).send({ code: 400, message: "bad request" });
     } else next();
   });
