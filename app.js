@@ -799,9 +799,15 @@ let middleware = (request, response, next) => {
 };
 
 app.use(function(err, req, res, next) {
+
+    let stringified = err.body;
+    stringified = stringified.replace('	',' ');
+    stringified = JSON.parse(stringified)
+    req.body = stringified
+
     // ⚙️ our function to catch errors from body-parser
     if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
-      // do your own thing here 👍
+    //   // do your own thing here 👍
       logger.loggerInstance.error("error el ruta", req.protocol + '://' + req.get('host') + req.originalUrl)
       logger.loggerInstance.error(err.body)
       logger.loggerInstance.error("Error message: ",err.message)
@@ -822,7 +828,7 @@ app.use(function(err, req, res, next) {
             if (err2) {
               console.log(err2);
             } else {
-              data = data+"\n"+err.body
+              data = data+"\n"+stringified
               fs.writeFile("./error_put.log", data, err3 => {
                 if (err3) throw err3;
                 console.log('File has been saved!');
@@ -830,8 +836,10 @@ app.use(function(err, req, res, next) {
             }
           });          
       }
-      res.status(400).send({ code: 400, message: "bad request" });
+      next();
+    //   res.status(400).send({ code: 400, message: "bad request" });
     } else next();
+    
   });
 
 app.use(person);
@@ -863,3 +871,10 @@ mongoose.connect(dbConfig.url, dbConfig.options).then(
         });
     }
 );
+
+// let model = require(__dirname + "/model/database_schemas.js");
+
+// let msConfig = require(__dirname + "/config/ms_config.js");
+// app.listen(msConfig.port, function() {
+//     console.log("api_viewmed: is listening on port " + msConfig.port);
+// });

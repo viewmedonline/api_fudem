@@ -4,7 +4,8 @@
 #_ _ _ _ _ _ _ _ _ _ _ #
 
 .logs
-.log
+*.log*
+error_put.log
 package-lock.json
 npm-debug.log*
 
