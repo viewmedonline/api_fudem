@@ -801,7 +801,7 @@ let middleware = (request, response, next) => {
 app.use(function(err, req, res, next) {
 
     let stringified = err.body;
-    stringified = stringified.replace('	',' ');
+    stringified = stringified.replace(/	/g,'').replace(//g,'');
     stringified = JSON.parse(stringified)
     req.body = stringified
 
