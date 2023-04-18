@@ -684,8 +684,6 @@ let express = require("express");
 let bodyParser = require("body-parser");
 let mongoose = require("mongoose");
 mongoose.set("useFindAndModify", false);
-let fs = require("fs");
-let jwt = require("jsonwebtoken");
 
 let addRequestId = require("express-request-id")();
 let morgan = require("morgan");
@@ -768,35 +766,6 @@ app.use(function(req, res, next) {
 });
 
 app.use(cors(corsOptions));
-let middleware = (request, response, next) => {
-    //
-    // validating if the authorization field exists
-    if (request.headers["authorization"]) {
-        let cert = fs.readFileSync(__dirname + "/config/public_key.pem");
-        let token = request.get("authorization");
-        // verifying the token
-        jwt.verify(token, cert, { algorithms: ["ES384"] }, function(err, decoded) {
-            if (!err) {
-                next();
-            } else {
-                // error with the signature or date of validity of the token
-                response.status(401).json({
-                    status: "KO",
-                    message: "InvalidTokenSignature",
-                    documents: []
-                });
-            }
-        });
-    } else {
-        // error in the http header with the authorization field
-        response.status(400).json({
-            status: "KO",
-            message: "HeaderAuthorizationNotExist",
-            documents: []
-        });
-    }
-    //
-};
 
 app.use(function(err, req, res, next) {
 
@@ -811,31 +780,6 @@ app.use(function(err, req, res, next) {
       logger.loggerInstance.error("error el ruta", req.protocol + '://' + req.get('host') + req.originalUrl)
       logger.loggerInstance.error(err.body)
       logger.loggerInstance.error("Error message: ",err.message)
-      if(req.method=='POST'){
-        fs.readFile("./error_post.log", 'utf8', function readFileCallback(err2, data) {
-            if (err2) {
-              console.log(err2);
-            } else {
-              data = data+"\n"+err.body
-              fs.writeFile("./error_post.log",data, err3 => {
-                if (err3) throw err3;
-                console.log('File has been saved!');
-              });
-            }
-          });
-      }else{
-        fs.readFile("./error_put.log", 'utf8', function readFileCallback(err2, data) {
-            if (err2) {
-              console.log(err2);
-            } else {
-              data = data+"\n"+stringified
-              fs.writeFile("./error_put.log", data, err3 => {
-                if (err3) throw err3;
-                console.log('File has been saved!');
-              });
-            }
-          });          
-      }
       next();
     //   res.status(400).send({ code: 400, message: "bad request" });
     } else next();
@@ -871,10 +815,3 @@ mongoose.connect(dbConfig.url, dbConfig.options).then(
         });
     }
 );
-
-// let model = require(__dirname + "/model/database_schemas.js");
-
-// let msConfig = require(__dirname + "/config/ms_config.js");
-// app.listen(msConfig.port, function() {
-//     console.log("api_viewmed: is listening on port " + msConfig.port);
-// });
