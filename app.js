@@ -693,15 +693,16 @@ let app = express();
 
 let dbConfig = require(__dirname + "/config/db_config.js");
 
-let person = require("./routes/person");
-let diagnoses = require("./routes/diagnoses");
-let record = require("./routes/record");
-let consultation = require("./routes/consultation");
-let user = require("./routes/user");
-let file = require("./routes/file");
-let imaging = require("./routes/imaging");
-let constancy = require("./routes/constancy");
-let sucursal = require("./routes/sucursal");
+const person = require("./routes/person");
+const diagnoses = require("./routes/diagnoses");
+const record = require("./routes/record");
+const consultation = require("./routes/consultation");
+const user = require("./routes/user");
+const file = require("./routes/file");
+const imaging = require("./routes/imaging");
+const constancy = require("./routes/constancy");
+const sucursal = require("./routes/sucursal");
+const nurse_sheet = require("./routes/nurse_sheet");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -795,6 +796,7 @@ app.use(file);
 app.use(imaging);
 app.use(constancy);
 app.use(sucursal);
+app.use(nurse_sheet);
 
 mongoose.connect(dbConfig.url, dbConfig.options).then(
     () => {

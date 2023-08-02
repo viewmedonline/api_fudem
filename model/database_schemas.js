@@ -116,6 +116,23 @@ let antecedentSchema = new Schema({
     value: { type: Boolean, default: false }
 }, { versionKey: false })
 
+let nurseSheet = new Schema({
+    patient: {type: Schema.Types.ObjectId, ref: 'Person' },
+    age: Number,
+    date_sheet: Date,
+    heart_rate: String,
+    blood_pressure: String,
+    notes_nurses: [
+        {
+            _id: false,
+            note: String,
+            date: Date,
+            responsible: { type: Schema.Types.ObjectId, ref: 'Person' }
+
+        }
+    ],
+}, { versionKey: false })
+
 let cirugiasSchema = new Schema({
     _id: false,
     name: String,
@@ -228,5 +245,6 @@ module.exports = {
     File: mongoose.model('fs.file', fileSchema),
     Imaging: mongoose.model('Imaging', imagingSchema),
     Constancy: mongoose.model('Constancy', constancyShema),
-    branchOffice: mongoose.model('branchOffice', branchOfficeSchema)
+    branchOffice: mongoose.model('branchOffice', branchOfficeSchema),
+    nurseSheet: mongoose.model('nurseSheet', nurseSheet)
 }
