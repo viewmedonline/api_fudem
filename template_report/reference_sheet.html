@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hoja de Referencia Medica</title>
+  </head>
+  <body id="document">
+    <main>
+      <header>
+        <img src="data:image/jpeg;base64,{{logo}}" alt="fudem" id="logo" />
+      </header>
+      <section>
+        <div>
+            {{{content}}}
+        </div>
+      </section>
+
+    </main>
+    <div class="digital_signature">
+        <img
+            src="{{digital_signature}}"
+            alt="firma"
+            style="width: 150px; height: 75px"
+        />
+        <div>
+            {{name}}
+        </div>
+        <div>{{type}}</div>
+    </div>
+  </body>
+</html>
+<style>
+  body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+  }
+  #logo {
+    width: 40%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    margin: 0;
+    padding: 0;
+    margin: 0;
+  }
+  main {
+    padding: 20px;
+  }    
+  .digital_signature {
+    text-align: center;
+    bottom: 0;
+    position: absolute;
+    width: 100%;
+  }
+</style>

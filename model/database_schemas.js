@@ -236,6 +236,13 @@ let  branchOfficeSchema = new Schema({
         control: { type: controlSchema, required: true, default: {} }
 }, { versionKey: false })
 
+let referenceSchema = new Schema({
+    patient: { type: Schema.Types.ObjectId, ref: 'Person' },
+    pdf: { type: Schema.Types.ObjectId, ref: 'fs.file', default: null },
+    responsible: { type: Schema.Types.ObjectId, ref: 'Person' },
+    control: { type: controlSchema, required: true, default: {} }
+}, { versionKey: false })
+
 module.exports = {
     Person: mongoose.model('Person', personSchema),
     User: mongoose.model('User', userSchema),
@@ -247,5 +254,6 @@ module.exports = {
     Imaging: mongoose.model('Imaging', imagingSchema),
     Constancy: mongoose.model('Constancy', constancyShema),
     branchOffice: mongoose.model('branchOffice', branchOfficeSchema),
-    nurseSheet: mongoose.model('nurseSheet', nurseSheet)
+    nurseSheet: mongoose.model('nurseSheet', nurseSheet),
+    Reference: mongoose.model('Reference', referenceSchema)
 }

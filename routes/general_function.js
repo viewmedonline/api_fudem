@@ -52,7 +52,7 @@ const signatura_base64 = async (fileId) => {
     return data_base64
 }
 
-const create_report_pdf = async (name, data) => {
+const create_report_pdf = async (name, data, bottom = "2cm") => {
     try {
         const templatePath = path.join(__dirname, '..', 'template_report', name);
         let file_html = await fs.readFile(templatePath, "utf8");
@@ -62,10 +62,10 @@ const create_report_pdf = async (name, data) => {
             orientation: "portrait", // portrait or landscape
             margin: {
                 top: "1cm", // default is 0, units: mm, cm, in, px
-                right: "1cm",
-                bottom: "1cm",
+                right: "2cm",
+                bottom: bottom,
                 left: "1cm",
-            }
+            },
         };
         let template_handler = Handlebars.compile(file_html);
         data.logo = logo_fudem_base64;

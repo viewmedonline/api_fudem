@@ -4,8 +4,27 @@ let express = require('express');
 let router = express.Router();
 let multiparty = require('multiparty')
 const fs = require("fs").promises;
+const { readFileSync } = require("fs");
+const path = require('path');
+const pdf = require("html-pdf-node");
 let model = require('../model/database_schemas.js')
-let async = require("async");
+const { create_report_pdf, signatura_base64 } = require('./general_function.js')
+
+router.post('/report/preview', async (request, response) => {
+
+  try {
+    if (request.body.data.digital_signature) {
+      const signature = await signatura_base64(request.body.data.digital_signature)
+      request.body.data.digital_signature = signature
+    }
+    const pdf_data = await create_report_pdf(request.body.name, request.body.data)
+    response.contentType("application/pdf");
+    response.send(pdf_data);
+  } catch (error) {
+    console.log(error)
+  }
+
+})
 
 router.put('/store_file/:fileName', (request, response) => {
 
