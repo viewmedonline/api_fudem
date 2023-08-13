@@ -1,6 +1,8 @@
 let express = require('express');
 let router = express.Router();
 let model = require('../model/database_schemas.js')
+const { signatura_base64, create_report_pdf, save_file } = require('./general_function.js')
+
 
 router.post('/constancy/insert', (request, response) => {
     let currentConstancy = new model.Constancy(request.body)
@@ -18,6 +20,37 @@ router.post('/constancy/insert', (request, response) => {
             response.status(400).json({
                 'status': 'KO',
                 'message': 'Constancy not inserted',
+                'documents': []
+            })
+        })
+})
+router.post('/constancy/insert/pdf', async (request, response) => {
+    const signature = await signatura_base64(request.body.data.digital_signature)
+    request.body.data.digital_signature = signature
+    const pdf_data = await create_report_pdf(request.body.name, request.body.data)
+    const report_id = await save_file(`constancy_${request.body.data.patient}.pdf`, pdf_data)
+
+    let currentConstancy = new model.Constancy({
+        person: request.body.data.patient,
+        description: "",
+        date: request.body.data.date,
+        pdf: report_id,
+        responsableconstancy: request.body.data.responsible,
+        control: request.body.data.control
+    })
+    currentConstancy.save()
+        .then(result => {
+            response.json({
+                'status': 'OK',
+                'message': null,
+                'documents': [result]
+            })
+        })
+        .catch(error => {
+            console.log('Microservice[Constancy_insert_pdf]: ' + error)
+            response.status(400).json({
+                'status': 'KO',
+                'message': 'Constancy pdf not inserted',
                 'documents': []
             })
         })

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hoja de Referencia Medica</title>
+    <title>Constancia de incapacidad</title>
   </head>
   <body id="document">
     <main>
@@ -11,9 +11,13 @@
         <img src="data:image/jpeg;base64,{{logo}}" alt="fudem" id="logo" />
       </header>
       <section>
-        <div>
-            {{{content}}}
-        </div>
+        <div style="text-align: center; font-weight: bold; font-size: larger;">Constancia de Incapacidad por Consulta Médica</div>
+        <p style="margin-bottom: 2em;margin-top: 3em;">
+            A quien interese:
+        </p>
+        <p style="text-align: justify;">Por medio de la presente se hace constar que se realiza evaluación médica al paciente <b>{{name}}</b>, de <b>{{age}}</b> años, diagnósticandole <b>{{diagnosis}}</b></p>
+        <p style="text-align: justify;">Por lo cual amerita incapacidad médica por <b>{{days}}</b> días a partir de la fecha.</p>
+        <p style="text-align: justify;">Para los usos que estime convenientes, se extiende la presente en la ciudad de <b>{{city}}</b> a los <b>{{day_month}}</b> días del mes de <b>{{month}}</b> del año <b>{{year}}</b></p>
       </section>
 
     </main>
@@ -24,7 +28,7 @@
             style="width: 150px; height: 75px"
         />
         <div>
-            <b>{{name}}</b>
+            <b>{{name_prof}}</b>
         </div>
         <div><b>{{type}}</b></div>
     </div>
@@ -39,7 +43,7 @@
     font-family: Arial, Helvetica, sans-serif;
     display: flex;
     flex-direction: column;
-    font-size: 14px;
+    font-size: 16px;
   }
   #logo {
     width: 40%;
@@ -59,4 +63,9 @@
     position: absolute;
     width: 100%;
   }
+  p {
+  margin-bottom: 2.5em;
+  line-height: 2;
+
+}
 </style>

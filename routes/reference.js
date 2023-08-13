@@ -8,7 +8,7 @@ router.post('/reference', async (request, response) => {
     const signature = await signatura_base64(request.body.data.digital_signature)
     request.body.data.digital_signature = signature
     const pdf_data = await create_report_pdf(request.body.name, request.body.data)
-    const report_id = await save_file(`nurse_sheet_${request.body.patient}.pdf`, pdf_data)
+    const report_id = await save_file(`reference_${request.body.data.patient}.pdf`, pdf_data)
     let currentReferenceSheet = new model.Reference({
         patient: request.body.data.patient,
         responsible: request.body.data.responsible,

@@ -223,6 +223,7 @@ let constancyShema = new Schema({
     person: { type: Schema.Types.ObjectId, ref: 'Person' },
     description: String,
     date: Date,
+    pdf: { type: Schema.Types.ObjectId, ref: 'fs.file' },
     responsableconstancy: { type: Schema.Types.ObjectId, ref: 'Person' },
     control: { type: controlSchema, required: true, default: {} }
 }, { versionKey: false })
@@ -242,6 +243,7 @@ let referenceSchema = new Schema({
     responsible: { type: Schema.Types.ObjectId, ref: 'Person' },
     control: { type: controlSchema, required: true, default: {} }
 }, { versionKey: false })
+
 
 module.exports = {
     Person: mongoose.model('Person', personSchema),
