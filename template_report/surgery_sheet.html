@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hoja de Cirugía</title>
+</head>
+
+<body id="document">
+  <main>
+    <header>
+      <img src="data:image/jpeg;base64,{{logo}}" alt="fudem" id="logo" />
+    </header>
+    <section>
+      <center>
+        <h1>Hoja de Cirugía</h1>
+      </center>
+      <div class="div-margin"><b>Cirugía:</b> <span>{{surgery}}</span></div>
+      <div class="grid-container-2">
+        <div><b>Expediente:</b> <span>{{num_exp}}</span></div>
+        <div class="flex-item">
+          <b>Nombre del Paciente:</b> <span>{{pat_name}}</span>
+        </div>
+      </div>
+      <div class="grid-container-2">
+        <div><b>Edad:</b> <span id="age">{{pat_age}}</span></div>
+        <div class="flex-item"><b>Sexo:</b> <span id="gender">{{pat_gender}}</span></div>
+      </div>
+      <div><b>Fecha de Cirugía:</b> <span id="date-surgery">{{date_surgery}}</span></div>
+      <div class="grid-container-2">
+        <div><b>Biometria OD:</b> <span id="biometrics_od">{{biometrics_od}}</span></div>
+        <div class="flex-item"><b>Biometria OI:</b> <span id="biometrics_oi">{{biometrics_oi}}</span></div>
+      </div>
+      <div class="div-margin">
+        <b>Resumen de la Historia:</b>
+        <div class="div-margin">{{resumen_history}}</div>
+      </div>
+      <div class="div-margin"><b>Diagnostico:</b> <span id="diagnosis">{{diagnosis}}</span></div>
+      <div class="div-margin"><b>Anestesia Solicitada:</b> <span>{{anesthesia}}</span></div>
+      <div class="div-margin"><b>Insumos Especiales:</b> <span id="suplies_special">{{supplies_special}}</span></div>
+      <div class="div-margin"><b>Medico que Indica Cirugía:</b> <span>{{physician_history_name}}</span></div>
+      <h3>Reporte Post-Operatorio</h3>
+      <div class="grid-container-2">
+        <div><b>Fecha de Cirugía:</b> <span>{{date_surgery}}</span></div>
+        <div class="flex-item"><b>Tiempo Quirúrgico:</b> <span>{{time_surgery}} min</span> </div>
+      </div>
+      <div class="div-margin"><b>Ojo Operado:</b> <span id="eye_operated">{{eye_operated}}</span></div>
+      <div class="div-margin"><b>Lente Intraocular Colocado: </b>
+        <div class="div-margin">{{lens_placed}}</div>
+      </div>
+      <div class="div-margin"><b>Anestesia Aplicada:</b> <span>{{anesthesia_applied}}</span></div>
+      <div class="div-margin"><b>Descripcion: </b>
+        <div class="div-margin">{{description}}</div>
+      </div>
+      <div class="div-margin"><b>Complicaciones: </b>
+        <div class="div-margin">{{complications}}</div>
+      </div>
+      <div class="div-margin"><b>Biopsia o Cultivo: </b><span id="biopsy_culture">{{biopsy_culture}}</span></div>
+      <div class="div-margin"><b>Operación Realizada: </b><span>{{operation_performed}}</span></div>
+      <div class="div-margin"><b>Observaciones: </b>
+        <div class="observations"><span>{{observations}}</span></div>
+      </div>
+      <div class="div-margin"><b>Nombre del Cirujano: </b>
+        <h3>{{surgeon_name}}</h3>
+      </div>
+      </div>
+    </section>
+  </main>
+  <div class="digital_signature">
+    <img src="{{digital_signature}}" alt="firma" style="width: 150px; height: 75px" />
+    <!-- <div>
+        <b>{{name}}</b>
+      </div> -->
+    <!-- <div><b>{{physician_specialty}}</b></div> -->
+  </div>
+</body>
+
+</html>
+<style>
+  body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+  }
+
+  #logo {
+    width: 40%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    margin: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  main {
+    padding: 20px;
+  }
+
+  .digital_signature {
+    text-align: center;
+    bottom: 0;
+    position: absolute;
+    width: 100%;
+  }
+
+  .grid-container-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin: 8px 0;
+  }
+
+  .div-margin {
+    margin: 8px 0;
+  }
+  .observations {
+    min-height: 50px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+    margin: 8px 0;
+    padding: 5px;
+  }
+  span {
+    margin-left: 10px;
+  }
+  #age {
+    margin-left: 50px;
+  }
+  #gender {
+    margin-left: 115px;
+  }
+  #date-surgery {
+    margin-left: 50px;
+  }
+#diagnosis {
+  margin-left: 65px;
+}
+#suplies_special {
+  margin-left: 15px;
+}
+#eye_operated {
+  margin-left: 40px;
+}
+#biopsy_culture {
+  margin-left: 32px;
+}
+</style>

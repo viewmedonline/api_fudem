@@ -3,12 +3,32 @@ let mongoose = require('mongoose')
 let express = require('express');
 let router = express.Router();
 let multiparty = require('multiparty')
-const fs = require("fs").promises;
-const { readFileSync } = require("fs");
-const path = require('path');
-const pdf = require("html-pdf-node");
+const fs = require("fs");
+const async = require('async');
 let model = require('../model/database_schemas.js')
-const { create_report_pdf, signatura_base64 } = require('./general_function.js')
+const { create_report_pdf, signatura_base64, save_file } = require('./general_function.js')
+
+
+router.post('/report/save', async (request, response) => {
+  try {
+    const signature = await signatura_base64(request.body.data.physician_signature)
+    request.body.data.digital_signature = signature
+    const pdf_data = await create_report_pdf(request.body.name, request.body.data)
+    const report_id = await save_file(`surgery_sheet_${request.body.data.patient}.pdf`, pdf_data)
+    response.json({
+      'status': 'OK',
+      'message': null,
+      'documents': report_id
+    })
+  } catch (error) {
+    console.log(error)
+    response.status(400).json({
+      'status': 'KO',
+      'message': 'Error creating report',
+      'documents': []
+    })
+  }
+})
 
 router.post('/report/preview', async (request, response) => {
 

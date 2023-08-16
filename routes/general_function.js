@@ -61,7 +61,7 @@ const create_report_pdf = async (name, data, bottom = "1cm") => {
             format: "letter",
             orientation: "portrait", // portrait or landscape
             margin: {
-                top: "1cm", // default is 0, units: mm, cm, in, px
+                top: "0cm", // default is 0, units: mm, cm, in, px
                 right: "1cm",
                 bottom: bottom,
                 left: "1cm",
