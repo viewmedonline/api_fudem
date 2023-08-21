@@ -704,6 +704,8 @@ const constancy = require("./routes/constancy");
 const sucursal = require("./routes/sucursal");
 const nurse_sheet = require("./routes/nurse_sheet");
 const reference = require("./routes/reference");
+const surgery_sheet = require("./routes/surgery_sheet");
+const intern_evaluation = require("./routes/intern_evaluation_sheet");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -799,6 +801,8 @@ app.use(constancy);
 app.use(sucursal);
 app.use(nurse_sheet);
 app.use(reference);
+app.use(surgery_sheet);
+app.use(intern_evaluation);
 
 mongoose.connect(dbConfig.url, dbConfig.options).then(
     () => {
