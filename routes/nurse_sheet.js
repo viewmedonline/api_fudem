@@ -98,7 +98,7 @@ router.put('/nurse_sheet/:idSheet', async (request, response) => {
       'status': 'KO',
       'message': 'UserUpdatingProblem',
       'documents': []
-    })
+    }) 
   })
 })
 

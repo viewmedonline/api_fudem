@@ -163,5 +163,63 @@ router.get('/get_file/:fileId', (request, response) => {
     })
 })
 
+//delete file
+router.delete('/delete_file/:fileId', (request, response) => {
+  let fileId = request.params.fileId
+
+  // Assign mongoose driver to Grid
+  Grid.mongo = mongoose.mongo
+
+  model.File.findById(fileId)
+    .then(data => {
+
+      let conn = mongoose.connection
+      let gfs = Grid(conn.db)
+      let fileId = request.params.fileId
+
+      // Check if the file exists in the database
+      gfs.exist({ _id: fileId }, (err, found) => {
+        if (err) {
+          response.status(500).json({
+            'status': 'KO',
+            'message': 'Problems looking for the file',
+            'documents': []
+          })
+        }
+        if (!found) {
+          response.status(400).json({
+            'status': 'KO',
+            'message': 'File not found',
+            'documents': []
+          })
+        } else {
+          // Search file from MongoDB
+          gfs.remove({ _id: fileId }, (err, gridStore) => {
+            if (err) {
+              response.status(500).json({
+                'status': 'KO',
+                'message': 'Problems deleting the file',
+                'documents': []
+              })
+            }
+            response.status(200).json({
+              'status': 'OK',
+              'message': null,
+              'documents': []
+            })
+          })
+        }
+      })
+    })
+    .catch(error => {
+      console.log('Microservice[delete_file]: ' + error)
+      response.status(400).json({
+        'status': 'KO',
+        'message': 'Document not found',
+        'documents': []
+      })
+    })
+})
+
 
 module.exports = router;
