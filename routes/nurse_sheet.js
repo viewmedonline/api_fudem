@@ -161,7 +161,7 @@ router.put('/nurse_sheet/close/:idSheet', async (request, response) => {
     let data_report = {
       name: `${data_sheet.patient.forename} ${data_sheet.patient.surname}`,
       age: data_sheet.age,
-      date: moment(data_sheet.date_sheet).format('DD/MM/YYYY hh:mm a'),
+      date: moment(data_sheet.date_sheet).format('DD/MM/YYYY'),
       exp: data_sheet.patient.idQflow,
       dui: data_sheet.patient.id_document,
       heart_rate: data_sheet.heart_rate,
