@@ -10,7 +10,7 @@ router.post('/surgery_sheet', async (request, response) => {
         const signature = await signatura_base64(request.body.data.physician_signature)
         request.body.data.digital_signature = signature
         const pdf_data = await create_report_pdf(request.body.name, request.body.data)
-        const report_id = await save_file(`surgery_sheet_${request.body.data.patient}.pdf`, pdf_data)
+        const report_id = await save_file(`surgery_sheet_${request.body.data.num_exp}.pdf`, pdf_data)
         request.body.data.pdf = report_id
         //save colletion
         const surgery_sheet = new model.SurgerySheet(request.body.data)

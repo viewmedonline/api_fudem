@@ -5,8 +5,12 @@ const { signatura_base64, create_report_pdf, save_file } = require('./general_fu
 const moment = require('moment')
 
 router.post('/reference', async (request, response) => {
-    const signature = await signatura_base64(request.body.data.digital_signature)
-    request.body.data.digital_signature = signature
+    if (request.body.data.digital_signature) {
+        const signature = await signatura_base64(
+          request.body.data.digital_signature
+        );
+        request.body.data.digital_signature = signature;
+      }
     const pdf_data = await create_report_pdf(request.body.name, request.body.data)
     const report_id = await save_file(`reference_${request.body.data.patient}.pdf`, pdf_data)
     let currentReferenceSheet = new model.Reference({

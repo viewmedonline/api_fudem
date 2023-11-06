@@ -10,7 +10,20 @@
       <header>
         <img src="data:image/jpeg;base64,{{logo}}" alt="fudem" id="logo" />
       </header>
+
+      <section class="title-center">
+        <h1 id="title"><i>Referencia Médica</i></h1>
+      </section>
       <section>
+        <div id="date"><b>Fecha:</b> {{date}}</div>
+        <div id="name"><b>Nombre:</b> {{pat_name}}</div>
+
+        <div class="wrapper">
+          <div class="two"><b>Edad:</b> {{pat_age}}</div>
+          <div class="four"><b>EXP:</b> {{pat_exp}}</div>
+        </div>
+      </section>
+      <section style="margin-top: 10px;">
         <div>
             {{{content}}}
         </div>
@@ -58,5 +71,34 @@
     bottom: 0;
     position: absolute;
     width: 100%;
+  }
+  .title-center {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  #title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    display: inline-block;
+    border-bottom: 2px solid rgb(0, 0, 0);
+  }
+  #date {
+    width: 100%;
+    text-align: end;
+  }
+  #name {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .wrapper {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    grid-gap: 10px;
+  }
+  .wrapper2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px;
   }
 </style>

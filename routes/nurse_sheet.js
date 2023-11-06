@@ -42,7 +42,6 @@ router.get('/nurse_sheet/:idUser/:idSheet?', async (request, response) => {
     result = await Promise.all(result.map(async item => {
       let notes = await Promise.all(item.notes_nurses.map(async note => {
         const signature = await signatura_base64(note.responsible.digital_signature)
-        console.log(signature);
         const obj_responsible = {
           _id: note.responsible._id,
           forename: note.responsible.forename,

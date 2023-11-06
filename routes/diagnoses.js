@@ -68,6 +68,7 @@ const generarCadenaUnica = () => {
 //diagnoses upsert
 router.post('/diagnoses', (request, response) => {
   let current_diagnosis = request.body
+  current_diagnosis.level = 0
   if (!current_diagnosis._id) {
     current_diagnosis.code = generarCadenaUnica()
     current_diagnosis = new model.ICD10DiagnosisFudem(current_diagnosis)

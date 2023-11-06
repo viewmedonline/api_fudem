@@ -215,6 +215,7 @@ const internEvaluationSchema = new Schema({
     glucose: String,
     vih: String,
     ego: String,
+    hba1c: String,
     radiography: String,
     electrocardiogram: String,
     comments: String,

@@ -11,8 +11,10 @@ const { create_report_pdf, signatura_base64, save_file } = require('./general_fu
 
 router.post('/report/save', async (request, response) => {
   try {
-    const signature = await signatura_base64(request.body.data.physician_signature)
-    request.body.data.digital_signature = signature
+    if (request.body.data.digital_signature) {
+      const signature = await signatura_base64(request.body.data.digital_signature)
+      request.body.data.digital_signature = signature
+    }
     const pdf_data = await create_report_pdf(request.body.name, request.body.data)
     const report_id = await save_file(`surgery_sheet_${request.body.data.patient}.pdf`, pdf_data)
     response.json({

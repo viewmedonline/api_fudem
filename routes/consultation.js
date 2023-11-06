@@ -109,6 +109,7 @@ router.delete('/consultation/:consultationId', (request, response) => {
 })
 router.post('/consultationsLast', (request, response) => {
     let currentConsultation = model.Consultation
+    request.body.name = {$exists: false}
     currentConsultation.find(request.body)
         .where('control.active').equals(false)
         .sort({ 'control.created_at': -1 })
