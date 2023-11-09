@@ -159,6 +159,7 @@ let nurseSheet = new Schema(
         date_sheet: Date,
         heart_rate: String,
         blood_pressure: String,
+        hgt: String,
         pdf: { type: Schema.Types.ObjectId, ref: "fs.file", default: null },
         notes_nurses: [
             {

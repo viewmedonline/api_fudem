@@ -11,6 +11,7 @@ router.post('/nurse_sheet', async (request, response) => {
     date_sheet: request.body.date_sheet,
     heart_rate: request.body.heart_rate,
     blood_pressure: request.body.blood_pressure,
+    hgt: request.body.hgt,
   })
   currentNurseSheet.save()
     .then(result => {
@@ -64,6 +65,7 @@ router.get('/nurse_sheet/:idUser/:idSheet?', async (request, response) => {
         date: item.date_sheet,
         heart_rate: item.heart_rate,
         blood_pressure: item.blood_pressure,
+        hgt: item.hgt,
         notes_nurses: notes
       }
       return obj
@@ -165,6 +167,7 @@ router.put('/nurse_sheet/close/:idSheet', async (request, response) => {
       dui: data_sheet.patient.id_document,
       heart_rate: data_sheet.heart_rate,
       blood_pressure: data_sheet.blood_pressure,
+      hgt: data_sheet.hgt,
       notes_nurses: data_sheet.notes_nurses,
     }
 
