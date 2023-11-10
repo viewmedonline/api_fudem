@@ -36,15 +36,18 @@
         <div><b>Antecedentes Personales:</b></div>
         <div>{{personal_record}}</div>
       </div>    
-      <div><b>Examen Fisico:</b></div>  
+      <div><b><u>Examen Fisico</u></b></div>  
       <div class="grid-container-4">
         <div><b>PA:</b> {{pa}}</div>
         <div><b>FC:</b> {{fc}}</div>
         <div><b>FR:</b> {{fr}}</div>
         <div><b>SATO2:</b> {{oxygen_saturation}}</div>
       </div>
-      <div class="grid-container-texarea-1"><b>Estado físico</b>{{physical_state}}</div>   
-      <div><b>Examénes de Laboratorio:</b></div>  
+      <div class="grid-container-texarea-1">
+        <div><b>Estado físico:</b></div>
+        <div class="justify-text">{{physical_state}}</div>
+      </div>   
+      <div><b><u>Examénes de Laboratorio</u></b></div>  
       <div class="grid-container-4">
         <div><b>HT:</b> {{ht}}</div>
         <div><b>HB:</b> {{hb}}</div>
@@ -63,7 +66,10 @@
       </div>    
       <div class="grid-container-texarea-1"><b>Radiografía de Torax:</b> {{radiography}}</div>          
       <div class="grid-container-texarea-1"><b>Electrocardiograma:</b> {{electrocardiogram}}</div>          
-      <div class="grid-container-texarea-1 justify-text"><b>Comentarios:</b> {{comments}}</div>     
+      <div class="grid-container-texarea-1">
+        <div><b>Comentarios:</b></div>
+        <div class="justify-text">{{comments}}</div>
+      </div>         
       <div class="grid-container-2">
         <div><b>Riesgo Quirúrgico:</b> {{surgical_risk}}</div>
         <div><b>Capacidad Funcional: </b> {{functional_capacity}}</div>
@@ -147,7 +153,9 @@
     margin-left: 10px;
   }
   .justify-text {
+    width: 600px;
     text-align: justify;
+  word-wrap: break-word;
   }
 
 </style>

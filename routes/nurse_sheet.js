@@ -142,7 +142,7 @@ router.delete('/nurse_sheet/:idSheet', async (request, response) => {
 
 router.put('/nurse_sheet/close/:idSheet', async (request, response) => {
   try {
-    let data_sheet = (await model.nurseSheet.findById(request.params.idSheet).populate("patient", "forename surname id_document idQflow").populate({
+    let data_sheet = (await model.nurseSheet.findById(request.params.idSheet).populate("patient", "forename surname id_document idQflow birthdate").populate({
       path: 'notes_nurses',
       populate: {
         path: 'responsible',
@@ -158,10 +158,12 @@ router.put('/nurse_sheet/close/:idSheet', async (request, response) => {
       newItem.date = moment(item.date).format('DD/MM/YYYY hh:mm a')
       return newItem
     }))
+
+    let age = moment().diff(moment(data_sheet.patient.birthdate), 'years')
     ///creacion de reporte pdf
     let data_report = {
       name: `${data_sheet.patient.forename} ${data_sheet.patient.surname}`,
-      age: data_sheet.age,
+      age: age,
       date: moment(data_sheet.date_sheet).format('DD/MM/YYYY'),
       exp: data_sheet.patient.idQflow,
       dui: data_sheet.patient.id_document,
