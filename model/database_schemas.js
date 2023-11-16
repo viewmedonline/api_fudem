@@ -59,6 +59,7 @@ let icd10diagnosisFudemSchema = new Schema(
     {
         level: Number,
         code: String,
+        disable:{ type: Boolean, default: false},
         diagnostic: { type: langSchema, default: {} },
         include: [String],
         discard: [String],
