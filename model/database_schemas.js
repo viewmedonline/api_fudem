@@ -566,6 +566,7 @@ let perdiatricSchema = new Schema(
     clinical_predictors: String,
     clasification_asa: String,
     plan: String,
+    date_doc:Date,
     control: { type: controlSchema, required: true, default: {} },
   },
   { versionKey: false }
@@ -632,6 +633,7 @@ let nutritionistSchema = new Schema(
     cooh: String,
     prescribedDiet: String,
     comments: String,
+    date_doc:Date,
     control: { type: controlSchema, required: true, default: {} },
   },
   { versionKey: false }
@@ -670,6 +672,7 @@ let anesthesiologytSchema = new Schema(
         doses: String,
       },
     ],
+    date_doc:Date,
     control: { type: controlSchema, required: true, default: {} },
   },
   { versionKey: false }

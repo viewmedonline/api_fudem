@@ -706,6 +706,7 @@ const nurse_sheet = require("./routes/nurse_sheet");
 const reference = require("./routes/reference");
 const surgery_sheet = require("./routes/surgery_sheet");
 const intern_evaluation = require("./routes/intern_evaluation_sheet");
+const pediatrics_sheet = require("./routes/pediatrics_sheet");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -803,6 +804,7 @@ app.use(nurse_sheet);
 app.use(reference);
 app.use(surgery_sheet);
 app.use(intern_evaluation);
+app.use(pediatrics_sheet)
 
 mongoose.connect(dbConfig.url, dbConfig.options).then(
     () => {
