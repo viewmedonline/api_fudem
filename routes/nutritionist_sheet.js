@@ -15,21 +15,21 @@ router.post('/nutritionist_sheet', async (request, response) => {
             request.body.data.digital_signature = signature;
           }
         const pdf_data = await create_report_pdf(request.body.name, request.body.data)
-        const report_id = await save_file(`nutritionist_sheet_${request.body.data.person}.pdf`, pdf_data)
+        const report_id = await save_file(`nutritionist_sheet_${request.body.data.patient}.pdf`, pdf_data)
         request.body.data.pdf = report_id
         //save colletion
         const nutritionist_sheet = new model.NutritionalControl(request.body.data)
         await nutritionist_sheet.save()
 
         let currentConsultation = new model.Consultation({
-            person: request.body.data.person,
-            name: "Control Nutricional",
+            person: request.body.data.patient,
+            name: "Hoja de Control Nutricional",
             control: {
               active: false,
             },
             dateUpload: moment().format("YYYY-MM-DD"),
             file: report_id,
-            responsableConsultation: request.body.data.phy_id,
+            responsableConsultation: request.body.data.responsible,
         })
         currentConsultation.save()
 

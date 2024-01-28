@@ -6,7 +6,7 @@ let moment = require('moment')
 const { create_report_pdf, signatura_base64, save_file } = require('./general_function.js')
 
 
-router.post('/pediatrics_sheet', async (request, response) => {
+router.post('/anesthesiology_sheet', async (request, response) => {
     try {
         if (request.body.data.digital_signature) {
             const signature = await signatura_base64(
@@ -15,23 +15,11 @@ router.post('/pediatrics_sheet', async (request, response) => {
             request.body.data.digital_signature = signature;
           }
         const pdf_data = await create_report_pdf(request.body.name, request.body.data)
-        const report_id = await save_file(`pediatrics_sheet_${request.body.data.patient}.pdf`, pdf_data)
+        const report_id = await save_file(`anesthesiology_sheet_${request.body.data.patient}.pdf`, pdf_data)
         request.body.data.pdf = report_id
         //save colletion
-        const pediatrics_sheet = new model.PediatricEvaluation(request.body.data)
-        await pediatrics_sheet.save()
-
-        let currentConsultation = new model.Consultation({
-            person: request.body.data.patient,
-            name: "Evaluación por médico pediatra",
-            control: {
-              active: false,
-            },
-            dateUpload: moment().format("YYYY-MM-DD"),
-            file: report_id,
-            responsableConsultation: request.body.data.responsible,
-        })
-        currentConsultation.save()
+        const anesthesiology_sheet = new model.ReportAnesthesiology(request.body.data)
+        await anesthesiology_sheet.save()
 
         response.json({
             'status': 'OK',
@@ -43,6 +31,26 @@ router.post('/pediatrics_sheet', async (request, response) => {
         response.status(400).json({
             'status': 'KO',
             'message': 'Error creating report',
+            'documents': []
+        })
+    }
+})
+
+router.get('/anesthesiology_sheet/:patientId', async (request, response) => {
+    try {
+        console.log(request.params.patientId);
+        const anesthesiology_sheet = await model.ReportAnesthesiology.find({patient:request.params.patientId})
+
+        response.json({
+            'status': 'OK',
+            'message': null,
+            'documents': anesthesiology_sheet
+        })
+    } catch (error) {
+        console.log(error)
+        response.status(400).json({
+            'status': 'KO',
+            'message': 'Error query',
             'documents': []
         })
     }
