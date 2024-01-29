@@ -615,7 +615,7 @@ let nutritionistSchema = new Schema(
     consumptionFrequency: [
       {
         consumption: String,
-        frequency: String,
+        quatityAndFrecuency: String,
       },
     ],
     unpleasantFoods: String,

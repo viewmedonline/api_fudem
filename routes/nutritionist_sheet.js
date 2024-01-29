@@ -14,6 +14,12 @@ router.post('/nutritionist_sheet', async (request, response) => {
             );
             request.body.data.digital_signature = signature;
           }
+        request.body.data.colitis = request.body.data.colitis ? 'Afirma' : 'Niega'
+        request.body.data.gastritis = request.body.data.gastritis ? 'Afirma' : 'Niega'
+        request.body.data.constipation = request.body.data.constipation ? 'Afirma' : 'Niega'
+        request.body.data.diarrhea = request.body.data.diarrhea ? 'Afirma' : 'Niega'
+        request.body.data.diabetes = request.body.data.diabetes ? 'Afirma' : 'Niega'
+        request.body.data.hta = request.body.data.hta ? 'Afirma' : 'Niega'
         const pdf_data = await create_report_pdf(request.body.name, request.body.data)
         const report_id = await save_file(`nutritionist_sheet_${request.body.data.patient}.pdf`, pdf_data)
         request.body.data.pdf = report_id
