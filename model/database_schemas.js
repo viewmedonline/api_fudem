@@ -644,7 +644,6 @@ let anesthesiologytSchema = new Schema(
     patient: { type: Schema.Types.ObjectId, ref: "Person" },
     pdf: { type: Schema.Types.ObjectId, ref: "fs.file", default: null },
     responsible: { type: Schema.Types.ObjectId, ref: "Person" },
-    diagnosisRefer: String,
     operationDate: String,
     operationTime: String,
     operationDateFormat: Date,
