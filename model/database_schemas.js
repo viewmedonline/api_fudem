@@ -566,7 +566,7 @@ let perdiatricSchema = new Schema(
     clinical_predictors: String,
     clasification_asa: String,
     plan: String,
-    date:Date,
+    date: Date,
     control: { type: controlSchema, required: true, default: {} },
   },
   { versionKey: false }
@@ -633,7 +633,7 @@ let nutritionistSchema = new Schema(
     cooh: String,
     prescribedDiet: String,
     comments: String,
-    date:Date,
+    date: Date,
     control: { type: controlSchema, required: true, default: {} },
   },
   { versionKey: false }
@@ -672,8 +672,24 @@ let anesthesiologytSchema = new Schema(
         doses: String,
       },
     ],
-    date:Date,
+    date: Date,
     control: { type: controlSchema, required: true, default: {} },
+  },
+  { versionKey: false }
+);
+
+let consumedSchema = new Schema(
+  {
+    active: { type: Boolean, default: true },
+    description: String,
+  },
+  { versionKey: false }
+);
+
+let activitySchema = new Schema(
+  {
+    active: { type: Boolean, default: true },
+    description: String,
   },
   { versionKey: false }
 );
@@ -698,5 +714,10 @@ module.exports = {
   InternEvaluation: mongoose.model("InternEvaluation", internEvaluationSchema),
   PediatricEvaluation: mongoose.model("PediatricEvaluation", perdiatricSchema),
   NutritionalControl: mongoose.model("NutritionalControl", nutritionistSchema),
-  ReportAnesthesiology: mongoose.model("ReportAnesthesiology", anesthesiologytSchema),
+  ReportAnesthesiology: mongoose.model(
+    "ReportAnesthesiology",
+    anesthesiologytSchema
+  ),
+  consumedMaster: mongoose.model("consumedMaster", consumedSchema),
+  activityMaster: mongoose.model("activityMaster", activitySchema),
 };

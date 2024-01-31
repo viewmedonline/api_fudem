@@ -38,7 +38,6 @@ router.post('/anesthesiology_sheet', async (request, response) => {
 
 router.get('/anesthesiology_sheet/:patientId', async (request, response) => {
     try {
-        console.log(request.params.patientId);
         const anesthesiology_sheet = await model.ReportAnesthesiology.find({patient:request.params.patientId}).sort({date:-1,_id:-1})
 
         response.json({
