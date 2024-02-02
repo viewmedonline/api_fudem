@@ -847,10 +847,5 @@ mongoose.connect(dbConfig.url, dbConfig.options).then(
     err => {
         // error in the connection to the database
         console.log("api_viewmed: " + err);
-        response.status(500).json({
-            status: "KO",
-            message: "DatabaseNotConnection",
-            documents: []
-        });
     }
 );
