@@ -20,7 +20,7 @@ router.post('/nutritionist_sheet', async (request, response) => {
         request.body.data.diarrhea = request.body.data.diarrhea ? 'Afirma' : 'Niega'
         request.body.data.diabetes = request.body.data.diabetes ? 'Afirma' : 'Niega'
         request.body.data.hta = request.body.data.hta ? 'Afirma' : 'Niega'
-        const pdf_data = await create_report_pdf(request.body.name, request.body.data)
+        const pdf_data = await create_report_pdf(request.body.name, {...request.body.data, date: moment().format("DD-MM-YYYY")})
         const report_id = await save_file(`nutritionist_sheet_${request.body.data.patient}.pdf`, pdf_data)
         request.body.data.pdf = report_id
         //save colletion

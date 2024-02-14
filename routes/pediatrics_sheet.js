@@ -14,7 +14,8 @@ router.post('/pediatrics_sheet', async (request, response) => {
             );
             request.body.data.digital_signature = signature;
           }
-        const pdf_data = await create_report_pdf(request.body.name, request.body.data)
+        
+        const pdf_data = await create_report_pdf(request.body.name, {...request.body.data, date: moment().format("DD-MM-YYYY")})
         const report_id = await save_file(`pediatrics_sheet_${request.body.data.patient}.pdf`, pdf_data)
         request.body.data.pdf = report_id
         //save colletion
