@@ -14,6 +14,7 @@ router.get("/report/:dateFrom/:dateTo/:ext", async (request, response) => {
   let datos = [
     [
       "Fecha_Consulta",
+      "Consulta Por",
       "Nombres de Paciente",
       "Apellidos de Paciente",
       "Genero",
@@ -34,8 +35,14 @@ router.get("/report/:dateFrom/:dateTo/:ext", async (request, response) => {
       "Dio Receta",
     ],
   ];
-  const dateFrom = moment.utc(request.params.dateFrom).startOf("day").format();
-  const dateTo = moment.utc(request.params.dateTo).endOf("day").format();
+  const dateFrom = moment(request.params.dateFrom, "DD-MM-YYYY")
+    .utc()
+    .startOf("day")
+    .format();
+  const dateTo = moment(request.params.dateTo, "DD-MM-YYYY")
+    .utc()
+    .endOf("day")
+    .format();
   let results = await model.Consultation.find({
     "control.active": false,
     file: { $exists: false },
@@ -68,49 +75,63 @@ router.get("/report/:dateFrom/:dateTo/:ext", async (request, response) => {
           ? x.objPreliminary.data.reasonConsultation
           : x.objOphthalmology.data
           ? x.objOphthalmology.data.reasonConsultation
-          : x.objOptometrist.data.reasonConsultation) || "",
-      procedures:
-        x.process
-          .map((x) => {
-            return x.process + " - Ojo:" + x.eye;
-          })
-          .join(", ") || "",
-      proceduresTherapeutic:
-        x.processTherapeutic
-          .map((x) => {
-            return x.process + " - Ojo:" + x.eye;
-          })
-          .join(", ") || "",
-      retinalCamera: x.objPreliminary.data
-        ? x.objPreliminary.data.retinal_photo
-        : "No",
-      retinal_findings: x.objPreliminary.data
-        ? x.objPreliminary.data.retinal_findings || ""
-        : "",
-      retinal_observations: x.objPreliminary.data
-        ? x.objPreliminary.data.retinal_observations || ""
-        : "",
+          : x.objOptometrist.data.reasonConsultation) || "-",
     };
 
+    if (x.objPreliminary.data) {
+      let objPreliminary = { ...obj };
+      (objPreliminary.retinalCamera = x.objPreliminary.data
+        ? x.objPreliminary.data.retinal_photo
+        : "No"),
+        (objPreliminary.retinal_findings = x.objPreliminary.data
+          ? x.objPreliminary.data.retinal_findings || "-"
+          : "-"),
+        (objPreliminary.retinal_observations = x.objPreliminary.data
+          ? x.objPreliminary.data.retinal_observations || "-"
+          : "-"),
+        (objPreliminary.role = "Preliminar");
+      objPreliminary.nameDoctor = x.objPreliminary.data.responsablePreliminar;
+      objPreliminary.lastNameDoctor = "-";
+      objPreliminary.diagnostic = "-";
+      objPreliminary.consultationFor = "Preliminar"
+      responseArray.push(objPreliminary);
+    }
+
     if (x.objOphthalmology.data) {
-      obj.role = "Oftalmólogo";
-      obj.diagnostic =
+      let objOfta = { ...obj };
+      objOfta.role = "Oftalmólogo";
+      objOfta.diagnostic =
         x.objOphthalmology.data.diagnostic
           .map((x) => {
             return x.diagnostic.es;
           })
-          .join(", ") || "";
+          .join(", ") || "-";
       let nameOfta = await searchNameDoctor(
         x.objOphthalmology.data.responsableConsultation
       );
-      obj.nameDoctor = nameOfta.forename;
-      obj.lastNameDoctor = nameOfta.surname;
-      obj.medicines =
-        x.objOphthalmology.data.observaciones.medicamentos.join(", ") || "";
-      responseArray.push(obj);
+      objOfta.nameDoctor = nameOfta.forename;
+      objOfta.lastNameDoctor = nameOfta.surname;
+      objOfta.medicines =
+        x.objOphthalmology.data.observaciones.medicamentos.join(", ") || "-";
+      (objOfta.procedures =
+        x.process
+          .map((x) => {
+            return x.process + " - Ojo:" + x.eye;
+          })
+          .join(", ") || "-"),
+        (objOfta.proceduresTherapeutic =
+          x.processTherapeutic
+            .map((x) => {
+              return x.process + " - Ojo:" + x.eye;
+            })
+            .join(", ") || "-");
+            objOfta.consultationFor = "Oftalmología"
+
+        responseArray.push(objOfta);
     }
 
     if (x.objOptometrist.data) {
+      let objOpto = { ...obj };
       const diagnosesOpto = {
         hyperopia: "Hipermetropía",
         myopia: "Miopía",
@@ -122,8 +143,8 @@ router.get("/report/:dateFrom/:dateTo/:ext", async (request, response) => {
         squint: "Estrabismo",
       };
 
-      obj.role = "Optometrista";
-      obj.diagnostic =
+      objOpto.role = "Optometrista";
+      objOpto.diagnostic =
         x.objOptometrist.data.diagnosticoObservaciones.diagnostico
           .map((x) => {
             if (!x.eyeRight && !x.eyeLeft) return null;
@@ -132,14 +153,15 @@ router.get("/report/:dateFrom/:dateTo/:ext", async (request, response) => {
             return `${diagnosesOpto[x.name]} - ${eyes} `;
           })
           .filter((x) => x)
-          .join(", ") || "";
+          .join(", ") || "-";
       let nameOpto = await searchNameDoctor(
         x.objOptometrist.data.responsableConsultation
       );
-      obj.nameDoctor = nameOpto.forename;
-      obj.lastNameDoctor = nameOpto.surname;
-      obj.gavePrescription = x.objOptometrist.data.receta;
-      responseArray.push(obj);
+      objOpto.nameDoctor = nameOpto.forename;
+      objOpto.lastNameDoctor = nameOpto.surname;
+      objOpto.gavePrescription = x.objOptometrist.data.receta;
+      objOpto.consultationFor = "Optometría"
+      responseArray.push(objOpto);
     }
   }
 
@@ -147,6 +169,7 @@ router.get("/report/:dateFrom/:dateTo/:ext", async (request, response) => {
     responseArray.forEach((x) => {
       datos.push([
         x.dateConsult,
+        x.consultationFor,
         x.namePatient,
         x.lastNamePatient,
         x.gender,
