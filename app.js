@@ -710,6 +710,7 @@ const pediatrics_sheet = require("./routes/pediatrics_sheet");
 const nutritionist_sheet = require("./routes/nutritionist_sheet");
 const anesthesiology_sheet = require("./routes/anesthesiology_sheet");
 const master = require("./routes/master");
+const report = require("./routes/reports");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -811,6 +812,7 @@ app.use(pediatrics_sheet)
 app.use(nutritionist_sheet)
 app.use(anesthesiology_sheet)
 app.use(master)
+app.use(report)
 
 mongoose.connect(dbConfig.url, dbConfig.options).then(
     async () => {
@@ -835,7 +837,6 @@ mongoose.connect(dbConfig.url, dbConfig.options).then(
                 {description:"Merienda despues de almuerzo"},
                 {description:"Cena"},
                 {description:"Merienda despues de cena"},
-                {description:"Ejercicio Fisico"},
             ])
         }
 
