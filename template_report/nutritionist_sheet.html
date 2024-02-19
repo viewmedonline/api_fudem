@@ -137,21 +137,72 @@
           <div><b>Peso(lb):</b> {{weight}}</div>
           <div><b>Peso Ideal(lb):</b> {{idealWeight}}</div>
           <div><b>Peso Meta(lb):</b> {{goalWeight}}</div>
-        </div>  
+        </div>
         <div class="grid-container-3">
-          <div><b>Tallacm:</b> {{size}}</div>
+          <div><b>Talla(cm):</b> {{size}}</div>
           <div><b>IMC:</b> {{imc}}</div>
-        </div>  
-        <div class="grid-container-2">
           <div><b>Estado de Nutrición:</b> {{nutritionalStatus}}</div>
-          <div><b>Circunferencia de cintura:</b> {{WaistCircumference}}</div>
+        </div>
+        <div>
+          <b><u>Distribución de la composición corporal </u></b>
+        </div>
+        <div class="grid-container-3">
+          <div><b>Peso(lb):</b> {{weight}}</div>
+          <div><b>Grasa corporal(%):</b> {{bodyFat}}</div>
+          <div><b>Agua corporal(%):</b> {{bodyWater}}</div>
         </div>    
         <div class="grid-container-3">
+          <div><b>Masa musculo:</b> {{muscleMass}}</div>
+          <div><b>Valoración fisica:</b> {{physicalAssessment}}</div>
+          <div><b>DCI/BMR:</b> {{dciBmr}}</div>
+        </div>     
+        <div class="grid-container-3">
+          <div><b>Edad metabólica:</b> {{metabolicAge}}</div>
+          <div><b>Masa ósea:</b> {{boneMass}}</div>
+          <div><b>Grasa visceral:</b> {{viseralFat}}</div>
+        </div>   
+        <div class="grid-container"><img src="data:image/jpeg;base64,{{logo_form_1}}" width="100%" height="250px"/></div>
+        {{#or diagnosesImg1 diagnosesImg2}}
+        <div class="grid-container"><img src="data:image/jpeg;base64,{{logo_form_2}}" width="100%" height="400px"/></div>
+        <div class="justify-tex div-margin">
+          <div style="margin-bottom: 8px">
+            <b>Diagnostico:</b>
+            <span >{{diagnosesImg1}}</span>
+          </div>
+        </div>
+        <div class="page-break"></div>
+        <div class="grid-container"><img src="data:image/jpeg;base64,{{logo_form_3}}" width="100%" height="400px"/></div>
+        <div class="justify-tex div-margin">
+          <div style="margin-bottom: 8px">
+            <b>Diagnostico:</b>
+            <span >{{diagnosesImg2}}</span>
+          </div>
+        </div>
+        {{/or}}
+        {{#or diagnosesImg3 diagnosesImg4}}
+        <div class="grid-container"><img src="data:image/jpeg;base64,{{logo_form_4}}" width="100%" height="400px"/></div>
+        <div class="justify-tex div-margin">
+          <div style="margin-bottom: 8px">
+            <b>Diagnostico:</b>
+            <span >{{diagnosesImg3}}</span>
+          </div>
+        </div>
+        <div class="page-break"></div>
+        <div class="grid-container"><img src="data:image/jpeg;base64,{{logo_form_5}}" width="100%" height="400px"/></div>
+        <div class="justify-tex div-margin">
+          <div style="margin-bottom: 8px">
+            <b>Diagnostico:</b>
+            <span >{{diagnosesImg4}}</span>
+          </div>
+        </div>
+        {{/or}}
+        <div class="grid-container-4">
+          <div><b>C. de cintura:</b> {{WaistCircumference}}</div>
           <div><b>CHO(%):</b> {{cho}}</div>
           <div><b>CHON(%):</b> {{chon}}</div>
           <div><b>COOH(%):</b> {{cooh}}</div>
-        </div>  
-        
+        </div>
+
         <div class="justify-tex div-margin">
           <div style="margin-bottom: 8px">
             <b>Dieta prescrita:</b>
@@ -161,7 +212,7 @@
             <b>Comentarios:</b>
             <span id="date-surgery">{{comments}}</span>
           </div>
-        </div>        
+        </div>
       </section>
     </main>
     <div class="digital_signature">
@@ -174,7 +225,7 @@
         <div>
           <b>{{phy_name}}</b>
         </div>
-        <div><b>Médico Internista</b></div>
+        <div><b>Médico Nutricionista</b></div>
       </center>
     </div>
   </body>
@@ -211,7 +262,11 @@
     position: fixed;
     width: 100%;
   }
-
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    margin: 8px 0;
+  }
   .grid-container-2 {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -283,6 +338,6 @@
     text-align: center;
   }
   .page-break {
-        page-break-after: always;
-    }
+    page-break-after: always;
+  }
 </style>
