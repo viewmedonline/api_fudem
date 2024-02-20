@@ -1,107 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Evaluación Pediátrica</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Evaluación Pediátrica</title>
-</head>
-
-<body id="document">
-  <main>
-    <header>
-      <img src="data:image/jpeg;base64,{{logo}}" alt="fudem" id="logo" />
-    </header>
-    <section>
-      <center>
-        <h1>Evaluación Pediátrica</h1>
-      </center>
-      <div class="grid-container-2">
-        <div><b>Expediente:</b> <span>{{num_exp}}</span></div>
-        <div>
-          <b>Nombre del Paciente:</b> <span>{{pat_name}}</span>
+  <body id="document">
+    <main>
+      <header>
+        <img src="data:image/jpeg;base64,{{logo}}" alt="fudem" id="logo" />
+      </header>
+      <section>
+        <center>
+          <h1>Evaluación Pediátrica</h1>
+        </center>
+        <div class="grid-container-2">
+          <div><b>Expediente:</b> <span>{{num_exp}}</span></div>
+          <div><b>Nombre del Paciente:</b> <span>{{pat_name}}</span></div>
         </div>
-      </div>
-      <div class="grid-container-2">
-        <div><b>Edad:</b> <span id="age">{{pat_age}}</span></div>
-        <div><b>Sexo:</b> <span id="gender">{{pat_gender}}</span></div>
-      </div>   
-      <div class="div-margin"><b>Fecha:</b> <span id="date">{{date}}</span></div>
-      <div class="grid-container-2">
-        <div><b>Diagnóstico Preoperatorio:</b> <span id="date-surgery">{{diagnosisPre}}</span></div>
-        <div><b>Estado:</b> <span id="date-surgery">{{stateDiagnosis}}</span></div>
-      </div>
-      <div class="justify-text">
-        <div><b>Historia Clínica:</b></div>
-        <div>{{clinicObservation}}</div>
-      </div> 
-      <div class="justify-text">
-        <div><b>Antecedentes Personales no patológicos:</b></div>
-        <div>{{recordNP}}</div>
-      </div> 
-      <div class="justify-text">
-        <div><b>Antecedentes Personales patológicos:</b></div>
-        <div>{{recordNP}}</div>
-      </div>  
-      <div class="justify-text">
-        <div><b>Vacunación:</b></div>
-        <div>{{vaccination}}</div>
-      </div>     
-      <div class="justify-text">
-        <div><b>Examen Físico:</b></div>
-        <div>{{physicalExam}}</div>
-      </div>          
-      <div><b>Examénes de Laboratorio</b></div>  
-      <div class="grid-container-4">
-        <div><b>HT:</b> {{ht}}</div>
-        <div><b>HB:</b> {{hb}}</div>
-        <div><b>Plaquetas:</b> {{platelets}}</div>
-        <div><b>TP:</b> {{tp}}</div>
-      </div>  
-      <div class="grid-container-4">
-        <div><b>TPT:</b> {{tpt}}</div>
-        <div><b>INR:</b> {{inr}}</div>
-        <div><b>Glucosa:</b> {{glucose}}</div>
-        <div><b>Elisa/VIH:</b> {{vih}}</div>
-      </div>   
-      <div class="grid-container-4">
-        <div><b>EGO:</b> {{ego}}</div>
-      </div>    
-      <div class="grid-container-texarea-1"><b>Radiografía de Torax:</b> {{radiography}}</div>          
-      <div class="grid-container-texarea-1"><b>Electrocardiograma:</b> {{electrocardiogram}}</div>          
-      <div class="grid-container-texarea-1">
-        <div><b>Comentarios:</b></div>
-        <div class="justify-text">{{comments}}</div>
-      </div>         
-      <div class="grid-container-2">
-        <div><b>Riesgo Quirúrgico:</b> {{surgical_risk}}</div>
-        <div><b>Capacidad Funcional: </b> {{functional_capacity}}</div>
-      </div>    
-      <div class="grid-container-2">
-        <div><b>Predictores Clínicos:</b> {{clinical_predictors}}</div>
-        <div><b>Clasificación ASA: </b> {{clasification_asa}}</div>
-      </div>   
-      <div class="grid-container-texarea-1">
-        <div><b>Diagnóstico:</b></div>
-        <div class="justify-text">{{diagnosis}}</div>
-      </div>      
-      <div class="grid-container-texarea-1">
-        <div><b>Plan:</b></div>
-        <div class="justify-text">{{plan}}</div>
-      </div>                     
-    </section>
-  </main>
-  <div class="digital_signature">
-    <center>
-        <img src="{{digital_signature}}" alt="firma" style="width: 150px; height: 75px" />
+        <div class="grid-container-2">
+          <div><b>Edad:</b> <span id="age">{{pat_age}}</span></div>
+          <div><b>Sexo:</b> <span id="gender">{{pat_gender}}</span></div>
+        </div>
+        <div class="div-margin">
+          <b>Fecha:</b> <span id="date">{{date}}</span>
+        </div>
+        <div class="grid-container-2">
+          <div>
+            <b>Diagnóstico Preoperatorio:</b>
+            <span id="date-surgery">{{diagnosisPre}}</span>
+          </div>
+          <div>
+            <b>Estado:</b> <span id="date-surgery">{{stateDiagnosis}}</span>
+          </div>
+        </div>
+        <div class="justify-text">
+          <div><b>Historia Clínica:</b></div>
+          <div>{{clinicObservation}}</div>
+        </div>
+        <div class="justify-text">
+          <div><b>Antecedentes Personales no patológicos:</b></div>
+          <div>{{recordNP}}</div>
+        </div>
+        <div class="justify-text">
+          <div><b>Antecedentes Personales patológicos:</b></div>
+          <div>{{recordNP}}</div>
+        </div>
+        <div class="justify-text">
+          <div><b>Vacunación:</b></div>
+          <div>{{vaccination}}</div>
+        </div>
+        <div><b>Examen Fisico </b></div>
+        <div class="grid-container-4">
+          <div><b>PA:</b> {{blood_pressure}}</div>
+          <div><b>FC:</b> {{heart_rate}}</div>
+          <div><b>FR:</b> {{respiratory_rate}}</div>
+          <div><b>SATO2:</b> {{oxygen_saturation}}</div>
+        </div>  
+        <div class="grid-container-4">
+          <div><b>T°:</b> {{temp}}</div>
+          <div><b>Peso:</b> {{weight}}</div>
+          <div><b>Talla:</b> {{size}}</div>
+        </div>               
+        <div class="justify-text">
+          <div><b>Estado Físico:</b></div>
+          <div>{{physicalExam}}</div>
+        </div>
+        <div><b>Examénes de Laboratorio</b></div>
+        <div class="grid-container-4">
+          <div><b>HT:</b> {{ht}}</div>
+          <div><b>HB:</b> {{hb}}</div>
+          <div><b>Plaquetas:</b> {{platelets}}</div>
+          <div><b>TP:</b> {{tp}}</div>
+        </div>
+        <div class="grid-container-4">
+          <div><b>TPT:</b> {{tpt}}</div>
+          <div><b>INR:</b> {{inr}}</div>
+          <div><b>Glucosa:</b> {{glucose}}</div>
+          <div><b>Elisa/VIH:</b> {{vih}}</div>
+        </div>
+        <div class="grid-container-4">
+          <div><b>EGO:</b> {{ego}}</div>
+        </div>
+        <div class="grid-container-texarea-1">
+          <b>Radiografía de Torax:</b> {{radiography}}
+        </div>
+        <div class="grid-container-texarea-1">
+          <b>Electrocardiograma:</b> {{electrocardiogram}}
+        </div>
+        <div class="grid-container-texarea-1">
+          <div><b>Comentarios:</b></div>
+          <div class="justify-text">{{comments}}</div>
+        </div>
+        <div class="grid-container-2">
+          <div><b>Riesgo Quirúrgico:</b> {{surgical_risk}}</div>
+          <div><b>Capacidad Funcional: </b> {{functional_capacity}}</div>
+        </div>
+        <div class="grid-container-2">
+          <div><b>Predictores Clínicos:</b> {{clinical_predictors}}</div>
+          <div><b>Clasificación ASA: </b> {{clasification_asa}}</div>
+        </div>
+        <div class="grid-container-texarea-1">
+          <div><b>Diagnóstico:</b></div>
+          <div class="justify-text">{{diagnosis}}</div>
+        </div>
+        <div class="grid-container-texarea-1">
+          <div><b>Plan:</b></div>
+          <div class="justify-text">{{plan}}</div>
+        </div>
+      </section>
+    </main>
+    <div class="digital_signature">
+      <center>
+        <img
+          src="{{digital_signature}}"
+          alt="firma"
+          style="width: 150px; height: 75px"
+        />
         <div>
-            <b>{{phy_name}}</b>
-          </div> 
-        <div><b>Médico Internista</b></div>
-    </center>
-  </div>
-</body>
-
+          <b>{{phy_name}}</b>
+        </div>
+        <div><b>Médico Pediatra</b></div>
+      </center>
+    </div>
+  </body>
 </html>
 <style>
   body {
@@ -162,7 +185,6 @@
   .justify-text {
     width: 90%;
     text-align: justify;
-  word-wrap: break-word;
+    word-wrap: break-word;
   }
-
 </style>
