@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hoja de Reporte de Anestesiología</title>
+  </head>
+
+  <body id="document">
+    <main>
+      <header>
+        <img src="data:image/jpeg;base64,{{logo}}" alt="fudem" id="logo" />
+      </header>
+      <section>
+        <center>
+          <h1>Hoja de Reporte de Anestesiología</h1>
+        </center>
+        <div class="grid-container-2">
+          <div><b>Expediente:</b> <span>{{num_exp}}</span></div>
+          <div><b>Nombre del Paciente:</b> <span>{{pat_name}}</span></div>
+        </div>
+        <div class="grid-container-2">
+          <div><b>Edad:</b> <span id="age">{{pat_age}}</span></div>
+          <div><b>Sexo:</b> <span id="gender">{{pat_gender}}</span></div>
+        </div>
+        <div class="grid-container-2 div-margin">
+          <div><b>Fecha de operación:</b> <span id="date">{{operationDate}}</span></div>
+          <div><b>Hora de operación:</b> <span id="date">{{operationTime}}</span></div>
+        </div>
+        <div class="justify-tex div-margin">
+          <div>
+            <b>Diagnóstico pre-operatorio:</b>
+            <span id="date-surgery">{{preoperativeDiagnosis}}</span>
+          </div>
+        </div>
+        <div>
+          <div class="justify-tex div-margin">
+            <div>
+              <b>Antecedentes médicos del paciente:</b>
+              <span id="date-surgery">{{MedicalHistory}}</span>
+            </div>
+          </div>
+          <div class="grid-container-3 div-margin">
+            <div><b>Tipo de anestesia:</b> <span>{{typeAnesthesia}}</span></div>
+            <div>
+              <b>Técnica de anestesia:</b> <span>{{anesthesiaTechnique}}</span>
+            </div>
+            <div>
+              <b>Clasificación ASA:</b> <span>{{asaClassification}}</span>
+            </div>
+          </div>
+          <div>
+            <b><u>Signos vitales</u></b>
+          </div>
+          <table style="margin-bottom: 8px">
+            <tr>
+              <th>Hora</th>
+              <th>15'</th>
+              <th>30'</th>
+              <th>45'</th>
+              <th>60'</th>
+              <th>15'</th>
+              <th>30'</th>
+              <th>45'</th>
+              <th>60'</th>
+              <th>15'</th>
+              <th>30'</th>
+              <th>45'</th>
+              <th>60'</th>
+            </tr>
+
+            <tr>
+              <td>TA</td>
+              {{#each VitalSigns.ta}}
+              <td>{{this}}</td>
+              {{/each}}
+            </tr>
+            <tr>
+              <td>FC</td>
+              {{#each VitalSigns.fc}}
+              <td>{{this}}</td>
+              {{/each}}
+            </tr>
+            <tr>
+              <td>Fr</td>
+              {{#each VitalSigns.fr}}
+              <td>{{this}}</td>
+              {{/each}}
+            </tr>
+            <tr>
+              <td>T°</td>
+              {{#each VitalSigns.temp}}
+              <td>{{this}}</td>
+              {{/each}}
+            </tr>
+            <tr>
+              <td>PSO2</td>
+              {{#each VitalSigns.pso2}}
+              <td>{{this}}</td>
+              {{/each}}
+            </tr>
+            <tr>
+              <td>PCO2</td>
+              {{#each VitalSigns.pco2}}
+              <td>{{this}}</td>
+              {{/each}}
+            </tr>
+          </table>
+
+          <div>
+            <b><u>Medicamentos y soluciones administrados</u></b>
+          </div>
+          <table style="margin-bottom: 8px">
+            <tr>
+              <th>Medicamentos administrados</th>
+              <th>Dosis</th>
+            </tr>
+            {{#each medicines}}
+            <tr>
+              <td>{{description}}</td>
+              <td>{{doses}}</td>
+            </tr>
+            {{/each}}
+          </table>
+          <table style="margin-bottom: 8px">
+            <tr>
+              <th>Soluciones administradas</th>
+              <th>Dosis</th>
+            </tr>
+            {{#each solutions}}
+            <tr>
+              <td>{{description}}</td>
+              <td>{{doses}}</td>
+            </tr>
+            {{/each}}
+          </table>          
+        </div>
+      </section>
+    </main>
+    <div class="digital_signature">
+      <center>
+        <img
+          src="{{digital_signature}}"
+          alt="firma"
+          style="width: 150px; height: 75px"
+        />
+        <div>
+          <b>{{phy_name}}</b>
+        </div>
+        <div><b>Médico Internista</b></div>
+      </center>
+    </div>
+  </body>
+</html>
+<style>
+  body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
+    font-size: 12.5px;
+  }
+
+  #logo {
+    width: 30%;
+    height: 120px;
+    object-fit: contain;
+    object-position: center;
+    margin: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* main {
+    padding: 20px;
+  } */
+
+  .digital_signature {
+    text-align: center;
+    bottom: 0;
+    position: fixed;
+    width: 100%;
+  }
+
+  .grid-container-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin: 8px 0;
+  }
+  .grid-container-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 8px 0;
+  }
+  .grid-container-texarea-1 {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    margin: 8px 0;
+  }
+  .grid-container-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 8px 0;
+  }
+  .grid-container-5 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 8px 0;
+  }
+
+  .div-margin {
+    margin: 8px 0;
+  }
+  span {
+    margin-left: 10px;
+  }
+  .justify-text {
+    width: 90%;
+    text-align: justify;
+    word-wrap: break-word;
+  }
+  table,
+  td {
+    border: 1px solid black;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid #000000;
+    margin-top: 20px;
+  }
+  th,
+  td {
+    text-align: center;
+    padding: 1px;
+  }
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  th {
+    background-color: #4caf50;
+    color: rgb(10, 9, 9);
+    font-weight: 800;
+  }
+  table th {
+    border: 1px solid black;
+    text-align: center;
+  }
+  .page-break {
+    page-break-after: always;
+  }
+</style>

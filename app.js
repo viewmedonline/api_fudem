@@ -706,6 +706,11 @@ const nurse_sheet = require("./routes/nurse_sheet");
 const reference = require("./routes/reference");
 const surgery_sheet = require("./routes/surgery_sheet");
 const intern_evaluation = require("./routes/intern_evaluation_sheet");
+const pediatrics_sheet = require("./routes/pediatrics_sheet");
+const nutritionist_sheet = require("./routes/nutritionist_sheet");
+const anesthesiology_sheet = require("./routes/anesthesiology_sheet");
+const master = require("./routes/master");
+const report = require("./routes/reports");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -803,10 +808,37 @@ app.use(nurse_sheet);
 app.use(reference);
 app.use(surgery_sheet);
 app.use(intern_evaluation);
+app.use(pediatrics_sheet)
+app.use(nutritionist_sheet)
+app.use(anesthesiology_sheet)
+app.use(master)
+app.use(report)
 
 mongoose.connect(dbConfig.url, dbConfig.options).then(
-    () => {
+    async () => {
         let model = require(__dirname + "/model/database_schemas.js");
+        const countConsumed = await model.consumedMaster.find({}).count()
+        if(countConsumed==0){
+            await model.consumedMaster.insertMany([
+                {description:"Tabaco"},
+                {description:"Café"},
+                {description:"Agua"},
+                {description:"Alcohol"},
+                {description:"Actividad Fisica"},
+            ])
+        }
+        const countActyvity = await model.activityMaster.find({}).count()
+        if(countActyvity==0){
+            await model.activityMaster.insertMany([
+                {description:"Despertarse"},
+                {description:"Desayuno"},
+                {description:"Merienda antes de almuerzo"},
+                {description:"Almuerzo"},
+                {description:"Merienda despues de almuerzo"},
+                {description:"Cena"},
+                {description:"Merienda despues de cena"},
+            ])
+        }
 
         let msConfig = require(__dirname + "/config/ms_config.js");
         app.listen(msConfig.port, function() {
@@ -816,10 +848,5 @@ mongoose.connect(dbConfig.url, dbConfig.options).then(
     err => {
         // error in the connection to the database
         console.log("api_viewmed: " + err);
-        response.status(500).json({
-            status: "KO",
-            message: "DatabaseNotConnection",
-            documents: []
-        });
     }
 );
