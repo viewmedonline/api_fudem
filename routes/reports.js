@@ -43,8 +43,9 @@ router.get("/report/:dateFrom/:dateTo/:ext", async (request, response) => {
     .utc()
     .endOf("day")
     .format();
+  let results = [];
   try {
-    let results = await model.Consultation.find({
+    results = await model.Consultation.find({
       "control.active": false,
       file: { $exists: false },
       "control.created_at": {
