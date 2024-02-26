@@ -43,6 +43,7 @@ router.get("/report/:dateFrom/:dateTo/:ext", async (request, response) => {
     .utc()
     .endOf("day")
     .format();
+  console.log(dateFrom, dateTo);
   let results = [];
   try {
     results = await model.Consultation.find({
