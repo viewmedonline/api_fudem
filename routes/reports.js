@@ -39,6 +39,7 @@ router.get("/report/:dateFrom/:dateTo/:ext", async (request, response) => {
       "Dio Receta",
     ],
   ];
+  let responseArray = [];
   try {
     const dateFrom = moment(request.params.dateFrom, "DD-MM-YYYY")
       .utc()
@@ -59,7 +60,6 @@ router.get("/report/:dateFrom/:dateTo/:ext", async (request, response) => {
       .sort({ "control.created_at": -1 })
       .populate("person");
 
-    let responseArray = [];
     for (const x of results) {
       try {
         let dateConsult = x.objPreliminary.data
