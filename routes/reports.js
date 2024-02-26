@@ -43,16 +43,22 @@ router.get("/report/:dateFrom/:dateTo/:ext", async (request, response) => {
     .utc()
     .endOf("day")
     .format();
-  let results = await model.Consultation.find({
-    "control.active": false,
-    file: { $exists: false },
-    "control.created_at": {
-      $gte: dateFrom,
-      $lte: dateTo,
-    },
-  })
-    .sort({ "control.created_at": -1 })
-    .populate("person");
+  console.log(dateFrom, dateTo);
+  let results = [];
+  try {
+    results = await model.Consultation.find({
+      "control.active": false,
+      file: { $exists: false },
+      "control.created_at": {
+        $gte: dateFrom,
+        $lte: dateTo,
+      },
+    })
+      .sort({ "control.created_at": -1 })
+      .populate("person");
+  } catch (error) {
+    console.log("Ha ocurrido un error en la busqueda de consultas: " + error);
+  }
 
   let responseArray = [];
   for (const x of results) {
@@ -166,7 +172,7 @@ router.get("/report/:dateFrom/:dateTo/:ext", async (request, response) => {
         responseArray.push(objOpto);
       }
     } catch (error) {
-      console.log('Ha ocurrido un error el for: '+ error);
+      console.log("Ha ocurrido un error el for: " + error);
     }
   }
 
