@@ -45,7 +45,7 @@
         </div>
         <div class="justify-text">
           <div><b>Antecedentes Personales patológicos:</b></div>
-          <div>{{recordNP}}</div>
+          <div>{{recordP}}</div>
         </div>
         <div class="justify-text">
           <div><b>Vacunación:</b></div>
@@ -89,6 +89,7 @@
         <div class="grid-container-texarea-1">
           <b>Electrocardiograma:</b> {{electrocardiogram}}
         </div>
+        <!-- <div class="page-break"></div> -->
         <div class="grid-container-texarea-1">
           <div><b>Comentarios:</b></div>
           <div class="justify-text">{{comments}}</div>
@@ -130,8 +131,6 @@
   body {
     width: 100vw;
     height: 100vh;
-    margin: 0;
-    margin: 0;
     font-family: Arial, Helvetica, sans-serif;
     display: flex;
     flex-direction: column;
@@ -146,18 +145,13 @@
     margin: 0;
     padding: 0;
     margin: 0;
+  top: 0;
   }
-
-  /* main {
-    padding: 20px;
-  } */
-
   .digital_signature {
-    text-align: end;
+    text-align: center;
     bottom: 0;
-    position: absolute;
-    right: 0;
-    margin-right: 35%;
+    position: static;
+    width: 100%;
   }
 
   .grid-container-2 {
@@ -186,5 +180,8 @@
     width: 90%;
     text-align: justify;
     word-wrap: break-word;
+  }
+  .page-break {
+    page-break-after: always;
   }
 </style>
