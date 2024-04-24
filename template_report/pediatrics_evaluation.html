@@ -89,8 +89,8 @@
         <div class="grid-container-texarea-1">
           <b>Electrocardiograma:</b> {{electrocardiogram}}
         </div>
-        <!-- <div class="page-break"></div> -->
-        <div class="grid-container-texarea-1">
+        <div class="page-break"></div>
+        <div class="grid-container-texarea-1" style="margin-top: 120px;">
           <div><b>Comentarios:</b></div>
           <div class="justify-text">{{comments}}</div>
         </div>
@@ -131,6 +131,7 @@
   body {
     width: 100vw;
     height: 100vh;
+    margin-top: 100px;
     font-family: Arial, Helvetica, sans-serif;
     display: flex;
     flex-direction: column;
@@ -145,12 +146,13 @@
     margin: 0;
     padding: 0;
     margin: 0;
+    position: fixed;
   top: 0;
   }
   .digital_signature {
     text-align: center;
     bottom: 0;
-    position: static;
+    position: fixed;
     width: 100%;
   }
 
