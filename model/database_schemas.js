@@ -573,6 +573,7 @@ let perdiatricSchema = new Schema(
     clinical_predictors: String,
     clasification_asa: String,
     plan: String,
+    diagnosis:String,
     date: Date,
     control: { type: controlSchema, required: true, default: {} },
   },
