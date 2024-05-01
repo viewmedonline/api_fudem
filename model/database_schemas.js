@@ -230,6 +230,7 @@ const internEvaluationSchema = new Schema(
     clinical_predictors: String,
     clasification_asa: String,
     plan: String,
+    appointmentType: String,
     pdf: { type: Schema.Types.ObjectId, ref: "fs.file", default: null },
     responsible: { type: Schema.Types.ObjectId, ref: "Person" },
     person: { type: Schema.Types.ObjectId, ref: "Person" },
