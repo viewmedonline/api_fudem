@@ -460,6 +460,7 @@ let consultationSchema = new Schema(
       otros: String,
     },
     diagnostic: [],
+    daysPostOperatory: Number,
     observaciones: { observacion: String, medicamentos: [], recetas: [] },
     person: { type: Schema.Types.ObjectId, ref: "Person" },
     record: recordSchema,
