@@ -504,6 +504,30 @@ let imagingSchema = new Schema(
   { versionKey: false }
 );
 
+let psyProcessSchema = new Schema(
+  {
+    person: { type: Schema.Types.ObjectId, ref: "Person" },
+    file: { type: Schema.Types.ObjectId, ref: "fs.file" },
+    sessionNumber: String,
+    stateProcess: String,
+    dateStart: Date,
+    dateEnd: Date,
+    createdAt:{ type: Date, default: Date.now },
+    problemSummary: String,
+    diagnosticImpression: String,
+    diagnostic: [String],
+    descriptions:[{
+      description: String,
+      date: String,
+    }],
+    active: { type: Boolean, default: true },
+    pdf: { type: Schema.Types.ObjectId, ref: "fs.file" },
+    responsableConsultation: { type: Schema.Types.ObjectId, ref: "Person" },
+    control: { type: controlSchema, required: true, default: {} },
+  },
+  { versionKey: false }
+);
+
 let constancyShema = new Schema(
   {
     person: { type: Schema.Types.ObjectId, ref: "Person" },
@@ -743,4 +767,5 @@ module.exports = {
   ),
   consumedMaster: mongoose.model("consumedMaster", consumedSchema),
   activityMaster: mongoose.model("activityMaster", activitySchema),
+  psyProcess: mongoose.model("psyProcess", psyProcessSchema),
 };

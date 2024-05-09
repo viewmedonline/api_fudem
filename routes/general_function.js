@@ -8,13 +8,17 @@ const Handlebars = require("handlebars");
 const fs = require("fs").promises;
 let stream = require("stream");
 
-Handlebars.registerHelper('or', function(v1, v2, options) {
-    if(v1 || v2) {
-      return options.fn(this);
-    }
-    return options.inverse(this);
-  });
-  
+Handlebars.registerHelper("or", function (v1, v2, options) {
+  if (v1 || v2) {
+    return options.fn(this);
+  }
+  return options.inverse(this);
+});
+
+Handlebars.registerHelper("incremented", function (index) {
+  return index + 1;
+});
+
 const logo_fudem_base64 = readFileSync(
   path.join(__dirname, "..", "template_report", "logoFudem.jpg"),
   "base64"
