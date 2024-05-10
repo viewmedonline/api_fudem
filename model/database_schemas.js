@@ -68,6 +68,15 @@ let icd10diagnosisFudemSchema = new Schema(
   { collection: "icd10_diagnosis_fudem", versionKey: false }
 );
 
+let masterDiagnosisSchema = new Schema(
+  {
+    disable: { type: Boolean, default: false },
+    diagnostic: String,
+    type: String,
+  },
+  { collection: "master_diagnosis_fudem", versionKey: false }
+);
+
 let personSchema = new Schema(
   {
     forename: String,
@@ -768,4 +777,5 @@ module.exports = {
   consumedMaster: mongoose.model("consumedMaster", consumedSchema),
   activityMaster: mongoose.model("activityMaster", activitySchema),
   psyProcess: mongoose.model("psyProcess", psyProcessSchema),
+  MasterDiagnosis: mongoose.model("MasterDiagnosis", masterDiagnosisSchema),
 };
