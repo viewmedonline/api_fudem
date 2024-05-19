@@ -19,6 +19,10 @@ Handlebars.registerHelper("incremented", function (index) {
   return index + 1;
 });
 
+Handlebars.registerHelper('eq', function(a, b) {
+  return a === b;
+});
+
 const logo_fudem_base64 = readFileSync(
   path.join(__dirname, "..", "template_report", "logoFudem.jpg"),
   "base64"
