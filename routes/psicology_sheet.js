@@ -105,9 +105,6 @@ router.post("/psi_process/closed", async (request, response) => {
 
 router.post("/interview/children", async (request, response) => {
   try {
-    const interview_children = new model.PsyInterviewChildren(request.body);
-    const { _id } = await interview_children.save();
-
     if (request.body.data.digital_signature) {
       const signature = await signatura_base64(
         request.body.data.digital_signature
@@ -120,10 +117,18 @@ router.post("/interview/children", async (request, response) => {
       request.body.name,
       request.body.data
     );
+
     const report_id = await save_file(
       `interview_children_${request.body.data.person}.pdf`,
       pdf_data
     );
+
+    request.body.data.pdf = report_id;
+
+    const interview_children = new model.PsyInterviewChildren(
+      request.body.data
+    );
+    const { _id } = await interview_children.save();
 
     let currentConsultation = new model.Consultation({
       person: request.body.data.person,
@@ -154,9 +159,6 @@ router.post("/interview/children", async (request, response) => {
 
 router.post("/interview/adults", async (request, response) => {
   try {
-    const interview_adults = new model.PsyInterviewAdults(request.body);
-    const { _id } = await interview_adults.save();
-
     if (request.body.data.digital_signature) {
       const signature = await signatura_base64(
         request.body.data.digital_signature
@@ -173,6 +175,11 @@ router.post("/interview/adults", async (request, response) => {
       `interview_adults_${request.body.data.person}.pdf`,
       pdf_data
     );
+
+    request.body.data.pdf = report_id;
+
+    const interview_adults = new model.PsyInterviewAdults(request.body.data);
+    const { _id } = await interview_adults.save();
 
     let currentConsultation = new model.Consultation({
       person: request.body.data.person,
