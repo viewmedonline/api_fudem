@@ -1466,7 +1466,7 @@ router.get(
 
       let dataInterviewChildrenArray = [];
       const headers = [
-        "person",
+        "patient",
         "responsableConsultation",
         "dateInit",
         "timeConsultation",
@@ -1602,7 +1602,7 @@ router.get(
       let dataInterviewAdultsArray = [];
 
       const headers = [
-        "Person",
+        "patient",
         "responsableConsultation",
         "dateInit",
         "timeConsultation",
