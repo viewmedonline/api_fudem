@@ -798,16 +798,18 @@ router.get(
 
     let getPlansName = (name) => {
       const objName = {
-        oct: 'OCT',
-        biometrics: 'BIOMETRÍA',
-        campimetry: 'CAMPIMETRÍA',
-        angiography: 'ANGIOGRAFÍA',
-        paquimetry: 'PAQUIMETRÍA',
-        ultrasonography: 'ULTRASONOGRAFíA',
-        corneal_topography: 'TOPOGRAFíA CORNEAL',
-        ophthalmological_profile_exam: 'EXAMENES (PERFIL OFTALMOLOGICO) Y EVALUACION PREOPERATORIA PARA CIRUGÍA DE CATARATAS Y RETINA',
-        strategy_profile_exam: 'EXAMENES (PERFIL ESTRABISMO) Y EVALUACION PREOPERATORIA PEDIATRICA PARA CIRUGÍA DE ESTRABISMO',
-        pterigion_profile_exam: 'EXAMENES (PERFIL PTERIGION)'
+        oct: "OCT",
+        biometrics: "BIOMETRÍA",
+        campimetry: "CAMPIMETRÍA",
+        angiography: "ANGIOGRAFÍA",
+        paquimetry: "PAQUIMETRÍA",
+        ultrasonography: "ULTRASONOGRAFíA",
+        corneal_topography: "TOPOGRAFíA CORNEAL",
+        ophthalmological_profile_exam:
+          "EXAMENES (PERFIL OFTALMOLOGICO) Y EVALUACION PREOPERATORIA PARA CIRUGÍA DE CATARATAS Y RETINA",
+        strategy_profile_exam:
+          "EXAMENES (PERFIL ESTRABISMO) Y EVALUACION PREOPERATORIA PEDIATRICA PARA CIRUGÍA DE ESTRABISMO",
+        pterigion_profile_exam: "EXAMENES (PERFIL PTERIGION)",
       };
       return objName[name];
     };
@@ -880,36 +882,52 @@ router.get(
           x.objOphthalmology.data.record.antecedent.antecedentes[11].value
             ? "SI"
             : "NO",
-            x.objOphthalmology.data.record.antecedent.medicamentosAntecedent,
-            `${x.objOphthalmology.data.datapreliminar.ppm.ojoDer.data || ""} ${x.objOphthalmology.data.datapreliminar.ppm.ojoDer.otro || ""}`,
-            `${x.objOphthalmology.data.datapreliminar.ppm.ojoIzq.data || ""} ${x.objOphthalmology.data.datapreliminar.ppm.ojoIzq.otro || ""}`,
-            x.objOphthalmology.data.datapreliminar.agudezavisual.ojoDer.cc,
-            x.objOphthalmology.data.datapreliminar.agudezavisual.ojoDer.sc,
-            x.objOphthalmology.data.datapreliminar.agudezavisual.ojoDer.autocorreccion,
-            x.objOphthalmology.data.datapreliminar.agudezavisual.ojoIzq.cc,
-            x.objOphthalmology.data.datapreliminar.agudezavisual.ojoIzq.sc,
-            x.objOphthalmology.data.datapreliminar.agudezavisual.ojoIzq.autocorreccion,
-            x.objOphthalmology.data.datapreliminar.examenexterno.ojoder,
-            x.objOphthalmology.data.datapreliminar.examenexterno.ojoizq,
-            x.objOphthalmology.data.datapreliminar.biomicroscopio.ojoder,
-            x.objOphthalmology.data.datapreliminar.biomicroscopio.ojoizq,
-            x.objOphthalmology.data.datapreliminar.fundoscopia.ojoder,
-            x.objOphthalmology.data.datapreliminar.fundoscopia.ojoizq,
-            x.objOphthalmology.data.datapreliminar.gonioscopia.ojoder,
-            x.objOphthalmology.data.datapreliminar.gonioscopia.ojoizq,
-            x.objOphthalmology.data.datapreliminar.tonometria.ojoder,
-            x.objOphthalmology.data.datapreliminar.tonometria.ojoizq,
-            x.objOphthalmology.data.processTherapeutic.map(x=>{
-              return `${x.eye}: ${x.process}`
-            }).join(),
-            x.objOphthalmology.data.diagnostic.map(x=>x.diagnostic.es).join(),
-            x.objOphthalmology.data.treatmentplan.tratamiento.map(x=>{
-              if(x.value){
-                return getPlansName(x.name)
+          x.objOphthalmology.data.record.antecedent.medicamentosAntecedent,
+          `${x.objOphthalmology.data.datapreliminar.ppm.ojoDer.data || ""} ${
+            x.objOphthalmology.data.datapreliminar.ppm.ojoDer.otro || ""
+          }`,
+          `${x.objOphthalmology.data.datapreliminar.ppm.ojoIzq.data || ""} ${
+            x.objOphthalmology.data.datapreliminar.ppm.ojoIzq.otro || ""
+          }`,
+          x.objOphthalmology.data.datapreliminar.agudezavisual.ojoDer.cc,
+          x.objOphthalmology.data.datapreliminar.agudezavisual.ojoDer.sc,
+          x.objOphthalmology.data.datapreliminar.agudezavisual.ojoDer
+            .autocorreccion,
+          x.objOphthalmology.data.datapreliminar.agudezavisual.ojoIzq.cc,
+          x.objOphthalmology.data.datapreliminar.agudezavisual.ojoIzq.sc,
+          x.objOphthalmology.data.datapreliminar.agudezavisual.ojoIzq
+            .autocorreccion,
+          x.objOphthalmology.data.datapreliminar.examenexterno.ojoder,
+          x.objOphthalmology.data.datapreliminar.examenexterno.ojoizq,
+          x.objOphthalmology.data.datapreliminar.biomicroscopio.ojoder,
+          x.objOphthalmology.data.datapreliminar.biomicroscopio.ojoizq,
+          x.objOphthalmology.data.datapreliminar.fundoscopia.ojoder,
+          x.objOphthalmology.data.datapreliminar.fundoscopia.ojoizq,
+          x.objOphthalmology.data.datapreliminar.gonioscopia.ojoder,
+          x.objOphthalmology.data.datapreliminar.gonioscopia.ojoizq,
+          x.objOphthalmology.data.datapreliminar.tonometria.ojoder,
+          x.objOphthalmology.data.datapreliminar.tonometria.ojoizq,
+          x.objOphthalmology.data.processTherapeutic
+            .map((x) => {
+              return `${x.eye}: ${x.process}`;
+            })
+            .join(),
+          x.objOphthalmology.data.diagnostic.map((x) => x.diagnostic.es).join(),
+          x.objOphthalmology.data.treatmentplan.tratamiento
+            .map((x) => {
+              if (x.value) {
+                return getPlansName(x.name);
               }
-            }).concat([x.objOphthalmology.data.treatmentplan.laser,x.objOphthalmology.data.treatmentplan.lentes,x.objOphthalmology.data.treatmentplan.otros]).filter(x=>x).join(),
-            x.objOphthalmology.data.observaciones.observacion,
-            x.objOphthalmology.data.observaciones.medicamentos.join()
+            })
+            .concat([
+              x.objOphthalmology.data.treatmentplan.laser,
+              x.objOphthalmology.data.treatmentplan.lentes,
+              x.objOphthalmology.data.treatmentplan.otros,
+            ])
+            .filter((x) => x)
+            .join(),
+          x.objOphthalmology.data.observaciones.observacion,
+          x.objOphthalmology.data.observaciones.medicamentos.join(),
         ]);
       } catch (error) {
         console.log("Ha ocurrido un error el for: " + error);
@@ -1357,4 +1375,105 @@ router.get(
     }
   }
 );
+
+router.get(
+  "/report/psychologist1/:dateFrom/:dateTo/:ext",
+  async (request, response) => {
+    try {
+      const dateFrom = moment(request.params.dateFrom, "DD-MM-YYYY").format(
+        "YYYY-MM-DD 00:00:00"
+      );
+      const dateTo = moment(request.params.dateTo, "DD-MM-YYYY").format(
+        "YYYY-MM-DD 23:59:59"
+      );
+      let dataPsi = await model.psyProcess
+        .find({createdAt: { $gte: dateFrom, $lte: dateTo }})
+        .sort({ createdAt: -1 })
+        .populate("person")
+        .populate("responsableConsultation")
+
+      let dataPsiArray = [];
+      const headers = [
+        "sessionNumber",
+        "stateProcess",
+        "dateStart",
+        "dateEnd",
+        "createdAt",
+        "problemSummary",
+        "diagnosticImpression",
+        "diagnostic",
+        "descriptions",
+        "responsableConsultation",
+        "patient",
+      ];
+      dataPsiArray.push(headers);
+      for (const x of dataPsi) {
+        dataPsiArray.push([
+          x.sessionNumber,
+          x.stateProcess,
+          moment(x.dateStart).format("DD/MM/YYYY"),
+          moment(x.dateEnd).format("DD/MM/YYYY"),
+          moment(x.createdAt).format("DD/MM/YYYY"),
+          x.problemSummary,
+          x.diagnosticImpression,
+          x.diagnostic.join(),
+          x.descriptions.map((x) => x.description),
+          x.responsableConsultation.forename + " " + x.responsableConsultation.surname,
+          x.person.forename + " " + x.person.surname,
+        ]);
+      }
+
+      stringify(dataPsiArray, (err, output) => {
+        if (err) {
+          response.status(500).send("Error al generar CSV");
+          return;
+        }
+
+        response.setHeader("Content-Type", "text/csv");
+        response.setHeader(
+          "Content-Disposition",
+          "attachment; filename=datos.csv"
+        );
+        response.send(output);
+      });
+    } catch (error) {
+      console.log(error);
+      response.status(500).json({
+        status: "KO",
+        message: "Error al generar CSV",
+        documents: [],
+      });
+    }
+  }
+);
+
+router.get(
+  "/report/psychologist2/:dateFrom/:dateTo/:ext",
+  async (request, response) => {
+    try {
+    } catch (error) {
+      console.log(error);
+      response.status(500).json({
+        status: "KO",
+        message: "Error al generar CSV",
+        documents: [],
+      });
+    }
+  }
+);
+router.get(
+  "/report/psychologist3/:dateFrom/:dateTo/:ext",
+  async (request, response) => {
+    try {
+    } catch (error) {
+      console.log(error);
+      response.status(500).json({
+        status: "KO",
+        message: "Error al generar CSV",
+        documents: [],
+      });
+    }
+  }
+);
+
 module.exports = router;
