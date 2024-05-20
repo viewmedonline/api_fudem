@@ -1387,24 +1387,24 @@ router.get(
         "YYYY-MM-DD 23:59:59"
       );
       let dataPsi = await model.psyProcess
-        .find({createdAt: { $gte: dateFrom, $lte: dateTo }})
+        .find({ createdAt: { $gte: dateFrom, $lte: dateTo } })
         .sort({ createdAt: -1 })
         .populate("person")
-        .populate("responsableConsultation")
+        .populate("responsableConsultation");
 
       let dataPsiArray = [];
       const headers = [
-        "sessionNumber",
-        "stateProcess",
-        "dateStart",
-        "dateEnd",
-        "createdAt",
-        "problemSummary",
-        "diagnosticImpression",
-        "diagnostic",
-        "descriptions",
-        "responsableConsultation",
-        "patient",
+        "Numero de sesiones",
+        "Estado del proceso",
+        "Inicio",
+        "Fin",
+        "Creado",
+        "Resumen del problema",
+        "Impresion diagnostica",
+        "Diagnostico",
+        "Descripciones de sesiones",
+        "Responsable",
+        "Paciente",
       ];
       dataPsiArray.push(headers);
       for (const x of dataPsi) {
@@ -1418,7 +1418,9 @@ router.get(
           x.diagnosticImpression,
           x.diagnostic.join(),
           x.descriptions.map((x) => x.description),
-          x.responsableConsultation.forename + " " + x.responsableConsultation.surname,
+          x.responsableConsultation.forename +
+            " " +
+            x.responsableConsultation.surname,
           x.person.forename + " " + x.person.surname,
         ]);
       }
@@ -1451,6 +1453,127 @@ router.get(
   "/report/psychologist2/:dateFrom/:dateTo/:ext",
   async (request, response) => {
     try {
+      const dateFrom = moment(request.params.dateFrom, "DD-MM-YYYY").format(
+        "DD/MM/YYYY"
+      );
+      const dateTo = moment(request.params.dateTo, "DD-MM-YYYY").format(
+        "DD/MM/YYYY"
+      );
+
+      let dataInterviewChildren = await model.PsyInterviewChildren.find({dateInit: { $gte: dateFrom, $lte: dateTo }})
+        .populate("person")
+        .populate("responsableConsultation");
+
+      let dataInterviewChildrenArray = [];
+      const headers = [
+        "person",
+        "responsableConsultation",
+        "dateInit",
+        "timeConsultation",
+        "responsableName",
+        "responsableDui",
+        "reasonConsultation",
+        "symptomsPresent",
+        "appearanceProblem",
+        "informationDad",
+        "informationMom",
+        "abandonmentParents",
+        "recordFamilyExist",
+        "recordPsychiatricFamilyExist",
+        "recordFamilyAbuseExist",
+        "childsRoutine",
+        "sleepCycle",
+        "fixGaze",
+        "useGlasses",
+        "visualProblem",
+        "visualProblemDescription",
+        "makeFriendsEasily",
+        "whyNotMakeFriendsEasily",
+        "fightWithOtherChildren",
+        "relationshipWithChildrenOfOtherSex",
+        "whatHeLikesToDoInHisFreeTime",
+        "whatDoIsAlone",
+        "whatNotLikeDo",
+        "favoriteGames",
+        "whatSportsHeLikes",
+        "whatTVShowsHeWatches",
+        "wahtMakesHimHappy",
+        "wahtMakesHimSad",
+        "wahtMakesHimAngry",
+        "wahtMakesHimAfraid",
+        "pregnancyMother",
+        "pregnancyMotherNumber",
+        "howWasPregnancy",
+        "pregnancyMotherProblem",
+        "pregnancyMotherAbuse",
+        "pregnancyMotherPsiProblem",
+        "childBirth",
+        "cordComplication",
+        "responsablePhone",
+      ];
+      dataInterviewChildrenArray.push(headers);
+      for (const x of dataInterviewChildren) {
+        dataInterviewChildrenArray.push([
+          `${x.person.forename} ${x.person.surname}`,
+          `${x.responsableConsultation.forename} ${x.responsableConsultation.surname}`,
+          x.dateInit,
+          x.timeConsultation,
+          x.responsableName,
+          x.responsableDui,
+          x.reasonConsultation,
+          x.symptomsPresent,
+          x.appearanceProblem,
+          x.informationDad,
+          x.informationMom,
+          x.abandonmentParents,
+          x.recordFamilyExist,
+          x.recordPsychiatricFamilyExist,
+          x.recordFamilyAbuseExist,
+          x.childsRoutine,
+          x.sleepCycle,
+          x.fixGaze,
+          x.useGlasses,
+          x.visualProblem,
+          x.visualProblemDescription,
+          x.makeFriendsEasily,
+          x.whyNotMakeFriendsEasily,
+          x.fightWithOtherChildren,
+          x.relationshipWithChildrenOfOtherSex,
+          x.whatHeLikesToDoInHisFreeTime,
+          x.whatDoIsAlone,
+          x.whatNotLikeDo,
+          x.favoriteGames,
+          x.whatSportsHeLikes,
+          x.whatTVShowsHeWatches,
+          x.wahtMakesHimHappy,
+          x.wahtMakesHimSad,
+          x.wahtMakesHimAngry,
+          x.wahtMakesHimAfraid,
+          x.pregnancyMother,
+          x.pregnancyMotherNumber,
+          x.howWasPregnancy,
+          x.pregnancyMotherProblem,
+          x.pregnancyMotherAbuse,
+          x.pregnancyMotherPsiProblem,
+          x.childBirth,
+          x.cordComplication,
+          x.responsablePhone,
+        ]);
+      }
+
+      stringify(dataInterviewChildrenArray, (err, output) => {
+        if (err) {
+          response.status(500).send("Error al generar CSV");
+          return;
+        }
+
+        response.setHeader("Content-Type", "text/csv");
+        response.setHeader(
+          "Content-Disposition",
+          "attachment; filename=datos.csv"
+        );
+        response.send(output);
+      });
     } catch (error) {
       console.log(error);
       response.status(500).json({
@@ -1465,6 +1588,177 @@ router.get(
   "/report/psychologist3/:dateFrom/:dateTo/:ext",
   async (request, response) => {
     try {
+      const dateFrom = moment(request.params.dateFrom, "DD-MM-YYYY").format(
+        "DD/MM/YYYY"
+      );
+      const dateTo = moment(request.params.dateTo, "DD-MM-YYYY").format(
+        "DD/MM/YYYY"
+      );
+
+      let dataInterviewAdults = await model.PsyInterviewAdults.find({dateInit: { $gte: dateFrom, $lte: dateTo }})
+        .populate("person")
+        .populate("responsableConsultation");
+
+      let dataInterviewAdultsArray = [];
+      /**
+       *     person: { type: Schema.Types.ObjectId, ref: "Person" },
+    responsableConsultation: { type: Schema.Types.ObjectId, ref: "Person" },
+    dateInit: String,
+    timeConsultation: String,
+    reasonConsultation: String,
+    firstTimeBad: String,
+    causesOfProblem: String,
+    symptomsCharacteristics: String,
+    currentSymptoms: String,
+    symptomPhenomenon: String,
+    civilState: String,
+    haveChildren: String,
+    whatLikeRelation: String,
+    nameSon: String,
+    ageSon: String,
+    liveWithYou: String,
+    relationParents: String,
+    hasBrother: String,
+    relevantAspects: String,
+    significantPerson: String,
+    workActually: String,
+    workDescription: String,
+    dependents: String,
+    notWorkDescription: String,
+    howMaintainedEconomy: String,
+    psychiatricTreatment: String,
+    psychiatricTreatmentDescription: String,
+    psychiatricConsultingPrevius: String,
+    medicalPsiTreatment: String,
+    whatsMedication: String,
+    drinkFrequency: String,
+    questionDrink: String,
+    drinkAlcohol: String,
+    frequencyAbsences: String,
+    reduceDrink: String,
+    drinkProblem: String,
+    drinkProblemPsychological: String,
+    abuseExist: String,
+    fightsExist: String,
+    ridiculeParents: String,
+    physicalAbuseExist: String,
+    otherAbuseExist: String,
+    suicideAttempt: String,
+    suicideAttemptDescription: String,
+    whatDidAfterSuicideAttempts: String,
+       */
+      const headers = [
+        "Person",
+        "responsableConsultation",
+        "dateInit",
+        "timeConsultation",
+        "reasonConsultation",
+        "firstTimeBad",
+        "causesOfProblem",
+        "symptomsCharacteristics",
+        "currentSymptoms",                                    
+        "symptomPhenomenon",
+        "civilState",
+        "haveChildren",
+        "whatLikeRelation",
+        "nameSon",
+        "ageSon",
+        "liveWithYou",
+        "relationParents",
+        "hasBrother",
+        "relevantAspects",
+        "significantPerson",
+        "workActually",
+        "workDescription",
+        "dependents",
+        "notWorkDescription",
+        "howMaintainedEconomy",
+        "psychiatricTreatment",
+        "psychiatricTreatmentDescription",
+        "psychiatricConsultingPrevius",
+        "medicalPsiTreatment",
+        "whatsMedication",
+        "drinkFrequency",
+        "questionDrink",
+        "drinkAlcohol",
+        "frequencyAbsences",
+        "reduceDrink",
+        "drinkProblem",
+        "drinkProblemPsychological",
+        "abuseExist",
+        "fightsExist",
+        "ridiculeParents",
+        "physicalAbuseExist",
+        "otherAbuseExist",
+        "suicideAttempt",
+        "suicideAttemptDescription",
+        "whatDidAfterSuicideAttempts",
+      ];
+      dataInterviewAdultsArray.push(headers);
+      for (const x of dataInterviewAdults) {
+        dataInterviewAdultsArray.push([
+          `${x.person.forename} ${x.person.surname}`,
+          `${x.responsableConsultation.forename} ${x.responsableConsultation.surname}`,
+          x.dateInit,
+          x.timeConsultation,
+          x.reasonConsultation,
+          x.firstTimeBad,
+          x.causesOfProblem,
+          x.symptomsCharacteristics,
+          x.currentSymptoms,
+          x.symptomPhenomenon,
+          x.civilState,
+          x.haveChildren,
+          x.whatLikeRelation,
+          x.nameSon,
+          x.ageSon,
+          x.liveWithYou,
+          x.relationParents,
+          x.hasBrother,
+          x.relevantAspects,
+          x.significantPerson,
+          x.workActually,
+          x.workDescription,
+          x.dependents,
+          x.notWorkDescription,
+          x.howMaintainedEconomy,
+          x.psychiatricTreatment,
+          x.psychiatricTreatmentDescription,
+          x.psychiatricConsultingPrevius,
+          x.medicalPsiTreatment,
+          x.whatsMedication,
+          x.drinkFrequency,
+          x.questionDrink,
+          x.drinkAlcohol,
+          x.frequencyAbsences,
+          x.reduceDrink,
+          x.drinkProblem,
+          x.drinkProblemPsychological,
+          x.abuseExist,
+          x.fightsExist,
+          x.ridiculeParents,
+          x.physicalAbuseExist,
+          x.otherAbuseExist,
+          x.suicideAttempt,
+          x.suicideAttemptDescription,
+          x.whatDidAfterSuicideAttempts,
+        ]);
+      }
+
+      stringify(dataInterviewAdultsArray, (err, output) => {
+        if (err) {
+          response.status(500).send("Error al generar CSV");
+          return;
+        }
+
+        response.setHeader("Content-Type", "text/csv");
+        response.setHeader(
+          "Content-Disposition",
+          "attachment; filename=datos.csv"
+        );
+        response.send(output);
+      });
+        
     } catch (error) {
       console.log(error);
       response.status(500).json({
