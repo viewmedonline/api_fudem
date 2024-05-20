@@ -711,6 +711,7 @@ const nutritionist_sheet = require("./routes/nutritionist_sheet");
 const anesthesiology_sheet = require("./routes/anesthesiology_sheet");
 const master = require("./routes/master");
 const report = require("./routes/reports");
+const psiProcess = require("./routes/psicology_sheet");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -813,6 +814,7 @@ app.use(nutritionist_sheet)
 app.use(anesthesiology_sheet)
 app.use(master)
 app.use(report)
+app.use(psiProcess)
 
 mongoose.connect(dbConfig.url, dbConfig.options).then(
     async () => {

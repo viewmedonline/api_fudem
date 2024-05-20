@@ -7,11 +7,11 @@
   </head>
 
   <body id="document">
+    <header>
+      <img src="data:image/jpeg;base64,{{logo}}" alt="fudem" id="logo" />
+    </header>
     <main>
-      <header>
-        <img src="data:image/jpeg;base64,{{logo}}" alt="fudem" id="logo" />
-      </header>
-      <section>
+      <section style="margin-top: 100px;">
         <center>
           <h1>Evaluación Pediátrica</h1>
         </center>
@@ -45,7 +45,7 @@
         </div>
         <div class="justify-text">
           <div><b>Antecedentes Personales patológicos:</b></div>
-          <div>{{recordNP}}</div>
+          <div>{{recordP}}</div>
         </div>
         <div class="justify-text">
           <div><b>Vacunación:</b></div>
@@ -67,7 +67,9 @@
           <div><b>Estado Físico:</b></div>
           <div>{{physicalExam}}</div>
         </div>
-        <div><b>Examénes de Laboratorio</b></div>
+        <div class="page-break"></div>
+
+        <div style="margin-top: 100px;"><b>Examénes de Laboratorio</b></div>
         <div class="grid-container-4">
           <div><b>HT:</b> {{ht}}</div>
           <div><b>HB:</b> {{hb}}</div>
@@ -89,7 +91,7 @@
         <div class="grid-container-texarea-1">
           <b>Electrocardiograma:</b> {{electrocardiogram}}
         </div>
-        <div class="grid-container-texarea-1">
+        <div class="grid-container-texarea-1" >
           <div><b>Comentarios:</b></div>
           <div class="justify-text">{{comments}}</div>
         </div>
@@ -130,54 +132,48 @@
   body {
     width: 100vw;
     height: 100vh;
-    margin: 0;
-    margin: 0;
     font-family: Arial, Helvetica, sans-serif;
     display: flex;
     flex-direction: column;
     font-size: 12.5px;
   }
+  header{
+    object-fit: contain;
+    object-position: center;
 
+    position: fixed;
+    
+  }
   #logo {
     width: 30%;
     height: 120px;
-    object-fit: contain;
-    object-position: center;
-    margin: 0;
-    padding: 0;
-    margin: 0;
+    margin-bottom: 200px;
   }
-
-  /* main {
-    padding: 20px;
-  } */
-
   .digital_signature {
-    text-align: end;
+    text-align: center;
     bottom: 0;
-    position: absolute;
-    right: 0;
-    margin-right: 35%;
+    width: 100%;
+    position: fixed;
   }
 
   .grid-container-2 {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    margin: 8px 0;
+    margin: 10px 0;
   }
   .grid-container-texarea-1 {
     display: grid;
     grid-template-columns: 1fr 3fr;
-    margin: 8px 0;
+    margin: 10px 0;
   }
   .grid-container-4 {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    margin: 8px 0;
+    margin: 10px 0;
   }
 
   .div-margin {
-    margin: 8px 0;
+    margin: 10px 0;
   }
   span {
     margin-left: 10px;
@@ -186,5 +182,9 @@
     width: 90%;
     text-align: justify;
     word-wrap: break-word;
+    margin-bottom: 10px;
+  }
+  .page-break {
+    page-break-after: always;
   }
 </style>

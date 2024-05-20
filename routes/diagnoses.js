@@ -91,5 +91,46 @@ router.post('/diagnoses', (request, response) => {
       })
     })
 })
+// CRUD MasterDiagnosis
+router.get('/diagnoses/master/:type', (request, response) => {
+  model.MasterDiagnosis.find({type:request.params.type}).
+    then(result => {
+      response.status(200).json({
+        'status': 'OK',
+        'message': null,
+        'documents': result
+      })
+    }).catch(error => {
+      console.log('Microservice[diagnosis_insert]: ' + error);
+      response.status(500).json({
+        'status': 'KO',
+        'message': 'DiagnosisNotInserted',
+        'documents': []
+      })
+    })
+})
+router.post('/diagnoses/master', (request, response) => {
+  let current_diagnosis = request.body
+  if (!current_diagnosis._id) {
+    current_diagnosis = new model.MasterDiagnosis(current_diagnosis)
+  } else {
+    current_diagnosis._id = mongoose.Types.ObjectId(current_diagnosis._id)
+  }
+  model.MasterDiagnosis.findOneAndUpdate({ _id: current_diagnosis._id }, current_diagnosis, { upsert: true, new: true }).
+    then(result => {
+      response.status(200).json({
+        'status': 'OK',
+        'message': null,
+        'documents': [result]
+      })
+    }).catch(error => {
+      console.log('Microservice[diagnosis_insert]: ' + error);
+      response.status(500).json({
+        'status': 'KO',
+        'message': 'DiagnosisNotInserted',
+        'documents': []
+      })
+    })
+})
 
 module.exports = router;

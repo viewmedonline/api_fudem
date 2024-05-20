@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Entrevista Clínica</title>
+    <style>
+      body {
+        width: 100vw;
+        height: 100vh;
+        font-family: Arial, Helvetica, sans-serif;
+        display: flex;
+        flex-direction: column;
+        font-size: 12.5px;
+      }
+      header {
+        object-fit: contain;
+        object-position: center;
+        position: fixed;
+      }
+      #logo {
+        width: 50%;
+        height: 150px;
+        margin-bottom: 200px;
+      }
+      .digital_signature {
+        text-align: center;
+        bottom: 0;
+        width: 100%;
+        position: fixed;
+      }
+      .title-div {
+        font-size: 13px;
+        font-weight: bold;
+        color: #000000;
+        text-align: start;
+      }
+
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .col-12,
+      .flex-xs12 {
+        width: 100%;
+      }
+
+      .col-8,
+      .flex-xs8 {
+        box-sizing: border-box;
+        flex: 0 0 auto;
+        width: 75%;
+      }
+
+      .col-6,
+      .flex-xs6 {
+        box-sizing: border-box;
+        flex: 0 0 auto;
+        width: 50%;
+      }
+
+      .col-4,
+      .flex-xs4 {
+        box-sizing: border-box;
+        flex: 0 0 auto;
+        width: 33.33%;
+      }
+
+      .col-3,
+      .flex-xs3 {
+        box-sizing: border-box;
+        flex: 0 0 auto;
+        width: 25%;
+      }
+
+      .col-2,
+      .flex-xs2 {
+        box-sizing: border-box;
+        flex: 0 0 auto;
+        width: 16.66%;
+      }
+
+      .data-label {
+        font-weight: bold;
+        font-size: 12px;
+        margin-top: -3px;
+      }
+
+      .data-value {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        margin-top: -3px;
+        margin-left: 5px;
+        text-align: justify;
+      }
+      .mb-space {
+        margin-bottom: 15px;
+      }
+      .inline {
+        display: flex;
+      }
+      .page-break {
+        page-break-after: always !important;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="data:image/jpeg;base64,{{logo}}" alt="fudem" id="logo" />
+    </header>
+    <main>
+      <section>
+        <div
+          class="col-12 title-div mb-space"
+          style="text-align: center; margin-top: 150px; font-size: 16px"
+        >
+          FORMULARIO DE ENTREVISTA CLINICA PARA ADULTOS
+        </div>
+        <div class="row">
+          <div class="col-12 title-div mb-space">I. DATOS PERSONALES</div>
+          <div class="col-6 inline">
+            <p class="data-label">Fecha de inicio:</p>
+            <p class="data-value" id="dateInit">{{ dateInit }}</p>
+          </div>
+          <div class="col-6 inline">
+            <p class="data-label">Hora de consulta:</p>
+            <p class="data-value" id="timeConsultation">
+              {{ timeConsultation }}
+            </p>
+          </div>
+          <div class="col-8 inline">
+            <p class="data-label">Nombre del paciente:</p>
+            <p class="data-value" id="patientName">{{patientName}}</p>
+          </div>
+          <div class="col-3 inline">
+            <p class="data-label">Edad:</p>
+            <p class="data-value" id="patientAge">{{patientAge}}</p>
+          </div>
+          <div class="col-4 inline">
+            <p class="data-label">Teléfono:</p>
+            <p class="data-value" id="patPhone">{{patPhone}}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 title-div mb-space">II. HISTORIA DEL PROBLEMA</div>
+          <div class="col-12">
+            <p class="data-label">Motivo de consulta:</p>
+            <p class="data-value" id="reasonConsultation">
+              {{reasonConsultation}}
+            </p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">
+              ¿Cuándo se dio cuenta por primera vez que algo iba mal?:
+            </p>
+            <p class="data-value" id="firstTimeBad">{{firstTimeBad}}</p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">
+              ¿Cuáles fueron las causas o circunstancia en que apareció el
+              problema?:
+            </p>
+            <p class="data-value" id="causesOfProblem">{{causesOfProblem}}</p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">
+              Curso y características del síntoma o síntomas:
+            </p>
+            <p class="data-value" id="symptomsCharacteristics">
+              {{symptomsCharacteristics}}
+            </p>
+          </div>
+          <div class="col-12 inline">
+            <p class="data-label">
+              Estado actual del síntoma: ¿los síntomas se están solucionando en
+              este momento?:
+            </p>
+            <p class="data-value" id="currentSymptoms">{{currentSymptoms}}</p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">
+              Fenómenos o situaciones asociadas al síntoma:
+            </p>
+            <p class="data-value" id="symptomPhenomenon">
+              {{symptomPhenomenon}}
+            </p>
+          </div>
+
+          <div class="col-12 title-div mb-space">III. HISTORIA FAMILIAR</div>
+          <div class="col-6 inline">
+            <p class="data-label">Estado civil:</p>
+            <p class="data-value" id="civilState">{{civilState}}</p>
+          </div>
+          <div class="col-6 inline">
+            <p class="data-label">¿Tiene hijos?:</p>
+            <p class="data-value" id="haveChildren">{{haveChildren}}</p>
+          </div>
+          {{#ifNotEquals civilState "Viudo/a"}}
+          <div class="col-12">
+            <p class="data-label">¿Cómo es su relación con su pareja?:</p>
+            <p class="data-value" id="whatLikeRelation">{{whatLikeRelation}}</p>
+          </div>
+          {{/ifNotEquals}}
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="row" style="margin-top: 150px">
+          <div class="col-4">
+            <p class="data-label">Nombre del hijo o hija:</p>
+            <p class="data-value" id="nameSon">{{nameSon}}</p>
+          </div>
+          <div class="col-4">
+            <p class="data-label">Edad:</p>
+            <p class="data-value" id="ageSon">{{ageSon}}</p>
+          </div>
+
+          <div class="col-4">
+            <p class="data-label">Vive con usted:</p>
+            <p class="data-value" id="liveWithYou">{{liveWithYou}}</p>
+          </div>
+          <div class="col-8">
+            <p class="data-label">¿Cómo es la relación con sus padres?:</p>
+            <p class="data-value" id="relationParents">{{relationParents}}</p>
+          </div>
+          <div class="col-4 inline">
+            <p class="data-label">¿Tiene hermanos?:</p>
+            <p class="data-value" id="hasBrother">{{hasBrother}}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 title-div mb-space">
+            IV. HISTORIA PERSONAL Y DEL DESARROLLO
+          </div>
+          <div class="col-12">
+            <p class="data-label">
+              Aspectos relevantes de su infancia y adolescencia:
+            </p>
+            <p class="data-value" id="relevantAspects">{{relevantAspects}}</p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">
+              ¿Quiénes son las personas significativas en su vida? (no
+              familiares) ¿Tiene amigos?:
+            </p>
+            <p class="data-value" id="significantPerson">
+              {{significantPerson}}
+            </p>
+          </div>
+          <div class="col-12 inline">
+            <p class="data-label">¿Trabaja actualmente?:</p>
+            <p class="data-value" id="workActually">{{workActually}}</p>
+          </div>
+          {{#ifNotEquals workActually "No"}}
+          <div class="col-12" id="workDescriptionDiv">
+            <p class="data-label">¿dónde trabaja y desde cuándo?:</p>
+            <p class="data-value" id="workDescription">{{workDescription}}</p>
+          </div>
+          {{else}}
+          <div class="col-12" id="notWorkDescriptionDiv">
+            <p class="data-label">¿a qué se debe?:</p>
+            <p class="data-value" id="notWorkDescription">
+              {{notWorkDescription}}
+            </p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">¿Cómo se mantiene económicamente?:</p>
+            <p class="data-value" id="howMaintainedEconomy">
+              {{howMaintainedEconomy}}
+            </p>
+          </div>
+          {{/ifNotEquals}}
+          <div class="col-12 inline">
+            <p class="data-label">
+              ¿Cuántas personas dependen económicamente de usted?:
+            </p>
+            <p class="data-value" id="dependents">{{dependents}}</p>
+          </div>
+
+          <div class="col-12 title-div mb-space">
+            V. HISTORIAL DE ENFERMEDADES O TRASTORNOS MENTALES
+          </div>
+          <div class="col-12 inline">
+            <p class="data-label">
+              ¿Ha recibido terapia psicológica anteriormente?:
+            </p>
+            <p class="data-value" id="psychiatricTreatment">
+              {{psychiatricTreatment}}
+            </p>
+          </div>
+          {{#if (eq psychiatricTreatment "Si")}}
+          <div class="col-12 inline">
+            <p class="data-label">¿cuándo fue?:</p>
+            <p class="data-value" id="psychiatricTreatmentDescription">
+              {{psychiatricTreatmentDescription}}
+            </p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">
+              ¿Su consulta previa estaba relacionada con el problema actual o
+              era con respecto a otro problema?:
+            </p>
+            <p class="data-value" id="psychiatricConsultingPrevius">
+              {{psychiatricConsultingPrevius}}
+            </p>
+          </div>
+          {{/if}}
+          <div class="col-12 inline">
+            <p class="data-label">¿Ha recibido medicamento psicofármaco?:</p>
+            <p class="data-value" id="medicalPsiTreatment">
+              {{medicalPsiTreatment}}
+            </p>
+          </div>
+          {{#if (eq medicalPsiTreatment "Si")}}
+          <div class="col-12">
+            <p class="data-label">¿Qué medicamento toma?:</p>
+            <p class="data-value" id="whatsMedication">{{whatsMedication}}</p>
+          </div>
+          {{/if}}
+          <div class="col-12">
+            <p class="data-label">
+              ¿Cuáles son sus hábitos de bebida? (¿qué bebe?, ¿con qué
+              frecuencia?):
+            </p>
+            <p class="data-value" id="drinkHabits">{{drinkHabits}}</p>
+          </div>
+          <div class="col-12 inline">
+            <p class="data-label">¿Cuanto bebe?:</p>
+            <p class="data-value" id="drinkFrequency">{{drinkFrequency}}</p>
+          </div>
+        </div>
+        <div class="page-break"></div>
+        <div class="row" style="margin-top: 150px">
+          {{#if (eq drinkFrequency "No")}}
+          <div class="col-12">
+            <p class="data-label">
+              ¿Ha habido algún período en su
+              vida en el que bebiera mucho más?:
+            </p>
+            <p class="data-value" id="questionDrink">{{questionDrink}}</p>
+          </div>
+          {{else}}
+          <div class="col-12 inline">
+            <p class="data-label">
+              ¿Alguna vez faltó al trabajo o a clases o a sus ocupaciones porque
+              estaba alcoholizado o de resaca?:
+            </p>
+            <p class="data-value" id="drinkAlcohol">{{drinkAlcohol}}</p>
+          </div>
+          {{#if (eq drinkAlcohol "Si")}}
+          <div class="col-12 inline">
+            <p class="data-label">¿con qué frecuencia?:</p>
+            <p class="data-value" id="frequencyAbsences">
+              {{frequencyAbsences}}
+            </p>
+          </div>
+          {{/if}}
+          <div class="col-12 inline">
+            <p class="data-label">
+              ¿Ha intentado reducir o eliminar el consumo de alcohol?:
+            </p>
+            <p class="data-value" id="reduceDrink">{{reduceDrink}}</p>
+          </div>
+          <div class="col-12" style="margin-top: -15px">
+            <p>
+              <span class="data-label"
+                >¿Su consumo de alcohol le ha causado problemas con otras
+                personas? ¿Le ha causados problemas con la ley?:</span
+              >
+              {{drinkProblem}}
+            </p>
+          </div>
+          <div class="col-12" style="margin-top: -15px">
+            <p>
+              <span class="data-label"
+                >¿Su consumo de alcohol le ha causado problemas psicológicos,
+                como sentirse deprimido o ansioso, problemas para dormir o
+                irritabilidad?:</span
+              >
+              {{drinkProblemPsychological}}
+            </p>
+          </div>
+          {{/if}}
+          <div class="col-12 title-div mb-space">
+            VI. ABUSO FÍSICO, PSICOLÓGICO, SEXUAL
+          </div>
+          <div class="col-12 inline">
+            <p class="data-label">
+              ¿Tiene problemas o conflictos con alguien de su entorno?:
+            </p>
+            <p class="data-value" id="abuseExist">{{abuseExist}}</p>
+          </div>
+          <div class="col-12 inline">
+            <p class="data-label">¿Se ve envuelto en peleas?:</p>
+            <p class="data-value" id="fightsExist">{{fightsExist}}</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12 inline">
+            <p class="data-label">
+              ¿Recibe burlas o humillaciones de parte de alguien de su entorno?:
+            </p>
+            <p class="data-value" id="ridiculeParents">{{ridiculeParents}}</p>
+          </div>
+          <div class="col-12 inline">
+            <p class="data-label">
+              ¿Recibe golpes o maltrato físico de parte de alguien de su
+              entorno?:
+            </p>
+            <p class="data-value" id="physicalAbuseExist">
+              {{physicalAbuseExist}}
+            </p>
+          </div>
+          <div class="col-12 inline" style="margin-top: -15px">
+            <p>
+              <span class="data-label">
+                ¿Recibe algún otro tipo de maltrato o abuso de parte de alguien
+                de su entorno, físico, psicológico o sexual?: </span
+              ><span>{{otherAbuseExist}}</span>
+            </p>
+            <!-- <p class="data-value" id="otherAbuseExist">{{otherAbuseExist}}</p> -->
+          </div>
+          <div class="col-12 title-div mb-space">VII.TENDENCIAS SUICIDAS</div>
+          <div class="col-12 inline">
+            <p class="data-label">
+              ¿Alguna vez ha intentado quitarse la vida?:
+            </p>
+            <p class="data-value" id="suicideAttempt">{{suicideAttempt}}</p>
+          </div>
+          {{#if (eq suicideAttempt "Si")}}
+          <div class="col-12">
+            <p class="data-label">
+              ¿cuándo fue?, ¿qué método utilizó?,¿cuántos intentos ha tenido?,
+              ¿qué pasaba con su vida en ese momento?:
+            </p>
+            <p class="data-value" id="suicideAttemptDescription">
+              {{suicideAttemptDescription}}
+            </p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">
+              ¿Qué hizo luego de sus intentos suicidas? ¿Buscó ayuda?:
+            </p>
+            <p class="data-value" id="whatDidAfterSuicideAttempts">
+              {{whatDidAfterSuicideAttempts}}
+            </p>
+          </div>
+          {{/if}}
+        </div>
+      </section>
+    </main>
+    <div class="digital_signature">
+      <center>
+        <img
+          src="{{digital_signature}}"
+          alt="firma"
+          style="width: 150px; height: 75px"
+        />
+        <div>
+          <b>{{name_prof}}</b>
+        </div>
+      </center>
+    </div>
+  </body>
+</html>

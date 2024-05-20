@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Formulario del desarrollo y seguimiento del proceso psicoterapeutico
+    </title>
+  </head>
+  <body id="document">
+    <main>
+      <header>
+        <img src="data:image/jpeg;base64,{{logo}}" alt="fudem" id="logo" />
+      </header>
+      <section class="title-center">
+        <h1 id="title">
+          <i
+            >Formulario del desarrollo y seguimiento del proceso
+            psicoterapeutico
+          </i>
+        </h1>
+      </section>
+      <section style="margin-top: -30px">
+        <div id="date"><b>Fecha:</b> {{date}}</div>
+        <div id="name"><b>Nombre Completo:</b> {{name}}</div>
+
+        <div class="wrapper">
+          <div class="two"><b>Edad:</b> {{age}}</div>
+          <div class="three"><b>DUI:</b> {{dui}}</div>
+        </div>
+        <div class="wrapper">
+          <h3><b> 1. Información del proceso terapeutico </b></h3>
+        </div>
+        <div class="wrapper2">
+          <div><b>Numero de sesiones:</b> {{sesionNumber}}</div>
+          <div><b>Estado del proceso:</b> {{stateProcess}}</div>
+        </div>
+        <div class="wrapper2">
+          <div><b>Fecha inicio:</b> {{dateStart}}</div>
+          <div><b>Fecha fin:</b> {{dateEnd}}</div>
+        </div>
+        <div class="wrapper">
+          <h3><b> 2. Descripción del problema </b></h3>
+        </div>
+        <div class="wrapper">
+          <div style="word-wrap: break-word; text-align: justify">
+            <b>Resumen de la problematica del paciente y sintomas:</b>
+            {{problemSummary}}
+          </div>
+        </div>  
+        <div class="wrapper">
+          <div><b>Impresion Diagnostica:</b> {{diagnosticImpression}}</div>
+        </div>    
+        <div class="wrapper">
+          <h3><b> 3. Posible diagnostico </b></h3>
+          <ul>
+            {{#each diagnostic}}
+              <li>{{this}}</li>
+            {{/each}}
+            </ul>
+        </div>   
+        <div class="page-break"></div>
+        <div class="wrapper">
+          <h3><b> 4. Historial de sesiones </b></h3>
+        </div>                 
+      </section>
+      <section>
+        <table>
+          <tr>
+            <th># de sesión</th>
+            <th>Fecha</th>
+            <th>Descripción de la sesión</th>
+          </tr>
+          {{#each descriptions}}
+          <tr>
+            <td>{{incremented @index}}</td>
+            <td>{{date}}</td>
+            <td style="word-wrap: break-word; text-align: justify">
+              {{description}}
+            </td>
+          </tr>
+          {{/each}}
+        </table>
+      </section>
+    </main>
+    <div class="digital_signature">
+      <img
+          src="{{digital_signature}}"
+          alt="firma"
+          style="width: 150px; height: 75px"
+      />
+      <div>
+          <b>{{name}}</b>
+      </div>
+      <div><b>{{type}}</b></div>
+  </div>
+  </body>
+</html>
+<style>
+  body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+  }
+  .title-center {
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: -60px;
+  }
+  #title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    display: inline-block;
+    border-bottom: 2px solid rgb(0, 0, 0);
+  }
+  body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+  }
+  #logo {
+    width: 40%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    margin: 0;
+    padding: 0;
+    margin: 0;
+    margin-top: -60px;
+  }
+  main {
+    padding: 20px;
+  }
+  #date {
+    width: 100%;
+    text-align: end;
+  }
+  #name {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .wrapper {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    grid-gap: 10px;
+    margin-top: 10px;
+  }
+  .wrapper2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px;
+    margin-top: 10px;
+  }
+
+  table,
+  td {
+    border: 1px solid black;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid #000000;
+    margin-top: 20px;
+  }
+  th,
+  td {
+    text-align: center;
+    padding: 8px;
+  }
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  th {
+    background-color: #4caf50;
+    color: rgb(10, 9, 9);
+    font-weight: 800;
+  }
+  th:first-child {
+    width: 20%;
+  }
+  th:nth-child(2) {
+    width: 20%;
+  }
+  th:nth-child(3) {
+    width: 60%;
+  }
+  table th {
+    border: 1px solid black;
+    text-align: center;
+  }
+  .six {
+    text-align: center;
+  }
+  .digital_signature {
+    text-align: center;
+    margin-top: 10px;
+    bottom: 0;
+    width: 100%;
+    position: fixed;
+  }
+  .page-break {
+    page-break-after: always;
+  }
+</style>

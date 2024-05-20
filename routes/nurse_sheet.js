@@ -42,7 +42,7 @@ router.get('/nurse_sheet/:idUser/:idSheet?', async (request, response) => {
   query.then(async result => {
     result = await Promise.all(result.map(async item => {
       let notes = await Promise.all(item.notes_nurses.map(async note => {
-        const signature = await signatura_base64(note.responsible.digital_signature)
+        const signature = note.responsible.digital_signature ? await signatura_base64(note.responsible.digital_signature) : null
         const obj_responsible = {
           _id: note.responsible._id,
           forename: note.responsible.forename,
@@ -142,14 +142,7 @@ router.delete('/nurse_sheet/:idSheet', async (request, response) => {
 
 router.put('/nurse_sheet/close/:idSheet', async (request, response) => {
   try {
-    let data_sheet = (await model.nurseSheet.findById(request.params.idSheet).populate("patient", "forename surname id_document idQflow birthdate").populate({
-      path: 'notes_nurses',
-      populate: {
-        path: 'responsible',
-        select: '_id forename surname digital_signature'
-      },
-
-    })).toObject()
+    let data_sheet = (await model.nurseSheet.findById(request.params.idSheet).populate("patient", "forename surname id_document idQflow birthdate").populate("notes_nurses.responsible", 'forename surname digital_signature')).toObject()
 
     data_sheet.notes_nurses = await Promise.all(data_sheet.notes_nurses.map(async item => {
       let newItem = { ...item };
