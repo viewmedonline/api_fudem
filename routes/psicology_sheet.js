@@ -157,6 +157,35 @@ router.post("/interview/adults", async (request, response) => {
     const interview_adults = new model.PsyInterviewAdults(request.body);
     const { _id } = await interview_adults.save();
 
+    if (request.body.data.digital_signature) {
+      const signature = await signatura_base64(
+        request.body.data.digital_signature
+      );
+      request.body.data.digital_signature = signature;
+    }
+
+    //create pdf and save consultation
+    const pdf_data = await create_report_pdf(
+      request.body.name,
+      request.body.data
+    );
+    const report_id = await save_file(
+      `interview_adults_${request.body.data.person}.pdf`,
+      pdf_data
+    );
+
+    let currentConsultation = new model.Consultation({
+      person: request.body.data.person,
+      name: "FORMULARIO DE ENTREVISTA CLINICA PARA ADULTOS",
+      control: {
+        active: false,
+      },
+      dateUpload: moment().format("YYYY-MM-DD"),
+      file: report_id,
+      responsableConsultation: request.body.data.responsableConsultation,
+    });
+    currentConsultation.save();
+
     response.json({
       status: "OK",
       message: null,

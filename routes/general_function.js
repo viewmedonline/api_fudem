@@ -23,6 +23,10 @@ Handlebars.registerHelper('eq', function(a, b) {
   return a === b;
 });
 
+Handlebars.registerHelper('ifNotEquals', function(arg1, arg2, options) {
+  return (arg1 != arg2) ? options.fn(this) : options.inverse(this);
+});
+
 const logo_fudem_base64 = readFileSync(
   path.join(__dirname, "..", "template_report", "logoFudem.jpg"),
   "base64"

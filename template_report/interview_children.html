@@ -44,6 +44,13 @@
         width: 100%;
       }
 
+      .col-8,
+      .flex-xs8 {
+        box-sizing: border-box;
+        flex: 0 0 auto;
+        width: 75%;
+      }
+
       .col-6,
       .flex-xs6 {
         box-sizing: border-box;
@@ -110,33 +117,33 @@
         </div>
         <div class="row">
           <div class="col-12 title-div mb-space">I. DATOS PERSONALES</div>
-          <div class="col-6">
+          <div class="col-6 inline">
             <p class="data-label">Fecha de inicio:</p>
             <p class="data-value" id="dateInit">{{ dateInit }}</p>
           </div>
-          <div class="col-6">
+          <div class="col-6 inline">
             <p class="data-label">Hora de consulta:</p>
             <p class="data-value" id="timeConsultation">
               {{ timeConsultation }}
             </p>
           </div>
-          <div class="col-6">
+          <div class="col-8 inline">
             <p class="data-label">Nombre del niño, niña o adolescente:</p>
             <p class="data-value" id="patientName">{{patientName}}</p>
           </div>
-          <div class="col-6">
+          <div class="col-3 inline">
             <p class="data-label">Edad:</p>
             <p class="data-value" id="patientAge">{{patientAge}}</p>
           </div>
-          <div class="col-4">
+          <div class="col-6">
             <p class="data-label">Nombre del responsable:</p>
             <p class="data-value" id="responsableName">{{responsableName}}</p>
           </div>
-          <div class="col-4">
+          <div class="col-6">
             <p class="data-label">DUI del responsable:</p>
             <p class="data-value" id="responsableDui">{{responsableDui}}</p>
           </div>
-          <div class="col-4">
+          <div class="col-4 inline">
             <p class="data-label">Teléfono:</p>
             <p class="data-value" id="responsablePhone">{{responsablePhone}}</p>
           </div>
