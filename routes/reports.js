@@ -753,9 +753,9 @@ router.get(
         "Gonioscopia OI",
         "Tonometría OD",
         "Tonometría OI",
-        "Procedimientos T",
+        // "Procedimientos T",
         "Diagnostico",
-        "Plan",
+        // "Plan",
         "Observaciones",
         "Medicamentos",
       ],
@@ -907,25 +907,25 @@ router.get(
           x.objOphthalmology.data.datapreliminar.gonioscopia.ojoizq,
           x.objOphthalmology.data.datapreliminar.tonometria.ojoder,
           x.objOphthalmology.data.datapreliminar.tonometria.ojoizq,
-          x.objOphthalmology.data.processTherapeutic
-            .map((x) => {
-              return `${x.eye}: ${x.process}`;
-            })
-            .join(),
+          // x.objOphthalmology.data.processTherapeutic
+          //   .map((x) => {
+          //     return `${x.eye}: ${x.process}`;
+          //   })
+          //   .join(),
           x.objOphthalmology.data.diagnostic.map((x) => x.diagnostic.es).join(),
-          x.objOphthalmology.data.treatmentplan.tratamiento
-            .map((x) => {
-              if (x.value) {
-                return getPlansName(x.name);
-              }
-            })
-            .concat([
-              x.objOphthalmology.data.treatmentplan.laser,
-              x.objOphthalmology.data.treatmentplan.lentes,
-              x.objOphthalmology.data.treatmentplan.otros,
-            ])
-            .filter((x) => x)
-            .join(),
+          // x.objOphthalmology.data.treatmentplan.tratamiento
+          //   .map((x) => {
+          //     if (x.value) {
+          //       return getPlansName(x.name);
+          //     }
+          //   })
+          //   .concat([
+          //     x.objOphthalmology.data.treatmentplan.laser,
+          //     x.objOphthalmology.data.treatmentplan.lentes,
+          //     x.objOphthalmology.data.treatmentplan.otros,
+          //   ])
+          //   .filter((x) => x)
+          //   .join(),
           x.objOphthalmology.data.observaciones.observacion,
           x.objOphthalmology.data.observaciones.medicamentos.join(),
         ]);
