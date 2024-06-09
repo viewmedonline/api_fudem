@@ -10,6 +10,25 @@ const searchNameDoctor = async (id) => {
   return doctor;
 };
 
+const filterDuplicate = (diagnostics) => {
+  const uniqueDiagnostics = [];
+  const seenCodes = new Set();
+  const seenDiagnostics = new Set();
+
+  for (const diagnostic of diagnostics) {
+    const code = diagnostic.code;
+    const diagnosticText = diagnostic.diagnostic;
+
+    if (!seenCodes.has(code) && !seenDiagnostics.has(diagnosticText)) {
+      uniqueDiagnostics.push(diagnostic);
+      seenCodes.add(code);
+      seenDiagnostics.add(diagnosticText);
+    }
+  }
+
+  return uniqueDiagnostics;
+}
+
 router.get(
   "/report/preliminary/:dateFrom/:dateTo/:ext",
   async (request, response) => {
@@ -902,7 +921,8 @@ router.get(
             x.objOphthalmology.data.processTherapeutic.map(x=>{
               return `${x.eye}: ${x.process}`
             }).join(),
-            x.objOphthalmology.data.diagnostic.map(x=>x.diagnostic.es).join(),
+            filterDuplicate( x.objOphthalmology.data.diagnostic).map(x=>x.diagnostic.es).join(),
+            // x.objOphthalmology.data.diagnostic,
             x.objOphthalmology.data.treatmentplan.tratamiento.map(x=>{
               if(x.value){
                 return getPlansName(x.name)
