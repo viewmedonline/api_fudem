@@ -1,5 +1,5 @@
 module.exports = {
-  url: process.env.URL_BD ||'mongodb://fudem:fudem@localhost:27017/fudem?authSource=fudem',
+  url: process.env.URL_BD ||'mongodb://localhost:27017/viewmedFudem?authSource=admin',
   // url: process.env.URL_BD ||'mongodb://35.237.55.120:27017/viewmed',
   options: {
     autoIndex: false, // Don't build indexes
@@ -9,8 +9,8 @@ module.exports = {
     // If not connected, return errors immediately rather than waiting for reconnect
     bufferMaxEntries: 0,
     useNewUrlParser: true,
-    user: 'fudem',
-    pass: 'fudem',
+    user: 'root',
+    pass: 'router2022*',
     useNewUrlParser: true
   }
 }
