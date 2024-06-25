@@ -14,7 +14,7 @@
     </header>
     <section>
       <center>
-        <h1>Hoja de Evaluación Médico Internista</h1>
+        <h1 style="margin-top: 110px;">Hoja de Evaluación Médico Internista</h1>
       </center>
       <div class="grid-container-2">
         <div><b>Expediente:</b> <span>{{num_exp}}</span></div>
@@ -69,8 +69,9 @@
       <div class="grid-container-texarea-1">
         <div><b>Comentarios:</b></div>
         <div class="justify-text">{{comments}}</div>
-      </div>         
-      <div class="grid-container-2">
+      </div>   
+      <div class="page-break"></div>
+      <div class="grid-container-2" style="margin-top: 110px;">
         <div><b>Riesgo Quirúrgico:</b> {{surgical_risk}}</div>
         <div><b>Capacidad Funcional: </b> {{functional_capacity}}</div>
       </div>    
@@ -109,8 +110,9 @@
   }
 
   #logo {
-    width: 40%;
-    height: 100%;
+    position: fixed;
+    width: 30%;
+    height: 120px;
     object-fit: contain;
     object-position: center;
     margin: 0;
@@ -123,11 +125,10 @@
   } */
 
   .digital_signature {
-    text-align: end;
+    text-align: center;
     bottom: 0;
-    position: absolute;
-    right: 0;
-    margin-right: 35%;
+    position: fixed;
+    width: 100%;
   }
 
   .grid-container-2 {
@@ -153,9 +154,12 @@
     margin-left: 10px;
   }
   .justify-text {
-    width: 600px;
+    width: "100%";
     text-align: justify;
   word-wrap: break-word;
+  }
+  .page-break {
+    page-break-after: always;
   }
 
 </style>
