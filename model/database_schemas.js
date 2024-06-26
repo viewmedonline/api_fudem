@@ -68,6 +68,15 @@ let icd10diagnosisFudemSchema = new Schema(
   { collection: "icd10_diagnosis_fudem", versionKey: false }
 );
 
+let masterDiagnosisSchema = new Schema(
+  {
+    disable: { type: Boolean, default: false },
+    diagnostic: String,
+    type: String,
+  },
+  { collection: "master_diagnosis_fudem", versionKey: false }
+);
+
 let personSchema = new Schema(
   {
     forename: String,
@@ -230,6 +239,7 @@ const internEvaluationSchema = new Schema(
     clinical_predictors: String,
     clasification_asa: String,
     plan: String,
+    appointmentType: String,
     pdf: { type: Schema.Types.ObjectId, ref: "fs.file", default: null },
     responsible: { type: Schema.Types.ObjectId, ref: "Person" },
     person: { type: Schema.Types.ObjectId, ref: "Person" },
@@ -459,6 +469,7 @@ let consultationSchema = new Schema(
       otros: String,
     },
     diagnostic: [],
+    daysPostOperatory: Number,
     observaciones: { observacion: String, medicamentos: [], recetas: [] },
     person: { type: Schema.Types.ObjectId, ref: "Person" },
     record: recordSchema,
@@ -498,6 +509,135 @@ let imagingSchema = new Schema(
     dateImagin: String,
     responsableConsultation: { type: Schema.Types.ObjectId, ref: "Person" },
     control: { type: controlSchema, required: true, default: {} },
+  },
+  { versionKey: false }
+);
+
+let psyProcessSchema = new Schema(
+  {
+    person: { type: Schema.Types.ObjectId, ref: "Person" },
+    sessionNumber: String,
+    stateProcess: String,
+    dateStart: Date,
+    dateEnd: Date,
+    createdAt:{ type: Date, default: Date.now },
+    problemSummary: String,
+    diagnosticImpression: String,
+    diagnostic: [String],
+    descriptions:[{
+      description: String,
+      date: String,
+    }],
+    active: { type: Boolean, default: true },
+    pdf: { type: Schema.Types.ObjectId, ref: "fs.file" },
+    responsableConsultation: { type: Schema.Types.ObjectId, ref: "Person" },
+    control: { type: controlSchema, required: true, default: {} },
+  },
+  { versionKey: false }
+);
+
+let psyInterviewChildrenSchema = new Schema(
+  {
+    person: { type: Schema.Types.ObjectId, ref: "Person" },
+    pdf: { type: Schema.Types.ObjectId, ref: "fs.file" },
+    responsableConsultation: { type: Schema.Types.ObjectId, ref: "Person" },
+    control: { type: controlSchema, required: true, default: {} },
+    dateInit: String,
+    timeConsultation: String,
+    responsableName: String,
+    responsableDui: String,
+    reasonConsultation: String,
+    symptomsPresent: String,
+    appearanceProblem: String,
+    informationDad: String,
+    informationMom: String,
+    abandonmentParents: String,
+    recordFamilyExist: String,
+    recordPsychiatricFamilyExist: String,
+    recordFamilyAbuseExist: String,
+    childsRoutine: String,
+    sleepCycle: String,
+    fixGaze: String,
+    useGlasses: String,
+    visualProblem: String,
+    visualProblemDescription: String,
+    makeFriendsEasily: String,
+    whyNotMakeFriendsEasily: String,
+    fightWithOtherChildren: String,
+    relationshipWithChildrenOfOtherSex: String,
+    whatHeLikesToDoInHisFreeTime: String,
+    whatDoIsAlone: String,
+    whatNotLikeDo: String,
+    favoriteGames: String,
+    whatSportsHeLikes: String,
+    whatTVShowsHeWatches: String,
+    wahtMakesHimHappy: String,
+    wahtMakesHimSad: String,
+    wahtMakesHimAngry: String,
+    wahtMakesHimAfraid: String,
+    pregnancyMother: String,
+    pregnancyMotherNumber: String,
+    howWasPregnancy: String,
+    pregnancyMotherProblem: String,
+    pregnancyMotherAbuse: String,
+    pregnancyMotherPsiProblem: String,
+    childBirth : String,
+    cordComplication: String,
+    responsablePhone: String,
+  },
+  { versionKey: false }
+);
+
+let psyInterviewAdultsSchema = new Schema(
+  {
+    person: { type: Schema.Types.ObjectId, ref: "Person" },
+    pdf: { type: Schema.Types.ObjectId, ref: "fs.file" },
+    responsableConsultation: { type: Schema.Types.ObjectId, ref: "Person" },
+    control: { type: controlSchema, required: true, default: {} },
+    dateInit: String,
+    timeConsultation: String,
+    reasonConsultation: String,
+    firstTimeBad: String,
+    causesOfProblem: String,
+    symptomsCharacteristics: String,
+    currentSymptoms: String,
+    symptomPhenomenon: String,
+    civilState: String,
+    haveChildren: String,
+    whatLikeRelation: String,
+    nameSon: String,
+    ageSon: String,
+    liveWithYou: String,
+    relationParents: String,
+    hasBrother: String,
+    relevantAspects: String,
+    significantPerson: String,
+    workActually: String,
+    workDescription: String,
+    dependents: String,
+    notWorkDescription: String,
+    howMaintainedEconomy: String,
+    psychiatricTreatment: String,
+    psychiatricTreatmentDescription: String,
+    psychiatricConsultingPrevius: String,
+    medicalPsiTreatment: String,
+    whatsMedication: String,
+    drinkFrequency: String,
+    questionDrink: String,
+    drinkAlcohol: String,
+    frequencyAbsences: String,
+    reduceDrink: String,
+    drinkProblem: String,
+    drinkProblemPsychological: String,
+    abuseExist: String,
+    fightsExist: String,
+    ridiculeParents: String,
+    physicalAbuseExist: String,
+    otherAbuseExist: String,
+    suicideAttempt: String,
+    suicideAttemptDescription: String,
+    whatDidAfterSuicideAttempts: String,
+
   },
   { versionKey: false }
 );
@@ -741,4 +881,14 @@ module.exports = {
   ),
   consumedMaster: mongoose.model("consumedMaster", consumedSchema),
   activityMaster: mongoose.model("activityMaster", activitySchema),
+  psyProcess: mongoose.model("psyProcess", psyProcessSchema),
+  MasterDiagnosis: mongoose.model("MasterDiagnosis", masterDiagnosisSchema),
+  PsyInterviewChildren: mongoose.model(
+    "PsyInterviewChildren",
+    psyInterviewChildrenSchema
+  ),
+  PsyInterviewAdults: mongoose.model(
+    "PsyInterviewAdults",
+    psyInterviewAdultsSchema
+  ),
 };

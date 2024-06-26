@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Entrevista Clínica</title>
+    <style>
+      body {
+        width: 100vw;
+        height: 100vh;
+        font-family: Arial, Helvetica, sans-serif;
+        display: flex;
+        flex-direction: column;
+        font-size: 12.5px;
+      }
+      header {
+        object-fit: contain;
+        object-position: center;
+        position: fixed;
+      }
+      #logo {
+        width: 50%;
+        height: 150px;
+        margin-bottom: 200px;
+      }
+      .digital_signature {
+        text-align: center;
+        bottom: 0;
+        width: 100%;
+        position: fixed;
+      }
+      .title-div {
+        font-size: 13px;
+        font-weight: bold;
+        color: #000000;
+        text-align: start;
+      }
+
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .col-12,
+      .flex-xs12 {
+        width: 100%;
+      }
+
+      .col-8,
+      .flex-xs8 {
+        box-sizing: border-box;
+        flex: 0 0 auto;
+        width: 75%;
+      }
+
+      .col-6,
+      .flex-xs6 {
+        box-sizing: border-box;
+        flex: 0 0 auto;
+        width: 50%;
+      }
+
+      .col-4,
+      .flex-xs4 {
+        box-sizing: border-box;
+        flex: 0 0 auto;
+        width: 33.33%;
+      }
+
+      .col-3,
+      .flex-xs3 {
+        box-sizing: border-box;
+        flex: 0 0 auto;
+        width: 25%;
+      }
+
+      .col-2,
+      .flex-xs2 {
+        box-sizing: border-box;
+        flex: 0 0 auto;
+        width: 16.66%;
+      }
+
+      .data-label {
+        font-weight: bold;
+        font-size: 12px;
+        margin-top: -3px;
+      }
+
+      .data-value {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        margin-top: -3px;
+        margin-left: 5px;
+        text-align: justify;
+      }
+      .mb-space {
+        margin-bottom: 15px;
+      }
+      .inline {
+        display: flex;
+      }
+      .page-break {
+        page-break-after: always !important;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="data:image/jpeg;base64,{{logo}}" alt="fudem" id="logo" />
+    </header>
+    <main>
+      <section>
+        <div
+          class="col-12 title-div mb-space"
+          style="text-align: center; margin-top: 150px; font-size: 16px"
+        >
+          FORMULARIO DE ENTREVISTA CLINICA PARA NIÑEZ Y ADOLESCENCIA
+        </div>
+        <div class="row">
+          <div class="col-12 title-div mb-space">I. DATOS PERSONALES</div>
+          <div class="col-6 inline">
+            <p class="data-label">Fecha de inicio:</p>
+            <p class="data-value" id="dateInit">{{ dateInit }}</p>
+          </div>
+          <div class="col-6 inline">
+            <p class="data-label">Hora de consulta:</p>
+            <p class="data-value" id="timeConsultation">
+              {{ timeConsultation }}
+            </p>
+          </div>
+          <div class="col-8 inline">
+            <p class="data-label">Nombre del niño, niña o adolescente:</p>
+            <p class="data-value" id="patientName">{{patientName}}</p>
+          </div>
+          <div class="col-3 inline">
+            <p class="data-label">Edad:</p>
+            <p class="data-value" id="patientAge">{{patientAge}}</p>
+          </div>
+          <div class="col-6">
+            <p class="data-label">Nombre del responsable:</p>
+            <p class="data-value" id="responsableName">{{responsableName}}</p>
+          </div>
+          <div class="col-6">
+            <p class="data-label">DUI del responsable:</p>
+            <p class="data-value" id="responsableDui">{{responsableDui}}</p>
+          </div>
+          <div class="col-4 inline">
+            <p class="data-label">Teléfono:</p>
+            <p class="data-value" id="responsablePhone">{{responsablePhone}}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 title-div mb-space">II. HISTORIA DEL PROBLEMA</div>
+          <div class="col-12">
+            <p class="data-label">Motivo de consulta:</p>
+            <p class="data-value" id="reasonConsultation">
+              {{ reasonConsultation }}
+            </p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">Síntomas presentes:</p>
+            <p class="data-value" id="symptomsPresent">{{ symptomsPresent }}</p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">Fecha de aparición del problema:</p>
+            <p class="data-value" id="appearanceProblem">
+              {{ appearanceProblem }}
+            </p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12 title-div mb-space">III. HISTORIA FAMILIAR</div>
+          <div class="col-12">
+            <p class="data-label">Información del padre:</p>
+            <p class="data-value" id="informationDad">{{ informationDad }}</p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">Información de la madre:</p>
+            <p class="data-value" id="informationMom">{{ informationMom }}</p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">
+              En caso de abandono de los padres, explicar motivos:
+            </p>
+            <p class="data-value" id="abandonmentParents">
+              {{ abandonmentParents }}
+            </p>
+          </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="row" style="margin-top: 150px">
+          <div class="col-12 title-div mb-space">
+            IV. HISTORIAL DE SALUD FAMILIAR, INFORMACIÓN DE EMBARAZO Y HISTORIA
+            DEL DESARROLLO
+          </div>
+          <div class="col-12 inline">
+            <p class="data-label">¿Existen antecedentes médicos familiares?:</p>
+            <p class="data-value" id="recordFamilyExist">
+              {{ recordFamilyExist }}
+            </p>
+          </div>
+
+          <div class="col-12 inline">
+            <p class="data-label">
+              ¿Existen antecedentes psiquiátricos familiares?:
+            </p>
+            <p class="data-value" id="recordPsychiatricFamilyExist">
+              {{ recordPsychiatricFamilyExist }}
+            </p>
+          </div>
+          <div class="col-12 inline">
+            <p class="data-label">
+              ¿Existen antecedentes en la familia de abuso de sustancias
+              (alcohol o drogas)?:
+            </p>
+            <p class="data-value" id="recordFamilyAbuseExist">
+              {{ recordFamilyAbuseExist }}
+            </p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">
+              ¿Cómo fue el embarazo de la madre? ¿Presento problemas durante el
+              embarazo?:
+            </p>
+            <p class="data-value" id="pregnancyMother">{{ pregnancyMother }}</p>
+          </div>
+          <div class="col-12 inline">
+            <p class="data-label">¿Cuántos embarazos ha tenido la madre?:</p>
+            <p class="data-value" id="pregnancyMotherNumber">
+              {{ pregnancyMotherNumber }}
+            </p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">¿Cómo fue el embarazo?:</p>
+            <p class="data-value" id="howWasPregnancy">{{ howWasPregnancy }}</p>
+          </div>
+          <div class="col-12 inline">
+            <p class="data-label">
+              ¿La madre presentó algún problema en el embarazo?:
+            </p>
+            <p class="data-value" id="pregnancyMotherProblem">
+              {{ pregnancyMotherProblem }}
+            </p>
+          </div>
+          <div class="col-12 inline">
+            <p class="data-label">
+              ¿La madre abusó de drogas o alcohol durante el embarazo?:
+            </p>
+            <p class="data-value" id="pregnancyMotherAbuse">
+              {{ pregnancyMotherAbuse }}
+            </p>
+          </div>
+          <div class="col-12 inline">
+            <p class="data-label">
+              ¿La madre presentó algún problema médico o psiquiátrico durante el
+              embarazo?:
+            </p>
+            <p class="data-value" id="pregnancyMotherPsiProblem">
+              {{ pregnancyMotherPsiProblem }}
+            </p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12 title-div mb-space">
+            V. ANTECEDENTES PERINATALES
+          </div>
+          <div class="col-12">
+            <p class="data-label">
+              ¿Cómo fue el parto del niño, niña o adolescente?:
+            </p>
+            <p class="data-value" id="childBirth">{{ childBirth }}</p>
+          </div>
+          <div class="col-12 inline">
+            <p class="data-label">
+              ¿Sufrió el niño o la madre alguna complicación durante el parto?:
+            </p>
+            <p class="data-value" id="cordComplication">
+              {{ cordComplication }}
+            </p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12 title-div mb-space">VI. ÁREA CONDUCTUAL</div>
+          <div class="col-12">
+            <p class="data-label">¿Cómo es la rutina diaria del niño?:</p>
+            <p class="data-value" id="childsRoutine">{{ childsRoutine }}</p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">¿Cómo es su ciclo de sueño?:</p>
+            <p class="data-value" id="sleepCycle">{{ sleepCycle }}</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12 title-div mb-space">VII. AREA VISUAL</div>
+          <div class="col-4 inline">
+            <p class="data-label">¿Fija la mirada?:</p>
+            <p class="data-value" id="fixGaze">{{ fixGaze }}</p>
+          </div>
+          <div class="col-4 inline">
+            <p class="data-label">¿Usa lentes?:</p>
+            <p class="data-value" id="useGlasses">{{ useGlasses }}</p>
+          </div>
+          <div class="col-4 inline">
+            <p class="data-label">¿Tiene algún problema visual?:</p>
+            <p class="data-value" id="visualProblem">{{ visualProblem }}</p>
+          </div>
+         {{#if (eq visualProblem "Si")}}
+          <div class="col-12">
+            <p class="data-label">Explicar problema visual:</p>
+            <p class="data-value" id="visualProblemDescription">
+              {{ visualProblemDescription }}
+            </p>
+          </div>
+         {{/if}}
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="row" style="margin-top: 150px">
+          <div class="col-12 title-div mb-space">VIII. AREA SOCIAL</div>
+          <div class="col-12">
+            <p class="data-label">¿Hace amigos con facilidad?:</p>
+            <p class="data-value" id="makeFriendsEasily">
+              {{ makeFriendsEasily }}
+            </p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">¿Por qué no hace amigos con facilidad?:</p>
+            <p class="data-value" id="whyNotMakeFriendsEasily">
+              {{ whyNotMakeFriendsEasily }}
+            </p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">¿Por qué cosas se pelea con otros niños?:</p>
+            <p class="data-value" id="fightWithOtherChildren">
+              {{ fightWithOtherChildren }}
+            </p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">
+              ¿Cómo se relaciona con los niños de otro sexo?:
+            </p>
+            <p class="data-value" id="relationshipWithChildrenOfOtherSex">
+              {{ relationshipWithChildrenOfOtherSex }}
+            </p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">¿Qué le gusta hacer en su tiempo libre?:</p>
+            <p class="data-value" id="whatHeLikesToDoInHisFreeTime">
+              {{ whatHeLikesToDoInHisFreeTime }}
+            </p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">¿Qué hace cuando está solo/a?:</p>
+            <p class="data-value" id="whatDoIsAlone">{{ whatDoIsAlone }}</p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">¿Qué no le gusta hacer?:</p>
+            <p class="data-value" id="whatNotLikeDo">{{ whatNotLikeDo }}</p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">¿Cuáles son sus juegos favoritos?:</p>
+            <p class="data-value" id="favoriteGames">{{ favoriteGames }}</p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">¿Qué tipo de deportes le gustan?:</p>
+            <p class="data-value" id="whatSportsHeLikes">
+              {{ whatSportsHeLikes }}
+            </p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">¿Qué programas de televisión mira?:</p>
+            <p class="data-value" id="whatTVShowsHeWatches">
+              {{ whatTVShowsHeWatches }}
+            </p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12 title-div mb-space">IX. AREA EMOCIONAL</div>
+          <div class="col-12">
+            <p class="data-label">¿Qué lo hace feliz?:</p>
+            <p class="data-value" id="wahtMakesHimHappy">
+              {{ wahtMakesHimHappy }}
+            </p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">¿Qué lo entristece?:</p>
+            <p class="data-value" id="wahtMakesHimSad">{{ wahtMakesHimSad }}</p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">¿Qué lo enoja?:</p>
+            <p class="data-value" id="wahtMakesHimAngry">
+              {{ wahtMakesHimAngry }}
+            </p>
+          </div>
+          <div class="col-12">
+            <p class="data-label">¿Qué le da miedo?:</p>
+            <p class="data-value" id="wahtMakesHimAfraid">
+              {{ wahtMakesHimAfraid }}
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+    <div class="digital_signature">
+      <center>
+        <img
+          src="{{digital_signature}}"
+          alt="firma"
+          style="width: 150px; height: 75px"
+        />
+        <div>
+          <b>{{name_prof}}</b>
+        </div>
+      </center>
+    </div>
+  </body>
+</html>

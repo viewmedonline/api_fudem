@@ -772,9 +772,9 @@ router.get(
         "Gonioscopia OI",
         "Tonometría OD",
         "Tonometría OI",
-        "Procedimientos T",
+        // "Procedimientos T",
         "Diagnostico",
-        "Plan",
+        // "Plan",
         "Observaciones",
         "Medicamentos",
       ],
@@ -817,16 +817,18 @@ router.get(
 
     let getPlansName = (name) => {
       const objName = {
-        oct: 'OCT',
-        biometrics: 'BIOMETRÍA',
-        campimetry: 'CAMPIMETRÍA',
-        angiography: 'ANGIOGRAFÍA',
-        paquimetry: 'PAQUIMETRÍA',
-        ultrasonography: 'ULTRASONOGRAFíA',
-        corneal_topography: 'TOPOGRAFíA CORNEAL',
-        ophthalmological_profile_exam: 'EXAMENES (PERFIL OFTALMOLOGICO) Y EVALUACION PREOPERATORIA PARA CIRUGÍA DE CATARATAS Y RETINA',
-        strategy_profile_exam: 'EXAMENES (PERFIL ESTRABISMO) Y EVALUACION PREOPERATORIA PEDIATRICA PARA CIRUGÍA DE ESTRABISMO',
-        pterigion_profile_exam: 'EXAMENES (PERFIL PTERIGION)'
+        oct: "OCT",
+        biometrics: "BIOMETRÍA",
+        campimetry: "CAMPIMETRÍA",
+        angiography: "ANGIOGRAFÍA",
+        paquimetry: "PAQUIMETRÍA",
+        ultrasonography: "ULTRASONOGRAFíA",
+        corneal_topography: "TOPOGRAFíA CORNEAL",
+        ophthalmological_profile_exam:
+          "EXAMENES (PERFIL OFTALMOLOGICO) Y EVALUACION PREOPERATORIA PARA CIRUGÍA DE CATARATAS Y RETINA",
+        strategy_profile_exam:
+          "EXAMENES (PERFIL ESTRABISMO) Y EVALUACION PREOPERATORIA PEDIATRICA PARA CIRUGÍA DE ESTRABISMO",
+        pterigion_profile_exam: "EXAMENES (PERFIL PTERIGION)",
       };
       return objName[name];
     };
@@ -899,37 +901,52 @@ router.get(
           x.objOphthalmology.data.record.antecedent.antecedentes[11].value
             ? "SI"
             : "NO",
-            x.objOphthalmology.data.record.antecedent.medicamentosAntecedent,
-            `${x.objOphthalmology.data.datapreliminar.ppm.ojoDer.data || ""} ${x.objOphthalmology.data.datapreliminar.ppm.ojoDer.otro || ""}`,
-            `${x.objOphthalmology.data.datapreliminar.ppm.ojoIzq.data || ""} ${x.objOphthalmology.data.datapreliminar.ppm.ojoIzq.otro || ""}`,
-            x.objOphthalmology.data.datapreliminar.agudezavisual.ojoDer.cc,
-            x.objOphthalmology.data.datapreliminar.agudezavisual.ojoDer.sc,
-            x.objOphthalmology.data.datapreliminar.agudezavisual.ojoDer.autocorreccion,
-            x.objOphthalmology.data.datapreliminar.agudezavisual.ojoIzq.cc,
-            x.objOphthalmology.data.datapreliminar.agudezavisual.ojoIzq.sc,
-            x.objOphthalmology.data.datapreliminar.agudezavisual.ojoIzq.autocorreccion,
-            x.objOphthalmology.data.datapreliminar.examenexterno.ojoder,
-            x.objOphthalmology.data.datapreliminar.examenexterno.ojoizq,
-            x.objOphthalmology.data.datapreliminar.biomicroscopio.ojoder,
-            x.objOphthalmology.data.datapreliminar.biomicroscopio.ojoizq,
-            x.objOphthalmology.data.datapreliminar.fundoscopia.ojoder,
-            x.objOphthalmology.data.datapreliminar.fundoscopia.ojoizq,
-            x.objOphthalmology.data.datapreliminar.gonioscopia.ojoder,
-            x.objOphthalmology.data.datapreliminar.gonioscopia.ojoizq,
-            x.objOphthalmology.data.datapreliminar.tonometria.ojoder,
-            x.objOphthalmology.data.datapreliminar.tonometria.ojoizq,
-            x.objOphthalmology.data.processTherapeutic.map(x=>{
-              return `${x.eye}: ${x.process}`
-            }).join(),
-            filterDuplicate( x.objOphthalmology.data.diagnostic).map(x=>x.diagnostic.es).join(),
-            // x.objOphthalmology.data.diagnostic,
-            x.objOphthalmology.data.treatmentplan.tratamiento.map(x=>{
-              if(x.value){
-                return getPlansName(x.name)
-              }
-            }).concat([x.objOphthalmology.data.treatmentplan.laser,x.objOphthalmology.data.treatmentplan.lentes,x.objOphthalmology.data.treatmentplan.otros]).filter(x=>x).join(),
-            x.objOphthalmology.data.observaciones.observacion,
-            x.objOphthalmology.data.observaciones.medicamentos.join()
+          x.objOphthalmology.data.record.antecedent.medicamentosAntecedent,
+          `${x.objOphthalmology.data.datapreliminar.ppm.ojoDer.data || ""} ${
+            x.objOphthalmology.data.datapreliminar.ppm.ojoDer.otro || ""
+          }`,
+          `${x.objOphthalmology.data.datapreliminar.ppm.ojoIzq.data || ""} ${
+            x.objOphthalmology.data.datapreliminar.ppm.ojoIzq.otro || ""
+          }`,
+          x.objOphthalmology.data.datapreliminar.agudezavisual.ojoDer.cc,
+          x.objOphthalmology.data.datapreliminar.agudezavisual.ojoDer.sc,
+          x.objOphthalmology.data.datapreliminar.agudezavisual.ojoDer
+            .autocorreccion,
+          x.objOphthalmology.data.datapreliminar.agudezavisual.ojoIzq.cc,
+          x.objOphthalmology.data.datapreliminar.agudezavisual.ojoIzq.sc,
+          x.objOphthalmology.data.datapreliminar.agudezavisual.ojoIzq
+            .autocorreccion,
+          x.objOphthalmology.data.datapreliminar.examenexterno.ojoder,
+          x.objOphthalmology.data.datapreliminar.examenexterno.ojoizq,
+          x.objOphthalmology.data.datapreliminar.biomicroscopio.ojoder,
+          x.objOphthalmology.data.datapreliminar.biomicroscopio.ojoizq,
+          x.objOphthalmology.data.datapreliminar.fundoscopia.ojoder,
+          x.objOphthalmology.data.datapreliminar.fundoscopia.ojoizq,
+          x.objOphthalmology.data.datapreliminar.gonioscopia.ojoder,
+          x.objOphthalmology.data.datapreliminar.gonioscopia.ojoizq,
+          x.objOphthalmology.data.datapreliminar.tonometria.ojoder,
+          x.objOphthalmology.data.datapreliminar.tonometria.ojoizq,
+          // x.objOphthalmology.data.processTherapeutic
+          //   .map((x) => {
+          //     return `${x.eye}: ${x.process}`;
+          //   })
+          //   .join(),
+          filterDuplicate( x.objOphthalmology.data.diagnostic).map(x=>x.diagnostic.es).join(),
+          // x.objOphthalmology.data.treatmentplan.tratamiento
+          //   .map((x) => {
+          //     if (x.value) {
+          //       return getPlansName(x.name);
+          //     }
+          //   })
+          //   .concat([
+          //     x.objOphthalmology.data.treatmentplan.laser,
+          //     x.objOphthalmology.data.treatmentplan.lentes,
+          //     x.objOphthalmology.data.treatmentplan.otros,
+          //   ])
+          //   .filter((x) => x)
+          //   .join(),
+          x.objOphthalmology.data.observaciones.observacion,
+          x.objOphthalmology.data.observaciones.medicamentos.join(),
         ]);
       } catch (error) {
         console.log("Ha ocurrido un error el for: " + error);
@@ -1377,4 +1394,353 @@ router.get(
     }
   }
 );
+
+router.get(
+  "/report/psychologist1/:dateFrom/:dateTo/:ext",
+  async (request, response) => {
+    try {
+      const dateFrom = moment(request.params.dateFrom, "DD-MM-YYYY").format(
+        "YYYY-MM-DD 00:00:00"
+      );
+      const dateTo = moment(request.params.dateTo, "DD-MM-YYYY").format(
+        "YYYY-MM-DD 23:59:59"
+      );
+      let dataPsi = await model.psyProcess
+        .find({ createdAt: { $gte: dateFrom, $lte: dateTo } })
+        .sort({ createdAt: -1 })
+        .populate("person")
+        .populate("responsableConsultation");
+
+      let dataPsiArray = [];
+      const headers = [
+        "Numero de sesiones",
+        "Estado del proceso",
+        "Inicio",
+        "Fin",
+        "Creado",
+        "Resumen del problema",
+        "Impresion diagnostica",
+        "Diagnostico",
+        "Descripciones de sesiones",
+        "Responsable",
+        "Paciente",
+      ];
+      dataPsiArray.push(headers);
+      for (const x of dataPsi) {
+        dataPsiArray.push([
+          x.sessionNumber,
+          x.stateProcess,
+          moment(x.dateStart).format("DD/MM/YYYY"),
+          moment(x.dateEnd).format("DD/MM/YYYY"),
+          moment(x.createdAt).format("DD/MM/YYYY"),
+          x.problemSummary,
+          x.diagnosticImpression,
+          x.diagnostic.join(),
+          x.descriptions.map((x) => x.description),
+          x.responsableConsultation.forename +
+            " " +
+            x.responsableConsultation.surname,
+          x.person.forename + " " + x.person.surname,
+        ]);
+      }
+
+      stringify(dataPsiArray, (err, output) => {
+        if (err) {
+          response.status(500).send("Error al generar CSV");
+          return;
+        }
+
+        response.setHeader("Content-Type", "text/csv");
+        response.setHeader(
+          "Content-Disposition",
+          "attachment; filename=datos.csv"
+        );
+        response.send(output);
+      });
+    } catch (error) {
+      console.log(error);
+      response.status(500).json({
+        status: "KO",
+        message: "Error al generar CSV",
+        documents: [],
+      });
+    }
+  }
+);
+
+router.get(
+  "/report/psychologist2/:dateFrom/:dateTo/:ext",
+  async (request, response) => {
+    try {
+      const dateFrom = moment(request.params.dateFrom, "DD-MM-YYYY").format(
+        "DD/MM/YYYY"
+      );
+      const dateTo = moment(request.params.dateTo, "DD-MM-YYYY").format(
+        "DD/MM/YYYY"
+      );
+
+      let dataInterviewChildren = await model.PsyInterviewChildren.find({dateInit: { $gte: dateFrom, $lte: dateTo }})
+        .populate("person")
+        .populate("responsableConsultation");
+
+      let dataInterviewChildrenArray = [];
+      const headers = [
+        "paciente",
+        "responsable de la consulta",
+        "fecha de inicio",
+        "hora de consulta",
+        "responsable del paciente",
+        "DUI del responsable",
+        "razon de la consulta",
+        "síntomas presentes",
+        "fecha del problema",
+        "Informacion del padre",
+        "Informacion de la madre",
+        "caso de abandono",
+        "antecedentes familiares",
+        "antecedentes psiquiátricos familiares",
+        "antecedentes de abuso de sustancias en la familia",
+        "rutina del niño",
+        "ciclo de sueño",
+        "fija mirada",
+        "uso de lentes",
+        "problema visual",
+        "problema visual descripción",
+        "hace amigos fácilmente",
+        "porque no hace amigos fácilmente",
+        "porque pelea con otros niños",
+        "relacion con otros niños",
+        "Qué hace en su tiempo libre",
+        "que hace cuando esta solo",
+        "que no le gusta hacer",
+        "juego favorito",
+        "Deporte que gusta",
+        "programa de tv que le gusta",
+        "que lo hace feliz",
+        "que lo entristece",
+        "que lo enoja",
+        "que le da miedo",
+        "problemas en embarazo",
+        "numero de embarazos",
+        "como fue el embarazo",
+        "problemas en embarazo (madre)",
+        "abuso de sustancias (madre)",
+        "problema medico o psiquiátrico en el embarazo",
+        "como fue el parto",
+        "sufrio problemas en embarazo (hijo o madre)",
+        "telefono de responsable",
+      ];
+      dataInterviewChildrenArray.push(headers);
+      for (const x of dataInterviewChildren) {
+        dataInterviewChildrenArray.push([
+          `${x.person.forename} ${x.person.surname}`,
+          `${x.responsableConsultation.forename} ${x.responsableConsultation.surname}`,
+          x.dateInit,
+          x.timeConsultation,
+          x.responsableName,
+          x.responsableDui,
+          x.reasonConsultation,
+          x.symptomsPresent,
+          x.appearanceProblem,
+          x.informationDad,
+          x.informationMom,
+          x.abandonmentParents,
+          x.recordFamilyExist,
+          x.recordPsychiatricFamilyExist,
+          x.recordFamilyAbuseExist,
+          x.childsRoutine,
+          x.sleepCycle,
+          x.fixGaze,
+          x.useGlasses,
+          x.visualProblem,
+          x.visualProblemDescription,
+          x.makeFriendsEasily,
+          x.whyNotMakeFriendsEasily,
+          x.fightWithOtherChildren,
+          x.relationshipWithChildrenOfOtherSex,
+          x.whatHeLikesToDoInHisFreeTime,
+          x.whatDoIsAlone,
+          x.whatNotLikeDo,
+          x.favoriteGames,
+          x.whatSportsHeLikes,
+          x.whatTVShowsHeWatches,
+          x.wahtMakesHimHappy,
+          x.wahtMakesHimSad,
+          x.wahtMakesHimAngry,
+          x.wahtMakesHimAfraid,
+          x.pregnancyMother,
+          x.pregnancyMotherNumber,
+          x.howWasPregnancy,
+          x.pregnancyMotherProblem,
+          x.pregnancyMotherAbuse,
+          x.pregnancyMotherPsiProblem,
+          x.childBirth,
+          x.cordComplication,
+          x.responsablePhone,
+        ]);
+      }
+
+      stringify(dataInterviewChildrenArray, (err, output) => {
+        if (err) {
+          response.status(500).send("Error al generar CSV");
+          return;
+        }
+
+        response.setHeader("Content-Type", "text/csv");
+        response.setHeader(
+          "Content-Disposition",
+          "attachment; filename=datos.csv"
+        );
+        response.send(output);
+      });
+    } catch (error) {
+      console.log(error);
+      response.status(500).json({
+        status: "KO",
+        message: "Error al generar CSV",
+        documents: [],
+      });
+    }
+  }
+);
+router.get(
+  "/report/psychologist3/:dateFrom/:dateTo/:ext",
+  async (request, response) => {
+    try {
+      const dateFrom = moment(request.params.dateFrom, "DD-MM-YYYY").format(
+        "DD/MM/YYYY"
+      );
+      const dateTo = moment(request.params.dateTo, "DD-MM-YYYY").format(
+        "DD/MM/YYYY"
+      );
+
+      let dataInterviewAdults = await model.PsyInterviewAdults.find({dateInit: { $gte: dateFrom, $lte: dateTo }})
+        .populate("person")
+        .populate("responsableConsultation");
+
+      let dataInterviewAdultsArray = [];
+
+      const headers = [
+        "paciente",
+        "responsable de consulta",
+        "fecha de inicio",
+        "hora de consulta",
+        "motivo de consulta",
+        "cuando se dio cuenta",
+        "cousas o circunstancias",
+        "curso y características",
+        "estado actual del síntoma",
+        "fenomenos o situaciones asociadas al síntoma",
+        "estado civil",
+        "tiene hijos",
+        "como es su relacion con su pareja",
+        "nombre de hijo/a",
+        "edad dehijo/a",
+        "vive con usted",
+        "relacion con sus padres",
+        "tiene hermanos",
+        "aspectos relevantes de su infancia",
+        "personas significativas en su vida",
+        "trabaja actualmente",
+        "donde trabaja y desde cuándo",
+        "cantidad de personas dependen",
+        "a que se debe (no trabaja)",
+        "como se mantiene económicamente",
+        "ha recibido terapia",
+        "descripcion terapia anterior",
+        "se relacionan las consultas",
+        "ha recibido medicamentos psicofármaco",
+        "que medicamento toma",
+        "cuanto bebe",
+        "actualmente bebe en exceso",
+        "alguna vez falto al trabajo",
+        "con que frecuencia",
+        "ha reducido o eliminado el consumo de alcohol",
+        "consumo de alcohol le ha causado problemas con otras personas",
+        "Su consumo de alcohol le ha causado problemas psicológicos",
+        "problemas o conflictos con alguien de su entorno",
+        "Se ve envuelto en peleas",
+        "Recibe burlas o humillaciones de parte de alguien de su entorno",
+        "Recibe golpes o maltrato físico de parte de alguien de su entorno",
+        "Recibe algún otro tipo de maltrato o abuso",
+        "ha intentado quitarse la vida",
+        "descripcion de la situación",
+        "Qué hizo luego de sus intentos suicidas",
+      ];
+      dataInterviewAdultsArray.push(headers);
+      for (const x of dataInterviewAdults) {
+        dataInterviewAdultsArray.push([
+          `${x.person.forename} ${x.person.surname}`,
+          `${x.responsableConsultation.forename} ${x.responsableConsultation.surname}`,
+          x.dateInit,
+          x.timeConsultation,
+          x.reasonConsultation,
+          x.firstTimeBad,
+          x.causesOfProblem,
+          x.symptomsCharacteristics,
+          x.currentSymptoms,
+          x.symptomPhenomenon,
+          x.civilState,
+          x.haveChildren,
+          x.whatLikeRelation,
+          x.nameSon,
+          x.ageSon,
+          x.liveWithYou,
+          x.relationParents,
+          x.hasBrother,
+          x.relevantAspects,
+          x.significantPerson,
+          x.workActually,
+          x.workDescription,
+          x.dependents,
+          x.notWorkDescription,
+          x.howMaintainedEconomy,
+          x.psychiatricTreatment,
+          x.psychiatricTreatmentDescription,
+          x.psychiatricConsultingPrevius,
+          x.medicalPsiTreatment,
+          x.whatsMedication,
+          x.drinkFrequency,
+          x.questionDrink,
+          x.drinkAlcohol,
+          x.frequencyAbsences,
+          x.reduceDrink,
+          x.drinkProblem,
+          x.drinkProblemPsychological,
+          x.abuseExist,
+          x.fightsExist,
+          x.ridiculeParents,
+          x.physicalAbuseExist,
+          x.otherAbuseExist,
+          x.suicideAttempt,
+          x.suicideAttemptDescription,
+          x.whatDidAfterSuicideAttempts,
+        ]);
+      }
+
+      stringify(dataInterviewAdultsArray, (err, output) => {
+        if (err) {
+          response.status(500).send("Error al generar CSV");
+          return;
+        }
+
+        response.setHeader("Content-Type", "text/csv");
+        response.setHeader(
+          "Content-Disposition",
+          "attachment; filename=datos.csv"
+        );
+        response.send(output);
+      });
+        
+    } catch (error) {
+      console.log(error);
+      response.status(500).json({
+        status: "KO",
+        message: "Error al generar CSV",
+        documents: [],
+      });
+    }
+  }
+);
+
 module.exports = router;
