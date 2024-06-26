@@ -6,7 +6,7 @@ let multiparty = require('multiparty')
 const fs = require("fs");
 const async = require('async');
 let model = require('../model/database_schemas.js')
-const { create_report_pdf, signatura_base64, save_file } = require('./general_function.js')
+const { create_report_pdf, signatura_base64, save_file, deleteFile } = require('./general_function.js')
 
 
 router.post('/report/save', async (request, response) => {
@@ -167,61 +167,34 @@ router.get('/get_file/:fileId', (request, response) => {
 
 //delete file
 router.delete('/delete_file/:fileId', (request, response) => {
-  let fileId = request.params.fileId
+  const fileId = request.params.fileId;
 
-  // Assign mongoose driver to Grid
-  Grid.mongo = mongoose.mongo
-
-  model.File.findById(fileId)
-    .then(data => {
-
-      let conn = mongoose.connection
-      let gfs = Grid(conn.db)
-      let fileId = request.params.fileId
-
-      // Check if the file exists in the database
-      gfs.exist({ _id: fileId }, (err, found) => {
-        if (err) {
-          response.status(500).json({
-            'status': 'KO',
-            'message': 'Problems looking for the file',
-            'documents': []
-          })
-        }
-        if (!found) {
-          response.status(400).json({
-            'status': 'KO',
-            'message': 'File not found',
-            'documents': []
-          })
-        } else {
-          // Search file from MongoDB
-          gfs.remove({ _id: fileId }, (err, gridStore) => {
-            if (err) {
-              response.status(500).json({
-                'status': 'KO',
-                'message': 'Problems deleting the file',
-                'documents': []
-              })
-            }
-            response.status(200).json({
-              'status': 'OK',
-              'message': null,
-              'documents': []
-            })
-          })
-        }
-      })
+  deleteFile(fileId)
+    .then(result => {
+      if (result === 'success') { // Verifica si la eliminación fue exitosa
+        response.status(200).json({
+          'status': 'OK',
+          'message': null,
+          'documents': []
+        });
+      } else {
+        // Si result no es 'success', significa que hubo un error
+        response.status(400).json({
+          'status': 'KO',
+          'message': result, // El mensaje de error se encuentra en 'result'
+          'documents': []
+        });
+      }
     })
     .catch(error => {
-      console.log('Microservice[delete_file]: ' + error)
-      response.status(400).json({
+      console.log('Microservice[delete_file]: ' + error);
+      response.status(500).json({ // Cambia a 500 para un error interno del servidor
         'status': 'KO',
-        'message': 'Document not found',
+        'message': 'Error al eliminar el archivo',
         'documents': []
-      })
-    })
-})
+      });
+    });
+});
 
 
 module.exports = router;

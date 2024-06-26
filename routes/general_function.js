@@ -154,8 +154,41 @@ const save_file = async (name, file_buffer) => {
   return fileId;
 };
 
+const deleteFile = (id) => {
+  Grid.mongo = mongoose.mongo;
+
+  return model.File.findById(id)
+    .then((data) => {
+      const conn = mongoose.connection;
+      const gfs = Grid(conn.db);
+
+      return new Promise((resolve, reject) => {
+        gfs.exist({ _id: id }, (err, found) => {
+          if (err) {
+            reject("Error al buscar el archivo"); // Manejo de error dentro de la promesa
+          } else if (!found) {
+            reject("Archivo no encontrado"); // Manejo de error dentro de la promesa
+          } else {
+            gfs.remove({ _id: id }, (err, gridStore) => {
+              if (err) {
+                reject("Error al eliminar el archivo"); // Manejo de error dentro de la promesa
+              } else {
+                resolve("success");
+              }
+            });
+          }
+        });
+      });
+    })
+    .catch((error) => {
+      console.log("Microservice[delete_file]: " + error);
+      return "Documento no encontrado";
+    });
+};
+
 module.exports = {
   signatura_base64,
   create_report_pdf,
   save_file,
+  deleteFile
 };
