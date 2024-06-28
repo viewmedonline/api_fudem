@@ -13,9 +13,9 @@ const mongoose = require('mongoose');
 
 router.post("/evaluation", async (request, response) => {
   try {
-    if (request.body.data.physician_signature) {
+    if (request.body.data.digital_signature) {
       const signature = await signatura_base64(
-        request.body.data.physician_signature
+        request.body.data.digital_signature
       );
       request.body.data.digital_signature = signature;
     }
