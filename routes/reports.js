@@ -1846,4 +1846,115 @@ router.get(
   }
 );
 
+router.get(
+  "/report/internist/:dateFrom/:dateTo/:ext",
+  async (request, response) => {
+    try {
+      const dateFrom = moment(request.params.dateFrom, "DD-MM-YYYY").format(
+        "DD/MM/YYYY"
+      );
+      const dateTo = moment(request.params.dateTo, "DD-MM-YYYY").format(
+        "DD/MM/YYYY"
+      );
+
+      let dataInterviewAdults = await model.InternEvaluation.find({
+        date: { $gte: dateFrom, $lte: dateTo },
+      })
+        .populate("person")
+        .populate("responsible");
+
+      let dataIternistArr = [];
+
+      const headers = [
+        "Paciente",
+        "Responsable de consulta",
+        "Fecha",
+        "Tipo de consulta",
+        "Diagnostico Preoperatorio",
+        "Historia Clinica",
+        "Antecedentes Personales",
+        "PA",
+        "FC",
+        "FR",
+        "SATO2",
+        "Estado Fisico",
+        "HT",
+        "HB",
+        "Plaquetas",
+        "TP",
+        "TPT",
+        "INR",
+        "Glucosa",
+        "Elisa/VIH",
+        "EGO",
+        "HBA1C",
+        "Radiografia Torax",
+        "Electrocardiograma",
+        "Comentarios",
+        "Riesgo quirurgico",
+        "Capacidad funcional",
+        "Predictores clinicos",
+        "Clasificasion ASA",
+        "Plan"
+      ];
+      dataIternistArr.push(headers);
+      for (const x of dataInterviewAdults) {
+        dataIternistArr.push([
+          `${x.person.forename} ${x.person.surname}`,
+          `${x.responsible.forename} ${x.responsible.surname}`,
+          x.date,
+          x.appointmentType,
+          x.preoperative_diagnosis,
+          x.history_clinic,
+          x.personal_record,
+          x.pa,
+          x.fc,
+          x.fr,
+          x.oxygen_saturation,
+          x.physical_state,
+          x.ht,
+          x.hb,
+          x.platelets,
+          x.tp,
+          x.tpt,
+          x.inr,
+          x.glucose,
+          x.vih,
+          x.ego,
+          x.hba1c,
+          x.radiography,
+          x.electrocardiogram,
+          x.comments,
+          x.surgical_risk,
+          x.functional_capacity,
+          x.clinical_predictors,
+          x.clasification_asa,
+          x.plan,
+        ]);
+      }
+
+      stringify(dataIternistArr, (err, output) => {
+        if (err) {
+          response.status(500).send("Error al generar CSV");
+          return;
+        }
+
+        response.setHeader("Content-Type", "text/csv");
+        response.setHeader(
+          "Content-Disposition",
+          "attachment; filename=datos.csv"
+        );
+        response.send(output);
+      });
+    } catch (error) {
+      console.log(error);
+      response.status(500).json({
+        status: "KO",
+        message: "Error al generar CSV",
+        documents: [],
+      });
+    }
+  }
+);
+
 module.exports = router;
