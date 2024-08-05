@@ -1,9 +1,15 @@
 let express = require("express");
+const util = require("util");
 const { stringify } = require("csv-stringify");
 let router = express.Router();
 const fs = require("fs");
 let model = require("../model/database_schemas.js");
 let moment = require("moment");
+const stringifyAsync = util.promisify(stringify);
+const utilFs = require("util").promisify;
+const writeFile = utilFs(fs.writeFile);
+const os = require("os");
+const path = require("path");
 
 const searchNameDoctor = async (id) => {
   let doctor = await model.Person.findById(id, "forename surname");
@@ -27,7 +33,7 @@ const filterDuplicate = (diagnostics) => {
   }
 
   return uniqueDiagnostics;
-}
+};
 
 router.get(
   "/report/preliminary/:dateFrom/:dateTo/:ext",
@@ -122,240 +128,287 @@ router.get(
       .endOf("day")
       .format();
     let results = [];
+    const fileName =
+      "preliminares_" +
+      request.params.dateFrom +
+      "_" +
+      request.params.dateTo +
+      ".csv";
+    const tempFileName = os.tmpdir() + "/" + fileName;
+    let countResults = 0;
     try {
-      results = await model.Consultation.find(
-        {
-          "control.active": false,
-          "objPreliminary.data": { $exists: true },
-          file: { $exists: false },
-          "control.created_at": {
-            $gte: dateFrom,
-            $lte: dateTo,
-          },
+      countResults = await model.Consultation.find({
+        "control.active": false,
+        "objPreliminary.data": { $exists: true },
+        file: { $exists: false },
+        "control.created_at": {
+          $gte: dateFrom,
+          $lte: dateTo,
         },
-        {
-          person: 1,
-          control: 1,
-          objPreliminary: 1,
-          sucursalId: 1,
-          typeConsultation: 1,
-          reasonConsultation: 1,
-          responsablePreliminar: 1,
-        }
-      )
-        .sort({ "control.created_at": -1 })
-        .populate("person");
+      }).count();
     } catch (error) {
       console.log("Ha ocurrido un error en la busqueda de consultas: " + error);
     }
-
-    for (const x of results) {
+    let cicle = 0;
+    let limit = 1000;
+    console.log("countResults", countResults);
+    while (countResults > cicle) {
       try {
-        const { antecedent, cirugias, otrosDatos } =
-          await model.Record.findById(x.person.record);
-        let typeConsultation = (type) => {
-          if (!type) {
-            return "";
+        results = await model.Consultation.find(
+          {
+            "control.active": false,
+            "objPreliminary.data": { $exists: true },
+            file: { $exists: false },
+            "control.created_at": {
+              $gte: dateFrom,
+              $lte: dateTo,
+            },
+          },
+          {
+            person: 1,
+            control: 1,
+            objPreliminary: 1,
+            sucursalId: 1,
+            typeConsultation: 1,
+            reasonConsultation: 1,
+            responsablePreliminar: 1,
           }
-          const value = type.replace(/ /g, "");
-          const typesConsultations = {
-            Forthefirsttime: "Primera Vez",
-            PostOperativePatient: "Paciente Post-Operatorio",
-            Control: "Control",
-            E: "Emergencia",
-          };
-          return typesConsultations[value];
-        };
-        datos.push([
-          moment(x.objPreliminary.control.created_at).format("DD/MM/YYYY"),
-          x.person.forename,
-          x.person.surname,
-          x.person.gender,
-          moment(x.person.birthdate).format("DD/MM/YYYY"),
-          x.person.idQflow,
-          x.person.readWrtite ? "SI" : "NO",
-          x.person.lenses ? "SI" : "NO",
-          typeConsultation(x.typeConsultation),
-          x.reasonConsultation,
-          x.responsablePreliminar,
-          (await model.branchOffice.findById(x.sucursalId, "Name")).Name,
-          antecedent.antecedentes[0].value ? "SI" : "NO",
-          antecedent.antecedentes[1].value ? "SI" : "NO",
-          antecedent.antecedentes[2].value ? "SI" : "NO",
-          antecedent.antecedentes[3].value ? "SI" : "NO",
-          antecedent.antecedentes[4].value ? "SI" : "NO",
-          antecedent.antecedentes[5].value ? "SI" : "NO",
-          antecedent.antecedentes[6].value ? "SI" : "NO",
-          antecedent.antecedentes[7].value ? "SI" : "NO",
-          antecedent.antecedentes[8].value ? "SI" : "NO",
-          antecedent.antecedentes[9].value ? "SI" : "NO",
-          antecedent.antecedentes[10].value ? "SI" : "NO",
-          antecedent.antecedentes[11].value ? "SI" : "NO",
-          cirugias.cirugias.length > 0 && cirugias.cirugias[0].eyeRight
-            ? "SI"
-            : "NO",
-          cirugias.cirugias.length > 0 && cirugias.cirugias[1].eyeRight
-            ? "SI"
-            : "NO",
-          cirugias.cirugias.length > 0 && cirugias.cirugias[2].eyeRight
-            ? "SI"
-            : "NO",
-          cirugias.cirugias.length > 0 && cirugias.cirugias[3].eyeRight
-            ? "SI"
-            : "NO",
-          cirugias.cirugias.length > 0 && cirugias.cirugias[4].eyeRight
-            ? "SI"
-            : "NO",
-          cirugias.cirugias.length > 0 && cirugias.cirugias[5].eyeRight
-            ? "SI"
-            : "NO",
-          cirugias.cirugias.length > 0 && cirugias.cirugias[6].eyeRight
-            ? "SI"
-            : "NO",
-          cirugias.othersEyeRigth || "NO",
-          cirugias.cirugias.length > 0 && cirugias.cirugias[0].eyeLeft
-            ? "SI"
-            : "NO",
-          cirugias.cirugias.length > 0 && cirugias.cirugias[1].eyeLeft
-            ? "SI"
-            : "NO",
-          cirugias.cirugias.length > 0 && cirugias.cirugias[2].eyeLeft
-            ? "SI"
-            : "NO",
-          cirugias.cirugias.length > 0 && cirugias.cirugias[3].eyeLeft
-            ? "SI"
-            : "NO",
-          cirugias.cirugias.length > 0 && cirugias.cirugias[4].eyeLeft
-            ? "SI"
-            : "NO",
-          cirugias.cirugias.length > 0 && cirugias.cirugias[5].eyeLeft
-            ? "SI"
-            : "NO",
-          cirugias.cirugias.length > 0 && cirugias.cirugias[6].eyeLeft
-            ? "SI"
-            : "NO",
-          cirugias.cirugias.othersEyeLeft || "NO",
-          x.objPreliminary.data.generalData
-            ? x.objPreliminary.data.generalData.typeLense
-            : "",
-          otrosDatos.alergias[0],
-          otrosDatos.medicamentos[0],
-          x.objPreliminary.data.agudezaVisual
-            ? x.objPreliminary.data.agudezaVisual.ojoDer.correccion
-            : "",
-          x.objPreliminary.data.agudezaVisual
-            ? x.objPreliminary.data.agudezaVisual.ojoDer.sinCorreccion
-            : "",
-          x.objPreliminary.data.agudezaVisual
-            ? x.objPreliminary.data.agudezaVisual.ojoIzq.correccion
-            : "",
-          x.objPreliminary.data.agudezaVisual
-            ? x.objPreliminary.data.agudezaVisual.ojoIzq.sinCorreccion
-            : "",
-          x.objPreliminary.data.agudezaVisual
-            ? x.objPreliminary.data.agudezaVisual.observation
-            : "",
-          x.objPreliminary.data.autorefraccionA
-            ? x.objPreliminary.data.autorefraccionA.ojoDer.esfera
-            : "",
-          x.objPreliminary.data.autorefraccionA
-            ? x.objPreliminary.data.autorefraccionA.ojoDer.cilindro
-            : "",
-          x.objPreliminary.data.autorefraccionA
-            ? x.objPreliminary.data.autorefraccionA.ojoDer.eje
-            : "",
-          x.objPreliminary.data.autorefraccionA
-            ? x.objPreliminary.data.autorefraccionA.ojoIzq.esfera
-            : "",
-          x.objPreliminary.data.autorefraccionA
-            ? x.objPreliminary.data.autorefraccionA.ojoIzq.cilindro
-            : "",
-          x.objPreliminary.data.autorefraccionA
-            ? x.objPreliminary.data.autorefraccionA.ojoIzq.eje
-            : "",
-          x.objPreliminary.data.queratometria
-            ? x.objPreliminary.data.queratometria.ojoDer.esfera
-            : "",
-          x.objPreliminary.data.queratometria
-            ? x.objPreliminary.data.queratometria.ojoDer.ejeEs
-            : "",
-          x.objPreliminary.data.queratometria
-            ? x.objPreliminary.data.queratometria.ojoDer.cilindro
-            : "",
-          x.objPreliminary.data.queratometria
-            ? x.objPreliminary.data.queratometria.ojoDer.ejeCil
-            : "",
-          x.objPreliminary.data.queratometria
-            ? x.objPreliminary.data.queratometria.ojoIzq.esfera
-            : "",
-          x.objPreliminary.data.queratometria
-            ? x.objPreliminary.data.queratometria.ojoIzq.ejeEs
-            : "",
-          x.objPreliminary.data.queratometria
-            ? x.objPreliminary.data.queratometria.ojoIzq.cilindro
-            : "",
-          x.objPreliminary.data.queratometria
-            ? x.objPreliminary.data.queratometria.ojoIzq.ejeCil
-            : "",
-          x.objPreliminary.data.lensometria
-            ? x.objPreliminary.data.lensometria.ojoDer.esfera
-            : "",
-          x.objPreliminary.data.lensometria
-            ? x.objPreliminary.data.lensometria.ojoDer.cilindro
-            : "",
-          x.objPreliminary.data.lensometria
-            ? x.objPreliminary.data.lensometria.ojoDer.eje
-            : "",
-          x.objPreliminary.data.lensometria
-            ? x.objPreliminary.data.lensometria.ojoDer.prisma
-            : "",
-          x.objPreliminary.data.lensometria
-            ? x.objPreliminary.data.lensometria.ojoDer.adicion
-            : "",
-          x.objPreliminary.data.lensometria
-            ? x.objPreliminary.data.lensometria.ojoIzq.esfera
-            : "",
-          x.objPreliminary.data.lensometria
-            ? x.objPreliminary.data.lensometria.ojoIzq.cilindro
-            : "",
-          x.objPreliminary.data.lensometria
-            ? x.objPreliminary.data.lensometria.ojoIzq.eje
-            : "",
-          x.objPreliminary.data.lensometria
-            ? x.objPreliminary.data.lensometria.ojoIzq.prisma
-            : "",
-          x.objPreliminary.data.lensometria
-            ? x.objPreliminary.data.lensometria.ojoIzq.adicion
-            : "",
-          x.objPreliminary.data.tonometria
-            ? x.objPreliminary.data.tonometria.ojoDer
-            : "",
-          x.objPreliminary.data.tonometria
-            ? x.objPreliminary.data.tonometria.ojoIzq
-            : "",
-          x.objPreliminary.data.retinal_photo,
-          x.objPreliminary.data.retinal_findings,
-          x.objPreliminary.data.retinal_observation,
-        ]);
+        )
+          .limit(limit)
+          .skip(cicle)
+          .sort({ "control.created_at": -1 })
+          .populate("person");
       } catch (error) {
-        console.log("Ha ocurrido un error el for: " + error);
-        console.log(x._id);
+        console.log(
+          "Ha ocurrido un error en la busqueda de consultas: " + error
+        );
       }
+      datos = [];
+      for (const x of results) {
+        try {
+          const { antecedent, cirugias, otrosDatos } =
+            await model.Record.findById(x.person.record);
+          let typeConsultation = (type) => {
+            if (!type) {
+              return "";
+            }
+            const value = type.replace(/ /g, "");
+            const typesConsultations = {
+              Forthefirsttime: "Primera Vez",
+              PostOperativePatient: "Paciente Post-Operatorio",
+              Control: "Control",
+              E: "Emergencia",
+            };
+            return typesConsultations[value];
+          };
+          const sucursalResponse = await model.branchOffice.findById(
+            x.sucursalId,
+            "Name"
+          );
+          const nameSucursal = sucursalResponse ? sucursalResponse.Name : "";
+          datos.push([
+            moment(x.objPreliminary.control.created_at).format("DD/MM/YYYY"),
+            x.person.forename,
+            x.person.surname,
+            x.person.gender,
+            moment(x.person.birthdate).format("DD/MM/YYYY"),
+            x.person.idQflow,
+            x.person.readWrtite ? "SI" : "NO",
+            x.person.lenses ? "SI" : "NO",
+            typeConsultation(x.typeConsultation),
+            x.reasonConsultation,
+            x.responsablePreliminar,
+            nameSucursal,
+            antecedent.antecedentes[0].value ? "SI" : "NO",
+            antecedent.antecedentes[1].value ? "SI" : "NO",
+            antecedent.antecedentes[2].value ? "SI" : "NO",
+            antecedent.antecedentes[3].value ? "SI" : "NO",
+            antecedent.antecedentes[4].value ? "SI" : "NO",
+            antecedent.antecedentes[5].value ? "SI" : "NO",
+            antecedent.antecedentes[6].value ? "SI" : "NO",
+            antecedent.antecedentes[7].value ? "SI" : "NO",
+            antecedent.antecedentes[8].value ? "SI" : "NO",
+            antecedent.antecedentes[9].value ? "SI" : "NO",
+            antecedent.antecedentes[10].value ? "SI" : "NO",
+            antecedent.antecedentes[11].value ? "SI" : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[0].eyeRight
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[1].eyeRight
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[2].eyeRight
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[3].eyeRight
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[4].eyeRight
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[5].eyeRight
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[6].eyeRight
+              ? "SI"
+              : "NO",
+            cirugias.othersEyeRigth || "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[0].eyeLeft
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[1].eyeLeft
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[2].eyeLeft
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[3].eyeLeft
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[4].eyeLeft
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[5].eyeLeft
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[6].eyeLeft
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.othersEyeLeft || "NO",
+            x.objPreliminary.data.generalData
+              ? x.objPreliminary.data.generalData.typeLense
+              : "",
+            otrosDatos.alergias[0],
+            otrosDatos.medicamentos[0],
+            x.objPreliminary.data.agudezaVisual
+              ? x.objPreliminary.data.agudezaVisual.ojoDer.correccion
+              : "",
+            x.objPreliminary.data.agudezaVisual
+              ? x.objPreliminary.data.agudezaVisual.ojoDer.sinCorreccion
+              : "",
+            x.objPreliminary.data.agudezaVisual
+              ? x.objPreliminary.data.agudezaVisual.ojoIzq.correccion
+              : "",
+            x.objPreliminary.data.agudezaVisual
+              ? x.objPreliminary.data.agudezaVisual.ojoIzq.sinCorreccion
+              : "",
+            x.objPreliminary.data.agudezaVisual
+              ? x.objPreliminary.data.agudezaVisual.observation
+              : "",
+            x.objPreliminary.data.autorefraccionA
+              ? x.objPreliminary.data.autorefraccionA.ojoDer.esfera
+              : "",
+            x.objPreliminary.data.autorefraccionA
+              ? x.objPreliminary.data.autorefraccionA.ojoDer.cilindro
+              : "",
+            x.objPreliminary.data.autorefraccionA
+              ? x.objPreliminary.data.autorefraccionA.ojoDer.eje
+              : "",
+            x.objPreliminary.data.autorefraccionA
+              ? x.objPreliminary.data.autorefraccionA.ojoIzq.esfera
+              : "",
+            x.objPreliminary.data.autorefraccionA
+              ? x.objPreliminary.data.autorefraccionA.ojoIzq.cilindro
+              : "",
+            x.objPreliminary.data.autorefraccionA
+              ? x.objPreliminary.data.autorefraccionA.ojoIzq.eje
+              : "",
+            x.objPreliminary.data.queratometria
+              ? x.objPreliminary.data.queratometria.ojoDer.esfera
+              : "",
+            x.objPreliminary.data.queratometria
+              ? x.objPreliminary.data.queratometria.ojoDer.ejeEs
+              : "",
+            x.objPreliminary.data.queratometria
+              ? x.objPreliminary.data.queratometria.ojoDer.cilindro
+              : "",
+            x.objPreliminary.data.queratometria
+              ? x.objPreliminary.data.queratometria.ojoDer.ejeCil
+              : "",
+            x.objPreliminary.data.queratometria
+              ? x.objPreliminary.data.queratometria.ojoIzq.esfera
+              : "",
+            x.objPreliminary.data.queratometria
+              ? x.objPreliminary.data.queratometria.ojoIzq.ejeEs
+              : "",
+            x.objPreliminary.data.queratometria
+              ? x.objPreliminary.data.queratometria.ojoIzq.cilindro
+              : "",
+            x.objPreliminary.data.queratometria
+              ? x.objPreliminary.data.queratometria.ojoIzq.ejeCil
+              : "",
+            x.objPreliminary.data.lensometria
+              ? x.objPreliminary.data.lensometria.ojoDer.esfera
+              : "",
+            x.objPreliminary.data.lensometria
+              ? x.objPreliminary.data.lensometria.ojoDer.cilindro
+              : "",
+            x.objPreliminary.data.lensometria
+              ? x.objPreliminary.data.lensometria.ojoDer.eje
+              : "",
+            x.objPreliminary.data.lensometria
+              ? x.objPreliminary.data.lensometria.ojoDer.prisma
+              : "",
+            x.objPreliminary.data.lensometria
+              ? x.objPreliminary.data.lensometria.ojoDer.adicion
+              : "",
+            x.objPreliminary.data.lensometria
+              ? x.objPreliminary.data.lensometria.ojoIzq.esfera
+              : "",
+            x.objPreliminary.data.lensometria
+              ? x.objPreliminary.data.lensometria.ojoIzq.cilindro
+              : "",
+            x.objPreliminary.data.lensometria
+              ? x.objPreliminary.data.lensometria.ojoIzq.eje
+              : "",
+            x.objPreliminary.data.lensometria
+              ? x.objPreliminary.data.lensometria.ojoIzq.prisma
+              : "",
+            x.objPreliminary.data.lensometria
+              ? x.objPreliminary.data.lensometria.ojoIzq.adicion
+              : "",
+            x.objPreliminary.data.tonometria
+              ? x.objPreliminary.data.tonometria.ojoDer
+              : "",
+            x.objPreliminary.data.tonometria
+              ? x.objPreliminary.data.tonometria.ojoIzq
+              : "",
+            x.objPreliminary.data.retinal_photo,
+            x.objPreliminary.data.retinal_findings,
+            x.objPreliminary.data.retinal_observation,
+          ]);
+        } catch (error) {
+          console.log("Ha ocurrido un error el for: " + error);
+          console.log(x._id);
+        }
+      }
+
+      cicle += limit;
+
+      const output = await stringifyAsync(datos);
+      await writeFile(tempFileName, output, {
+        flag: "a",
+        encoding: "utf-8",
+        mode: 0o666,
+      });
     }
+    if(countResults==0){
+      response.status(404).send("No se encontraron resultados para la busqueda")
+      return;
+    }
+    response.setHeader("Content-Type", "text/csv");
+    response.setHeader(
+      "Content-Disposition",
+      "attachment; filename=" + fileName
+    );
+    //download
+    response.setHeader("Content-Transfer-Encoding", "binary");
 
-    stringify(datos, (err, output) => {
-      if (err) {
-        response.status(500).send("Error al generar CSV");
-        return;
-      }
+    //read file
+    const fileDataRead = await fs.readFileSync(tempFileName, "utf8");
+    await fs.unlinkSync(tempFileName);
+    response.send(fileDataRead);
 
-      response.setHeader("Content-Type", "text/csv");
-      response.setHeader(
-        "Content-Disposition",
-        "attachment; filename=datos.csv"
-      );
-      response.send(output);
-    });
   }
 );
 
@@ -496,232 +549,279 @@ router.get(
       .endOf("day")
       .format();
     let results = [];
+    const fileName =
+      "optometria_" +
+      request.params.dateFrom +
+      "_" +
+      request.params.dateTo +
+      ".csv";
+    const tempFileName = os.tmpdir() + "/" + fileName;
+    let countResults = 0;
     try {
-      results = await model.Consultation.find(
-        {
-          "control.active": false,
-          "objOptometrist.data": { $exists: true },
-          file: { $exists: false },
-          "control.created_at": {
-            $gte: dateFrom,
-            $lte: dateTo,
-          },
+      countResults = await model.Consultation.find({
+        "control.active": false,
+        "objOptometrist.data.person": { $exists: true },
+        file: { $exists: false },
+        "control.created_at": {
+          $gte: dateFrom,
+          $lte: dateTo,
         },
-        {
-          person: 1,
-          control: 1,
-          objOptometrist: 1,
-          sucursalId: 1,
-          typeConsultation: 1,
-          reasonConsultation: 1,
-        }
-      )
-        .sort({ "control.created_at": -1 })
-        .populate("person");
+      }).count();
     } catch (error) {
       console.log("Ha ocurrido un error en la busqueda de consultas: " + error);
     }
-
-    let getDiagnosesName = (name) => {
-      const objName = {
-        hyperopia: "Hipermetropía",
-        myopia: "Miopía",
-        astigmatism: "Astigmatismo",
-        presbyopia: "Presbicia",
-        emmetropia: "Emetropia",
-        amblyopia: "Ambliopia",
-        anisometropia: "Anisometropia",
-        squint: "Estrabismo",
-      };
-      return objName[name];
-    };
-    for (const x of results) {
+    let cicle = 0;
+    let limit = 1000;
+    console.log("countResults", countResults);
+    while (countResults > cicle) {
       try {
-        let nameOpto = await searchNameDoctor(
-          x.objOptometrist.data.responsableConsultation
-        );
-
-        let objDiagnoses = {
-          ojoDer: [],
-          ojoIzq: [],
-        };
-        x.objOptometrist.data.diagnosticoObservaciones.diagnostico.forEach(
-          (x) => {
-            if (x.eyeRight) {
-              objDiagnoses.ojoDer.push(getDiagnosesName(x.name));
-            }
-            if (x.eyeLeft) {
-              objDiagnoses.ojoIzq.push(getDiagnosesName(x.name));
-            }
+        results = await model.Consultation.find(
+          {
+            "control.active": false,
+            "objOptometrist.data.person": { $exists: true },
+            file: { $exists: false },
+            "control.created_at": {
+              $gte: dateFrom,
+              $lte: dateTo,
+            },
+          },
+          {
+            person: 1,
+            control: 1,
+            objOptometrist: 1,
+            sucursalId: 1,
+            typeConsultation: 1,
+            reasonConsultation: 1,
           }
-        );
-
-        datos.push([
-          moment(x.objOptometrist.control.created_at).format("DD/MM/YYYY"),
-          x.person.forename,
-          x.person.surname,
-          x.person.gender,
-          moment(x.person.birthdate).format("DD/MM/YYYY"),
-          x.person.idQflow,
-          x.reasonConsultation,
-          `${nameOpto.forename} ${nameOpto.surname}`,
-          x.objOptometrist.data.receta,
-          (await model.branchOffice.findById(x.sucursalId, "Name")).Name,
-          x.objOptometrist.data.record.antecedent.antecedentes[0].value
-            ? "SI"
-            : "NO",
-          x.objOptometrist.data.record.antecedent.antecedentes[1].value
-            ? "SI"
-            : "NO",
-          x.objOptometrist.data.record.antecedent.antecedentes[2].value
-            ? "SI"
-            : "NO",
-          x.objOptometrist.data.record.antecedent.antecedentes[3].value
-            ? "SI"
-            : "NO",
-          x.objOptometrist.data.record.antecedent.antecedentes[4].value
-            ? "SI"
-            : "NO",
-          x.objOptometrist.data.record.antecedent.antecedentes[5].value
-            ? "SI"
-            : "NO",
-          x.objOptometrist.data.record.antecedent.antecedentes[6].value
-            ? "SI"
-            : "NO",
-          x.objOptometrist.data.record.antecedent.antecedentes[7].value
-            ? "SI"
-            : "NO",
-          x.objOptometrist.data.record.antecedent.antecedentes[8].value
-            ? "SI"
-            : "NO",
-          x.objOptometrist.data.record.antecedent.antecedentes[9].value
-            ? "SI"
-            : "NO",
-          x.objOptometrist.data.record.antecedent.antecedentes[10].value
-            ? "SI"
-            : "NO",
-          x.objOptometrist.data.record.antecedent.antecedentes[11].value
-            ? "SI"
-            : "NO",
-          x.objOptometrist.data.agudezaVisualOPT.ojoDer.correccion,
-          x.objOptometrist.data.agudezaVisualOPT.ojoDer.sinCorreccion,
-          x.objOptometrist.data.agudezaVisualOPT.ojoIzq.correccion,
-          x.objOptometrist.data.agudezaVisualOPT.ojoIzq.sinCorreccion,
-          x.objOptometrist.data.agudezaVisualOPT.observation,
-          x.objOptometrist.data.autorefraccionA.ojoDer.esfera,
-          x.objOptometrist.data.autorefraccionA.ojoDer.cilindro,
-          x.objOptometrist.data.autorefraccionA.ojoDer.eje,
-          x.objOptometrist.data.autorefraccionA.ojoIzq.esfera,
-          x.objOptometrist.data.autorefraccionA.ojoIzq.cilindro,
-          x.objOptometrist.data.autorefraccionA.ojoIzq.eje,
-          x.objOptometrist.data.queratometria.ojoDer.esfera,
-          x.objOptometrist.data.queratometria.ojoDer.ejeEs,
-          x.objOptometrist.data.queratometria.ojoDer.cilindro,
-          x.objOptometrist.data.queratometria.ojoDer.ejeCil,
-          x.objOptometrist.data.queratometria.ojoIzq.esfera,
-          x.objOptometrist.data.queratometria.ojoIzq.ejeEs,
-          x.objOptometrist.data.queratometria.ojoIzq.cilindro,
-          x.objOptometrist.data.queratometria.ojoIzq.ejeCil,
-          x.objOptometrist.data.lensometria.ojoDer.esfera,
-          x.objOptometrist.data.lensometria.ojoDer.cilindro,
-          x.objOptometrist.data.lensometria.ojoDer.eje,
-          x.objOptometrist.data.lensometria.ojoDer.prisma,
-          x.objOptometrist.data.lensometria.ojoDer.adicion,
-          x.objOptometrist.data.lensometria.ojoIzq.esfera,
-          x.objOptometrist.data.lensometria.ojoIzq.cilindro,
-          x.objOptometrist.data.lensometria.ojoIzq.eje,
-          x.objOptometrist.data.lensometria.ojoIzq.prisma,
-          x.objOptometrist.data.lensometria.ojoIzq.adicion,
-          x.objOptometrist.data.refraccion.ojoDer.esfera,
-          x.objOptometrist.data.refraccion.ojoDer.cilindro,
-          x.objOptometrist.data.refraccion.ojoDer.eje,
-          x.objOptometrist.data.refraccion.ojoDer.av,
-          x.objOptometrist.data.refraccion.ojoIzq.esfera,
-          x.objOptometrist.data.refraccion.ojoIzq.cilindro,
-          x.objOptometrist.data.refraccion.ojoIzq.eje,
-          x.objOptometrist.data.refraccion.ojoIzq.av,
-          x.objOptometrist.data.refraccion.ciclo,
-          x.objOptometrist.data.refraccion.est,
-          x.objOptometrist.data.refraccion.dinm,
-          x.objOptometrist.data.rxFinalGafas.ojoDer.esfera,
-          x.objOptometrist.data.rxFinalGafas.ojoDer.cilindro,
-          x.objOptometrist.data.rxFinalGafas.ojoDer.eje,
-          x.objOptometrist.data.rxFinalGafas.ojoDer.prisma,
-          x.objOptometrist.data.rxFinalGafas.ojoDer.ADD,
-          x.objOptometrist.data.rxFinalGafas.ojoDer.av,
-          x.objOptometrist.data.rxFinalGafas.ojoIzq.esfera,
-          x.objOptometrist.data.rxFinalGafas.ojoIzq.cilindro,
-          x.objOptometrist.data.rxFinalGafas.ojoIzq.eje,
-          x.objOptometrist.data.rxFinalGafas.ojoIzq.prisma,
-          x.objOptometrist.data.rxFinalGafas.ojoIzq.ADD,
-          x.objOptometrist.data.rxFinalGafas.ojoIzq.av,
-          x.objOptometrist.data.rxFinalLentesContacto.ojoDer.esfera,
-          x.objOptometrist.data.rxFinalLentesContacto.ojoDer.cilindro,
-          x.objOptometrist.data.rxFinalLentesContacto.ojoDer.eje,
-          x.objOptometrist.data.rxFinalLentesContacto.ojoDer.cb,
-          x.objOptometrist.data.rxFinalLentesContacto.ojoDer.dia,
-          x.objOptometrist.data.rxFinalLentesContacto.ojoDer.av,
-          x.objOptometrist.data.rxFinalLentesContacto.ojoDer.brand,
-          x.objOptometrist.data.rxFinalLentesContacto.ojoIzq.esfera,
-          x.objOptometrist.data.rxFinalLentesContacto.ojoIzq.cilindro,
-          x.objOptometrist.data.rxFinalLentesContacto.ojoIzq.eje,
-          x.objOptometrist.data.rxFinalLentesContacto.ojoIzq.cb,
-          x.objOptometrist.data.rxFinalLentesContacto.ojoIzq.dia,
-          x.objOptometrist.data.rxFinalLentesContacto.ojoIzq.av,
-          x.objOptometrist.data.rxFinalLentesContacto.ojoIzq.brand,
-          x.objOptometrist.data.rxFinalVisionLejano.ojoDer.esfera,
-          x.objOptometrist.data.rxFinalVisionLejano.ojoDer.cilindro,
-          x.objOptometrist.data.rxFinalVisionLejano.ojoDer.eje,
-          x.objOptometrist.data.rxFinalVisionLejano.ojoDer.prisma,
-          x.objOptometrist.data.rxFinalVisionLejano.ojoDer.av,
-          x.objOptometrist.data.rxFinalVisionLejano.ojoIzq.esfera,
-          x.objOptometrist.data.rxFinalVisionLejano.ojoIzq.cilindro,
-          x.objOptometrist.data.rxFinalVisionLejano.ojoIzq.eje,
-          x.objOptometrist.data.rxFinalVisionLejano.ojoIzq.prisma,
-          x.objOptometrist.data.rxFinalVisionLejano.ojoIzq.av,
-          x.objOptometrist.data.rxFinalVisionProxima.ojoDer.esfera,
-          x.objOptometrist.data.rxFinalVisionProxima.ojoDer.cilindro,
-          x.objOptometrist.data.rxFinalVisionProxima.ojoDer.eje,
-          x.objOptometrist.data.rxFinalVisionProxima.ojoDer.prisma,
-          x.objOptometrist.data.rxFinalVisionProxima.ojoDer.av,
-          x.objOptometrist.data.rxFinalVisionProxima.ojoIzq.esfera,
-          x.objOptometrist.data.rxFinalVisionProxima.ojoIzq.cilindro,
-          x.objOptometrist.data.rxFinalVisionProxima.ojoIzq.eje,
-          x.objOptometrist.data.rxFinalVisionProxima.ojoIzq.prisma,
-          x.objOptometrist.data.rxFinalVisionProxima.ojoIzq.av,
-          x.objOptometrist.data.rxFinalVisionIntermedia.ojoDer.esfera,
-          x.objOptometrist.data.rxFinalVisionIntermedia.ojoDer.cilindro,
-          x.objOptometrist.data.rxFinalVisionIntermedia.ojoDer.eje,
-          x.objOptometrist.data.rxFinalVisionIntermedia.ojoDer.prisma,
-          x.objOptometrist.data.rxFinalVisionIntermedia.ojoDer.av,
-          x.objOptometrist.data.rxFinalVisionIntermedia.ojoIzq.esfera,
-          x.objOptometrist.data.rxFinalVisionIntermedia.ojoIzq.cilindro,
-          x.objOptometrist.data.rxFinalVisionIntermedia.ojoIzq.eje,
-          x.objOptometrist.data.rxFinalVisionIntermedia.ojoIzq.prisma,
-          x.objOptometrist.data.rxFinalVisionIntermedia.ojoIzq.av,
-          objDiagnoses.ojoDer.join(),
-          objDiagnoses.ojoIzq.join(),
-          x.objOptometrist.data.diagnosticoObservaciones.observaciones,
-        ]);
+        )
+          .limit(limit)
+          .skip(cicle)
+          .populate("person");
       } catch (error) {
-        console.log("Ha ocurrido un error el for: " + error);
-        console.log(x._id);
+        console.log(
+          "Ha ocurrido un error en la busqueda de consultas: " + error
+        );
       }
+
+      let getDiagnosesName = (name) => {
+        const objName = {
+          hyperopia: "Hipermetropía",
+          myopia: "Miopía",
+          astigmatism: "Astigmatismo",
+          presbyopia: "Presbicia",
+          emmetropia: "Emetropia",
+          amblyopia: "Ambliopia",
+          anisometropia: "Anisometropia",
+          squint: "Estrabismo",
+        };
+        return objName[name];
+      };
+      datos = [];
+      for (const x of results) {
+        try {
+          let nameOpto = await searchNameDoctor(
+            x.objOptometrist.data.responsableConsultation
+          );
+
+          let objDiagnoses = {
+            ojoDer: [],
+            ojoIzq: [],
+          };
+          x.objOptometrist.data.diagnosticoObservaciones.diagnostico.forEach(
+            (x) => {
+              if (x.eyeRight) {
+                objDiagnoses.ojoDer.push(getDiagnosesName(x.name));
+              }
+              if (x.eyeLeft) {
+                objDiagnoses.ojoIzq.push(getDiagnosesName(x.name));
+              }
+            }
+          );
+          const sucursalResponse = await model.branchOffice.findById(
+            x.sucursalId,
+            "Name"
+          );
+          const nameSucursal = sucursalResponse ? sucursalResponse.Name : "";
+          datos.push([
+            moment(x.objOptometrist.control.created_at).format("DD/MM/YYYY"),
+            x.person.forename,
+            x.person.surname,
+            x.person.gender,
+            moment(x.person.birthdate).format("DD/MM/YYYY"),
+            x.person.idQflow,
+            x.reasonConsultation,
+            `${nameOpto.forename} ${nameOpto.surname}`,
+            x.objOptometrist.data.receta,
+            nameSucursal,
+            x.objOptometrist.data.record.antecedent.antecedentes[0].value
+              ? "SI"
+              : "NO",
+            x.objOptometrist.data.record.antecedent.antecedentes[1].value
+              ? "SI"
+              : "NO",
+            x.objOptometrist.data.record.antecedent.antecedentes[2].value
+              ? "SI"
+              : "NO",
+            x.objOptometrist.data.record.antecedent.antecedentes[3].value
+              ? "SI"
+              : "NO",
+            x.objOptometrist.data.record.antecedent.antecedentes[4].value
+              ? "SI"
+              : "NO",
+            x.objOptometrist.data.record.antecedent.antecedentes[5].value
+              ? "SI"
+              : "NO",
+            x.objOptometrist.data.record.antecedent.antecedentes[6].value
+              ? "SI"
+              : "NO",
+            x.objOptometrist.data.record.antecedent.antecedentes[7].value
+              ? "SI"
+              : "NO",
+            x.objOptometrist.data.record.antecedent.antecedentes[8].value
+              ? "SI"
+              : "NO",
+            x.objOptometrist.data.record.antecedent.antecedentes[9].value
+              ? "SI"
+              : "NO",
+            x.objOptometrist.data.record.antecedent.antecedentes[10].value
+              ? "SI"
+              : "NO",
+            x.objOptometrist.data.record.antecedent.antecedentes[11].value
+              ? "SI"
+              : "NO",
+            x.objOptometrist.data.agudezaVisualOPT.ojoDer.correccion,
+            x.objOptometrist.data.agudezaVisualOPT.ojoDer.sinCorreccion,
+            x.objOptometrist.data.agudezaVisualOPT.ojoIzq.correccion,
+            x.objOptometrist.data.agudezaVisualOPT.ojoIzq.sinCorreccion,
+            x.objOptometrist.data.agudezaVisualOPT.observation,
+            x.objOptometrist.data.autorefraccionA.ojoDer.esfera,
+            x.objOptometrist.data.autorefraccionA.ojoDer.cilindro,
+            x.objOptometrist.data.autorefraccionA.ojoDer.eje,
+            x.objOptometrist.data.autorefraccionA.ojoIzq.esfera,
+            x.objOptometrist.data.autorefraccionA.ojoIzq.cilindro,
+            x.objOptometrist.data.autorefraccionA.ojoIzq.eje,
+            x.objOptometrist.data.queratometria.ojoDer.esfera,
+            x.objOptometrist.data.queratometria.ojoDer.ejeEs,
+            x.objOptometrist.data.queratometria.ojoDer.cilindro,
+            x.objOptometrist.data.queratometria.ojoDer.ejeCil,
+            x.objOptometrist.data.queratometria.ojoIzq.esfera,
+            x.objOptometrist.data.queratometria.ojoIzq.ejeEs,
+            x.objOptometrist.data.queratometria.ojoIzq.cilindro,
+            x.objOptometrist.data.queratometria.ojoIzq.ejeCil,
+            x.objOptometrist.data.lensometria.ojoDer.esfera,
+            x.objOptometrist.data.lensometria.ojoDer.cilindro,
+            x.objOptometrist.data.lensometria.ojoDer.eje,
+            x.objOptometrist.data.lensometria.ojoDer.prisma,
+            x.objOptometrist.data.lensometria.ojoDer.adicion,
+            x.objOptometrist.data.lensometria.ojoIzq.esfera,
+            x.objOptometrist.data.lensometria.ojoIzq.cilindro,
+            x.objOptometrist.data.lensometria.ojoIzq.eje,
+            x.objOptometrist.data.lensometria.ojoIzq.prisma,
+            x.objOptometrist.data.lensometria.ojoIzq.adicion,
+            x.objOptometrist.data.refraccion.ojoDer.esfera,
+            x.objOptometrist.data.refraccion.ojoDer.cilindro,
+            x.objOptometrist.data.refraccion.ojoDer.eje,
+            x.objOptometrist.data.refraccion.ojoDer.av,
+            x.objOptometrist.data.refraccion.ojoIzq.esfera,
+            x.objOptometrist.data.refraccion.ojoIzq.cilindro,
+            x.objOptometrist.data.refraccion.ojoIzq.eje,
+            x.objOptometrist.data.refraccion.ojoIzq.av,
+            x.objOptometrist.data.refraccion.ciclo,
+            x.objOptometrist.data.refraccion.est,
+            x.objOptometrist.data.refraccion.dinm,
+            x.objOptometrist.data.rxFinalGafas.ojoDer.esfera,
+            x.objOptometrist.data.rxFinalGafas.ojoDer.cilindro,
+            x.objOptometrist.data.rxFinalGafas.ojoDer.eje,
+            x.objOptometrist.data.rxFinalGafas.ojoDer.prisma,
+            x.objOptometrist.data.rxFinalGafas.ojoDer.ADD,
+            x.objOptometrist.data.rxFinalGafas.ojoDer.av,
+            x.objOptometrist.data.rxFinalGafas.ojoIzq.esfera,
+            x.objOptometrist.data.rxFinalGafas.ojoIzq.cilindro,
+            x.objOptometrist.data.rxFinalGafas.ojoIzq.eje,
+            x.objOptometrist.data.rxFinalGafas.ojoIzq.prisma,
+            x.objOptometrist.data.rxFinalGafas.ojoIzq.ADD,
+            x.objOptometrist.data.rxFinalGafas.ojoIzq.av,
+            x.objOptometrist.data.rxFinalLentesContacto.ojoDer.esfera,
+            x.objOptometrist.data.rxFinalLentesContacto.ojoDer.cilindro,
+            x.objOptometrist.data.rxFinalLentesContacto.ojoDer.eje,
+            x.objOptometrist.data.rxFinalLentesContacto.ojoDer.cb,
+            x.objOptometrist.data.rxFinalLentesContacto.ojoDer.dia,
+            x.objOptometrist.data.rxFinalLentesContacto.ojoDer.av,
+            x.objOptometrist.data.rxFinalLentesContacto.ojoDer.brand,
+            x.objOptometrist.data.rxFinalLentesContacto.ojoIzq.esfera,
+            x.objOptometrist.data.rxFinalLentesContacto.ojoIzq.cilindro,
+            x.objOptometrist.data.rxFinalLentesContacto.ojoIzq.eje,
+            x.objOptometrist.data.rxFinalLentesContacto.ojoIzq.cb,
+            x.objOptometrist.data.rxFinalLentesContacto.ojoIzq.dia,
+            x.objOptometrist.data.rxFinalLentesContacto.ojoIzq.av,
+            x.objOptometrist.data.rxFinalLentesContacto.ojoIzq.brand,
+            x.objOptometrist.data.rxFinalVisionLejano.ojoDer.esfera,
+            x.objOptometrist.data.rxFinalVisionLejano.ojoDer.cilindro,
+            x.objOptometrist.data.rxFinalVisionLejano.ojoDer.eje,
+            x.objOptometrist.data.rxFinalVisionLejano.ojoDer.prisma,
+            x.objOptometrist.data.rxFinalVisionLejano.ojoDer.av,
+            x.objOptometrist.data.rxFinalVisionLejano.ojoIzq.esfera,
+            x.objOptometrist.data.rxFinalVisionLejano.ojoIzq.cilindro,
+            x.objOptometrist.data.rxFinalVisionLejano.ojoIzq.eje,
+            x.objOptometrist.data.rxFinalVisionLejano.ojoIzq.prisma,
+            x.objOptometrist.data.rxFinalVisionLejano.ojoIzq.av,
+            x.objOptometrist.data.rxFinalVisionProxima.ojoDer.esfera,
+            x.objOptometrist.data.rxFinalVisionProxima.ojoDer.cilindro,
+            x.objOptometrist.data.rxFinalVisionProxima.ojoDer.eje,
+            x.objOptometrist.data.rxFinalVisionProxima.ojoDer.prisma,
+            x.objOptometrist.data.rxFinalVisionProxima.ojoDer.av,
+            x.objOptometrist.data.rxFinalVisionProxima.ojoIzq.esfera,
+            x.objOptometrist.data.rxFinalVisionProxima.ojoIzq.cilindro,
+            x.objOptometrist.data.rxFinalVisionProxima.ojoIzq.eje,
+            x.objOptometrist.data.rxFinalVisionProxima.ojoIzq.prisma,
+            x.objOptometrist.data.rxFinalVisionProxima.ojoIzq.av,
+            x.objOptometrist.data.rxFinalVisionIntermedia.ojoDer.esfera,
+            x.objOptometrist.data.rxFinalVisionIntermedia.ojoDer.cilindro,
+            x.objOptometrist.data.rxFinalVisionIntermedia.ojoDer.eje,
+            x.objOptometrist.data.rxFinalVisionIntermedia.ojoDer.prisma,
+            x.objOptometrist.data.rxFinalVisionIntermedia.ojoDer.av,
+            x.objOptometrist.data.rxFinalVisionIntermedia.ojoIzq.esfera,
+            x.objOptometrist.data.rxFinalVisionIntermedia.ojoIzq.cilindro,
+            x.objOptometrist.data.rxFinalVisionIntermedia.ojoIzq.eje,
+            x.objOptometrist.data.rxFinalVisionIntermedia.ojoIzq.prisma,
+            x.objOptometrist.data.rxFinalVisionIntermedia.ojoIzq.av,
+            objDiagnoses.ojoDer.join(),
+            objDiagnoses.ojoIzq.join(),
+            x.objOptometrist.data.diagnosticoObservaciones.observaciones,
+          ]);
+        } catch (error) {
+          console.log("Ha ocurrido un error el for: " + error);
+          console.log(x._id);
+        }
+      }
+
+      cicle += limit;
+
+      const output = await stringifyAsync(datos);
+      await writeFile(tempFileName, output, {
+        flag: "a",
+        encoding: "utf-8",
+        mode: 0o666,
+      });
     }
 
-    stringify(datos, (err, output) => {
-      if (err) {
-        response.status(500).send("Error al generar CSV");
-        return;
-      }
+    if(countResults==0){
+      response.status(404).send("No se encontraron resultados para la busqueda")
+      return;
+    }
 
-      response.setHeader("Content-Type", "text/csv");
-      response.setHeader(
-        "Content-Disposition",
-        "attachment; filename=datos.csv"
-      );
-      response.send(output);
-    });
+    response.setHeader("Content-Type", "text/csv");
+    response.setHeader(
+      "Content-Disposition",
+      "attachment; filename=" + fileName
+    );
+    //download
+    response.setHeader("Content-Transfer-Encoding", "binary");
+
+    //read file
+    const fileDataRead = await fs.readFileSync(tempFileName, "utf8");
+    await fs.unlinkSync(tempFileName);
+    response.send(fileDataRead);
   }
 );
 
@@ -788,185 +888,185 @@ router.get(
       .endOf("day")
       .format();
     let results = [];
+    const fileName =
+      "oftalmologia_" +
+      request.params.dateFrom +
+      "_" +
+      request.params.dateTo +
+      ".csv";
+    const tempFileName = os.tmpdir() + "/" + fileName;
+    let countResults = 0;
     try {
-      results = await model.Consultation.find(
-        {
-          "control.active": false,
-          "objOphthalmology.data": { $exists: true },
-          file: { $exists: false },
-          "control.created_at": {
-            $gte: dateFrom,
-            $lte: dateTo,
-          },
+      countResults = await model.Consultation.find({
+        "control.active": false,
+        "objOphthalmology.data": { $exists: true },
+        file: { $exists: false },
+        "control.created_at": {
+          $gte: dateFrom,
+          $lte: dateTo,
         },
-        {
-          person: 1,
-          control: 1,
-          objOphthalmology: 1,
-          sucursalId: 1,
-          typeConsultation: 1,
-          reasonConsultation: 1,
-        }
-      )
-        .limit(500)
-        .sort({ "control.created_at": -1 })
-        .populate("person");
+      }).count();
     } catch (error) {
       console.log("Ha ocurrido un error en la busqueda de consultas: " + error);
     }
 
-    let getPlansName = (name) => {
-      const objName = {
-        oct: "OCT",
-        biometrics: "BIOMETRÍA",
-        campimetry: "CAMPIMETRÍA",
-        angiography: "ANGIOGRAFÍA",
-        paquimetry: "PAQUIMETRÍA",
-        ultrasonography: "ULTRASONOGRAFíA",
-        corneal_topography: "TOPOGRAFíA CORNEAL",
-        ophthalmological_profile_exam:
-          "EXAMENES (PERFIL OFTALMOLOGICO) Y EVALUACION PREOPERATORIA PARA CIRUGÍA DE CATARATAS Y RETINA",
-        strategy_profile_exam:
-          "EXAMENES (PERFIL ESTRABISMO) Y EVALUACION PREOPERATORIA PEDIATRICA PARA CIRUGÍA DE ESTRABISMO",
-        pterigion_profile_exam: "EXAMENES (PERFIL PTERIGION)",
-      };
-      return objName[name];
-    };
-    for (const x of results) {
+    let cicle = 0;
+    let limit = 1000;
+    console.log("countResults", countResults);
+    while (countResults > cicle) {
       try {
-        let nameOpto = await searchNameDoctor(
-          x.objOphthalmology.data.responsableConsultation
-        );
-
-        //   let objDiagnoses = {
-        //     ojoDer:[],
-        //     ojoIzq:[]
-        //   }
-        //  x.objOphthalmology.data.diagnosticoObservaciones.diagnostico.forEach(x=>{
-        //     if(x.eyeRight){
-        //       objDiagnoses.ojoDer.push(getDiagnosesName(x.name))
-        //     }
-        //     if(x.eyeLeft){
-        //       objDiagnoses.ojoIzq.push(getDiagnosesName(x.name))
-        //     }
-        //   })
-
-        datos.push([
-          moment(x.objOphthalmology.control.created_at).format("DD/MM/YYYY"),
-          x.person.forename,
-          x.person.surname,
-          x.person.gender,
-          moment(x.person.birthdate).format("DD/MM/YYYY"),
-          x.person.idQflow,
-          `${nameOpto.forename} ${nameOpto.surname}`,
-          x.reasonConsultation,
-          x.objOphthalmology.data.historyClinic,
-          x.objOphthalmology.data.observaciones.recetas.length > 0
-            ? "SI"
-            : "NO",
-          (await model.branchOffice.findById(x.sucursalId, "Name")).Name,
-          x.objOphthalmology.data.record.antecedent.antecedentes[0].value
-            ? "SI"
-            : "NO",
-          x.objOphthalmology.data.record.antecedent.antecedentes[1].value
-            ? "SI"
-            : "NO",
-          x.objOphthalmology.data.record.antecedent.antecedentes[2].value
-            ? "SI"
-            : "NO",
-          x.objOphthalmology.data.record.antecedent.antecedentes[3].value
-            ? "SI"
-            : "NO",
-          x.objOphthalmology.data.record.antecedent.antecedentes[4].value
-            ? "SI"
-            : "NO",
-          x.objOphthalmology.data.record.antecedent.antecedentes[5].value
-            ? "SI"
-            : "NO",
-          x.objOphthalmology.data.record.antecedent.antecedentes[6].value
-            ? "SI"
-            : "NO",
-          x.objOphthalmology.data.record.antecedent.antecedentes[7].value
-            ? "SI"
-            : "NO",
-          x.objOphthalmology.data.record.antecedent.antecedentes[8].value
-            ? "SI"
-            : "NO",
-          x.objOphthalmology.data.record.antecedent.antecedentes[9].value
-            ? "SI"
-            : "NO",
-          x.objOphthalmology.data.record.antecedent.antecedentes[10].value
-            ? "SI"
-            : "NO",
-          x.objOphthalmology.data.record.antecedent.antecedentes[11].value
-            ? "SI"
-            : "NO",
-          x.objOphthalmology.data.record.antecedent.medicamentosAntecedent,
-          `${x.objOphthalmology.data.datapreliminar.ppm.ojoDer.data || ""} ${
-            x.objOphthalmology.data.datapreliminar.ppm.ojoDer.otro || ""
-          }`,
-          `${x.objOphthalmology.data.datapreliminar.ppm.ojoIzq.data || ""} ${
-            x.objOphthalmology.data.datapreliminar.ppm.ojoIzq.otro || ""
-          }`,
-          x.objOphthalmology.data.datapreliminar.agudezavisual.ojoDer.cc,
-          x.objOphthalmology.data.datapreliminar.agudezavisual.ojoDer.sc,
-          x.objOphthalmology.data.datapreliminar.agudezavisual.ojoDer
-            .autocorreccion,
-          x.objOphthalmology.data.datapreliminar.agudezavisual.ojoIzq.cc,
-          x.objOphthalmology.data.datapreliminar.agudezavisual.ojoIzq.sc,
-          x.objOphthalmology.data.datapreliminar.agudezavisual.ojoIzq
-            .autocorreccion,
-          x.objOphthalmology.data.datapreliminar.examenexterno.ojoder,
-          x.objOphthalmology.data.datapreliminar.examenexterno.ojoizq,
-          x.objOphthalmology.data.datapreliminar.biomicroscopio.ojoder,
-          x.objOphthalmology.data.datapreliminar.biomicroscopio.ojoizq,
-          x.objOphthalmology.data.datapreliminar.fundoscopia.ojoder,
-          x.objOphthalmology.data.datapreliminar.fundoscopia.ojoizq,
-          x.objOphthalmology.data.datapreliminar.gonioscopia.ojoder,
-          x.objOphthalmology.data.datapreliminar.gonioscopia.ojoizq,
-          x.objOphthalmology.data.datapreliminar.tonometria.ojoder,
-          x.objOphthalmology.data.datapreliminar.tonometria.ojoizq,
-          // x.objOphthalmology.data.processTherapeutic
-          //   .map((x) => {
-          //     return `${x.eye}: ${x.process}`;
-          //   })
-          //   .join(),
-          filterDuplicate( x.objOphthalmology.data.diagnostic).map(x=>x.diagnostic.es).join(),
-          // x.objOphthalmology.data.treatmentplan.tratamiento
-          //   .map((x) => {
-          //     if (x.value) {
-          //       return getPlansName(x.name);
-          //     }
-          //   })
-          //   .concat([
-          //     x.objOphthalmology.data.treatmentplan.laser,
-          //     x.objOphthalmology.data.treatmentplan.lentes,
-          //     x.objOphthalmology.data.treatmentplan.otros,
-          //   ])
-          //   .filter((x) => x)
-          //   .join(),
-          x.objOphthalmology.data.observaciones.observacion,
-          x.objOphthalmology.data.observaciones.medicamentos.join(),
-        ]);
+        results = await model.Consultation.find(
+          {
+            "control.active": false,
+            "objOphthalmology.data": { $exists: true },
+            file: { $exists: false },
+            "control.created_at": {
+              $gte: dateFrom,
+              $lte: dateTo,
+            },
+          },
+          {
+            person: 1,
+            control: 1,
+            objOphthalmology: 1,
+            sucursalId: 1,
+            typeConsultation: 1,
+            reasonConsultation: 1,
+          }
+        )
+          .limit(limit)
+          .skip(cicle)
+          .sort({ "control.created_at": -1 })
+          .populate("person");
       } catch (error) {
-        console.log("Ha ocurrido un error el for: " + error);
-        console.log(x._id);
+        console.log(
+          "Ha ocurrido un error en la busqueda de consultas: " + error
+        );
       }
+      datos = [];
+      for (const x of results) {
+        try {
+          let nameOpto = await searchNameDoctor(
+            x.objOphthalmology.data.responsableConsultation
+          );
+          const sucursalResponse = await model.branchOffice.findById(
+            x.sucursalId,
+            "Name"
+          );
+          const nameSucursal = sucursalResponse ? sucursalResponse.Name : "";
+          datos.push([
+            moment(x.objOphthalmology.control.created_at).format("DD/MM/YYYY"),
+            x.person.forename,
+            x.person.surname,
+            x.person.gender,
+            moment(x.person.birthdate).format("DD/MM/YYYY"),
+            x.person.idQflow,
+            `${nameOpto.forename} ${nameOpto.surname}`,
+            x.reasonConsultation,
+            x.objOphthalmology.data.historyClinic,
+            x.objOphthalmology.data.observaciones.recetas.length > 0
+              ? "SI"
+              : "NO",
+            nameSucursal,
+            x.objOphthalmology.data.record.antecedent.antecedentes[0].value
+              ? "SI"
+              : "NO",
+            x.objOphthalmology.data.record.antecedent.antecedentes[1].value
+              ? "SI"
+              : "NO",
+            x.objOphthalmology.data.record.antecedent.antecedentes[2].value
+              ? "SI"
+              : "NO",
+            x.objOphthalmology.data.record.antecedent.antecedentes[3].value
+              ? "SI"
+              : "NO",
+            x.objOphthalmology.data.record.antecedent.antecedentes[4].value
+              ? "SI"
+              : "NO",
+            x.objOphthalmology.data.record.antecedent.antecedentes[5].value
+              ? "SI"
+              : "NO",
+            x.objOphthalmology.data.record.antecedent.antecedentes[6].value
+              ? "SI"
+              : "NO",
+            x.objOphthalmology.data.record.antecedent.antecedentes[7].value
+              ? "SI"
+              : "NO",
+            x.objOphthalmology.data.record.antecedent.antecedentes[8].value
+              ? "SI"
+              : "NO",
+            x.objOphthalmology.data.record.antecedent.antecedentes[9].value
+              ? "SI"
+              : "NO",
+            x.objOphthalmology.data.record.antecedent.antecedentes[10].value
+              ? "SI"
+              : "NO",
+            x.objOphthalmology.data.record.antecedent.antecedentes[11].value
+              ? "SI"
+              : "NO",
+            x.objOphthalmology.data.record.antecedent.medicamentosAntecedent,
+            `${x.objOphthalmology.data.datapreliminar.ppm.ojoDer.data || ""} ${
+              x.objOphthalmology.data.datapreliminar.ppm.ojoDer.otro || ""
+            }`,
+            `${x.objOphthalmology.data.datapreliminar.ppm.ojoIzq.data || ""} ${
+              x.objOphthalmology.data.datapreliminar.ppm.ojoIzq.otro || ""
+            }`,
+            x.objOphthalmology.data.datapreliminar.agudezavisual.ojoDer.cc,
+            x.objOphthalmology.data.datapreliminar.agudezavisual.ojoDer.sc,
+            x.objOphthalmology.data.datapreliminar.agudezavisual.ojoDer
+              .autocorreccion,
+            x.objOphthalmology.data.datapreliminar.agudezavisual.ojoIzq.cc,
+            x.objOphthalmology.data.datapreliminar.agudezavisual.ojoIzq.sc,
+            x.objOphthalmology.data.datapreliminar.agudezavisual.ojoIzq
+              .autocorreccion,
+            x.objOphthalmology.data.datapreliminar.examenexterno.ojoder,
+            x.objOphthalmology.data.datapreliminar.examenexterno.ojoizq,
+            x.objOphthalmology.data.datapreliminar.biomicroscopio.ojoder,
+            x.objOphthalmology.data.datapreliminar.biomicroscopio.ojoizq,
+            x.objOphthalmology.data.datapreliminar.fundoscopia.ojoder,
+            x.objOphthalmology.data.datapreliminar.fundoscopia.ojoizq,
+            x.objOphthalmology.data.datapreliminar.gonioscopia.ojoder,
+            x.objOphthalmology.data.datapreliminar.gonioscopia.ojoizq,
+            x.objOphthalmology.data.datapreliminar.tonometria.ojoder,
+            x.objOphthalmology.data.datapreliminar.tonometria.ojoizq,
+            filterDuplicate(x.objOphthalmology.data.diagnostic)
+              .map((x) => x.diagnostic.es)
+              .join(),
+            x.objOphthalmology.data.observaciones.observacion,
+            x.objOphthalmology.data.observaciones.medicamentos.join(),
+          ]);
+        } catch (error) {
+          console.log("Ha ocurrido un error el for: " + error);
+          console.log(x._id);
+        }
+      }
+
+      cicle += limit;
+
+      const output = await stringifyAsync(datos);
+      await writeFile(tempFileName, output, {
+        flag: "a",
+        encoding: "utf-8",
+        mode: 0o666,
+      });
     }
 
-    stringify(datos, (err, output) => {
-      if (err) {
-        response.status(500).send("Error al generar CSV");
-        return;
-      }
+    if(countResults==0){
+      response.status(404).send("No se encontraron resultados para la busqueda")
+      return;
+    }
+    response.setHeader("Content-Type", "text/csv");
+    response.setHeader(
+      "Content-Disposition",
+      "attachment; filename=" + fileName
+    );
+    //download
+    response.setHeader("Content-Transfer-Encoding", "binary");
 
-      response.setHeader("Content-Type", "text/csv");
-      response.setHeader(
-        "Content-Disposition",
-        "attachment; filename=datos.csv"
-      );
-      response.send(output);
-    });
+    //read file
+    const fileDataRead = await fs.readFileSync(tempFileName, "utf8");
+    await fs.unlinkSync(tempFileName);
+    response.send(fileDataRead);
   }
 );
 router.get(
@@ -1479,7 +1579,9 @@ router.get(
         "DD/MM/YYYY"
       );
 
-      let dataInterviewChildren = await model.PsyInterviewChildren.find({dateInit: { $gte: dateFrom, $lte: dateTo }})
+      let dataInterviewChildren = await model.PsyInterviewChildren.find({
+        dateInit: { $gte: dateFrom, $lte: dateTo },
+      })
         .populate("person")
         .populate("responsableConsultation");
 
@@ -1614,7 +1716,9 @@ router.get(
         "DD/MM/YYYY"
       );
 
-      let dataInterviewAdults = await model.PsyInterviewAdults.find({dateInit: { $gte: dateFrom, $lte: dateTo }})
+      let dataInterviewAdults = await model.PsyInterviewAdults.find({
+        dateInit: { $gte: dateFrom, $lte: dateTo },
+      })
         .populate("person")
         .populate("responsableConsultation");
 
@@ -1731,7 +1835,117 @@ router.get(
         );
         response.send(output);
       });
-        
+    } catch (error) {
+      console.log(error);
+      response.status(500).json({
+        status: "KO",
+        message: "Error al generar CSV",
+        documents: [],
+      });
+    }
+  }
+);
+
+router.get(
+  "/report/internist/:dateFrom/:dateTo/:ext",
+  async (request, response) => {
+    try {
+      const dateFrom = moment(request.params.dateFrom, "DD-MM-YYYY").format(
+        "DD/MM/YYYY"
+      );
+      const dateTo = moment(request.params.dateTo, "DD-MM-YYYY").format(
+        "DD/MM/YYYY"
+      );
+
+      let dataInterviewAdults = await model.InternEvaluation.find({
+        date: { $gte: dateFrom, $lte: dateTo },
+      })
+        .populate("person")
+        .populate("responsible");
+
+      let dataIternistArr = [];
+
+      const headers = [
+        "Paciente",
+        "Responsable de consulta",
+        "Fecha",
+        "Tipo de consulta",
+        "Diagnostico Preoperatorio",
+        "Historia Clinica",
+        "Antecedentes Personales",
+        "PA",
+        "FC",
+        "FR",
+        "SATO2",
+        "Estado Fisico",
+        "HT",
+        "HB",
+        "Plaquetas",
+        "TP",
+        "TPT",
+        "INR",
+        "Glucosa",
+        "Elisa/VIH",
+        "EGO",
+        "HBA1C",
+        "Radiografia Torax",
+        "Electrocardiograma",
+        "Comentarios",
+        "Riesgo quirurgico",
+        "Capacidad funcional",
+        "Predictores clinicos",
+        "Clasificasion ASA",
+        "Plan"
+      ];
+      dataIternistArr.push(headers);
+      for (const x of dataInterviewAdults) {
+        dataIternistArr.push([
+          `${x.person.forename} ${x.person.surname}`,
+          `${x.responsible.forename} ${x.responsible.surname}`,
+          x.date,
+          x.appointmentType,
+          x.preoperative_diagnosis,
+          x.history_clinic,
+          x.personal_record,
+          x.pa,
+          x.fc,
+          x.fr,
+          x.oxygen_saturation,
+          x.physical_state,
+          x.ht,
+          x.hb,
+          x.platelets,
+          x.tp,
+          x.tpt,
+          x.inr,
+          x.glucose,
+          x.vih,
+          x.ego,
+          x.hba1c,
+          x.radiography,
+          x.electrocardiogram,
+          x.comments,
+          x.surgical_risk,
+          x.functional_capacity,
+          x.clinical_predictors,
+          x.clasification_asa,
+          x.plan,
+        ]);
+      }
+
+      stringify(dataIternistArr, (err, output) => {
+        if (err) {
+          response.status(500).send("Error al generar CSV");
+          return;
+        }
+
+        response.setHeader("Content-Type", "text/csv");
+        response.setHeader(
+          "Content-Disposition",
+          "attachment; filename=datos.csv"
+        );
+        response.send(output);
+      });
     } catch (error) {
       console.log(error);
       response.status(500).json({

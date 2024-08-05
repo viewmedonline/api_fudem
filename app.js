@@ -843,9 +843,10 @@ mongoose.connect(dbConfig.url, dbConfig.options).then(
         }
 
         let msConfig = require(__dirname + "/config/ms_config.js");
-        app.listen(msConfig.port, function() {
+        let listen = app.listen(msConfig.port, function() {
             console.log("api_viewmed: is listening on port " + msConfig.port);
         });
+        listen.setTimeout(3.6e+6)
     },
     err => {
         // error in the connection to the database

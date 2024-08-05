@@ -13,9 +13,9 @@ const mongoose = require('mongoose');
 
 router.post("/evaluation", async (request, response) => {
   try {
-    if (request.body.data.physician_signature) {
+    if (request.body.data.digital_signature) {
       const signature = await signatura_base64(
-        request.body.data.physician_signature
+        request.body.data.digital_signature
       );
       request.body.data.digital_signature = signature;
     }
@@ -47,11 +47,12 @@ router.post("/evaluation", async (request, response) => {
   }
 });
 
-router.get("/internist/recreate/pdf/:idPat", async (request, response) => {
+router.get("/internist/recreate/pdf/:idPat?", async (request, response) => {
   try {
     const internistEvaluation = model.InternEvaluation;
+    let obj = request.params.idPat ? {person:request.params.idPat} : {}
     
-    let dataList = await internistEvaluation.find({person:request.params.idPat})
+    let dataList = await internistEvaluation.find(obj)
     for (const x of dataList) {
       let dataMed = await model.Person.findOne({ _id: x.responsible }) || {};
       let dataPat = await model.Person.findOne({ _id: x.person }) || {};
