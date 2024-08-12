@@ -19,12 +19,12 @@ Handlebars.registerHelper("incremented", function (index) {
   return index + 1;
 });
 
-Handlebars.registerHelper('eq', function(a, b) {
+Handlebars.registerHelper("eq", function (a, b) {
   return a === b;
 });
 
-Handlebars.registerHelper('ifNotEquals', function(arg1, arg2, options) {
-  return (arg1 != arg2) ? options.fn(this) : options.inverse(this);
+Handlebars.registerHelper("ifNotEquals", function (arg1, arg2, options) {
+  return arg1 != arg2 ? options.fn(this) : options.inverse(this);
 });
 
 const logo_fudem_base64 = readFileSync(
@@ -151,6 +151,10 @@ const save_file = async (name, file_buffer) => {
       resolve(fileId);
     });
   });
+  await model.Chunks.updateOne(
+    { files_id: fileId },
+    { $set: { date: Date.now() } }
+  );
   return fileId;
 };
 
@@ -190,5 +194,5 @@ module.exports = {
   signatura_base64,
   create_report_pdf,
   save_file,
-  deleteFile
+  deleteFile,
 };

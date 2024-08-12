@@ -289,6 +289,16 @@ let fileSchema = new Schema(
   { versionKey: false }
 );
 
+let chunkSchema = new Schema(
+  {
+    _id: false,
+    n: Number,
+    data: Buffer,
+    date: { type: Date, default: Date.now },
+  },
+  { versionKey: false }
+);
+
 let consultationSchema = new Schema(
   {
     reasonConsultation: String,
@@ -520,14 +530,16 @@ let psyProcessSchema = new Schema(
     stateProcess: String,
     dateStart: Date,
     dateEnd: Date,
-    createdAt:{ type: Date, default: Date.now },
+    createdAt: { type: Date, default: Date.now },
     problemSummary: String,
     diagnosticImpression: String,
     diagnostic: [String],
-    descriptions:[{
-      description: String,
-      date: String,
-    }],
+    descriptions: [
+      {
+        description: String,
+        date: String,
+      },
+    ],
     active: { type: Boolean, default: true },
     pdf: { type: Schema.Types.ObjectId, ref: "fs.file" },
     responsableConsultation: { type: Schema.Types.ObjectId, ref: "Person" },
@@ -581,7 +593,7 @@ let psyInterviewChildrenSchema = new Schema(
     pregnancyMotherProblem: String,
     pregnancyMotherAbuse: String,
     pregnancyMotherPsiProblem: String,
-    childBirth : String,
+    childBirth: String,
     cordComplication: String,
     responsablePhone: String,
   },
@@ -637,7 +649,6 @@ let psyInterviewAdultsSchema = new Schema(
     suicideAttempt: String,
     suicideAttemptDescription: String,
     whatDidAfterSuicideAttempts: String,
-
   },
   { versionKey: false }
 );
@@ -713,7 +724,7 @@ let perdiatricSchema = new Schema(
     clinical_predictors: String,
     clasification_asa: String,
     plan: String,
-    diagnosis:String,
+    diagnosis: String,
     date: Date,
     control: { type: controlSchema, required: true, default: {} },
   },
@@ -794,7 +805,7 @@ let nutritionistSchema = new Schema(
     diagnosesImg1: String,
     diagnosesImg2: String,
     diagnosesImg3: String,
-    diagnosesImg4: String, 
+    diagnosesImg4: String,
     control: { type: controlSchema, required: true, default: {} },
   },
   { versionKey: false }
@@ -866,6 +877,7 @@ module.exports = {
   ),
   Consultation: mongoose.model("Consultation", consultationSchema),
   File: mongoose.model("fs.file", fileSchema),
+  Chunks: mongoose.model("fs.chunks", chunkSchema),
   Imaging: mongoose.model("Imaging", imagingSchema),
   Constancy: mongoose.model("Constancy", constancyShema),
   branchOffice: mongoose.model("branchOffice", branchOfficeSchema),
