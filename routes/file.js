@@ -100,7 +100,6 @@ router.put("/store_file/:fileName", (request, response) => {
             function (callback) {
               data.on("close", function (file) {
                 fileId = file._id;
-
                 callback(null, null);
               });
             },
