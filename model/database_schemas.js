@@ -304,8 +304,8 @@ let consultationSchema = new Schema(
     reasonConsultation: String,
     typeConsultation: String,
     agudezaVisual: {
-      ojoDer: { correccion: String, sinCorreccion: String },
-      ojoIzq: { correccion: String, sinCorreccion: String },
+      ojoDer: { correccion: String, sinCorreccion: String, optotipo: String },
+      ojoIzq: { correccion: String, sinCorreccion: String, optotipo: String },
       observation: String,
     },
     autorefraccionA: {
@@ -350,13 +350,16 @@ let consultationSchema = new Schema(
         sinCorreccion: String,
         ph: String,
         autoTonometria: String,
+        optotipo: String,
       },
       ojoIzq: {
         correccion: String,
         sinCorreccion: String,
         ph: String,
         autoTonometria: String,
+        optotipo: String,
       },
+      observation: String,
     },
     refraccion: {
       ciclo: { type: Boolean, default: false },
@@ -461,8 +464,19 @@ let consultationSchema = new Schema(
         ojoIzq: { dato: String, otro: String },
       },
       agudezavisual: {
-        ojoDer: { sc: String, cc: String, autocorreccion: String },
-        ojoIzq: { sc: String, cc: String, autocorreccion: String },
+        ojoDer: {
+          sc: String,
+          cc: String,
+          autocorreccion: String,
+          optotipo: String,
+        },
+        ojoIzq: {
+          sc: String,
+          cc: String,
+          autocorreccion: String,
+          optotipo: String,
+        },
+        observation: String,
       },
       examenexterno: { ojoder: String, ojoizq: String },
       biomicroscopio: { ojoder: String, ojoizq: String },
