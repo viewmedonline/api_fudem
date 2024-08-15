@@ -343,6 +343,7 @@ let consultationSchema = new Schema(
       },
     },
     tonometria: { ojoDer: String, ojoIzq: String },
+    reason: String,
     generalData: { typeLense: String },
     agudezaVisualOPT: {
       ojoDer: {
