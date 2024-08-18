@@ -366,8 +366,23 @@ let consultationSchema = new Schema(
       ciclo: { type: Boolean, default: false },
       est: { type: Boolean, default: false },
       dinm: { type: Boolean, default: false },
-      ojoDer: { esfera: String, cilindro: String, eje: String, av: String },
-      ojoIzq: { esfera: String, cilindro: String, eje: String, av: String },
+      ppc: String,
+      ct: String,
+      rp: String,
+      ojoDer: {
+        esfera: String,
+        cilindro: String,
+        eje: String,
+        av: String,
+        add: String,
+      },
+      ojoIzq: {
+        esfera: String,
+        cilindro: String,
+        eje: String,
+        av: String,
+        add: String,
+      },
     },
     rxFinalGafas: {
       ojoDer: {
