@@ -401,6 +401,8 @@ let consultationSchema = new Schema(
         ADD: String,
         av: String,
       },
+      ocupation: String,
+      type_lenses: String,
     },
     rxFinalLentesContacto: {
       ojoDer: {
@@ -896,6 +898,13 @@ let activitySchema = new Schema(
   { versionKey: false }
 );
 
+let lensSchema = new Schema(
+  {
+    active: { type: Boolean, default: true },
+    description: String,
+  },
+  { versionKey: false, collection: "type_lenses" }
+);
 module.exports = {
   Person: mongoose.model("Person", personSchema),
   User: mongoose.model("User", userSchema),
@@ -933,4 +942,5 @@ module.exports = {
     "PsyInterviewAdults",
     psyInterviewAdultsSchema
   ),
+  Lens: mongoose.model("lenses_type", lensSchema),
 };
