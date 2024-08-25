@@ -540,6 +540,7 @@ let consultationSchema = new Schema(
     receta: String,
     prescription: { type: Schema.Types.ObjectId, ref: "Prescription" },
     prescription_of: { type: Schema.Types.ObjectId, ref: "Prescription" },
+    refer_to_ofta: String,
     control: { type: controlSchema, required: true, default: {} },
   },
   { versionKey: false }
