@@ -712,89 +712,93 @@ const anesthesiology_sheet = require("./routes/anesthesiology_sheet");
 const master = require("./routes/master");
 const report = require("./routes/reports");
 const psiProcess = require("./routes/psicology_sheet");
+const medicines = require("./routes/medicines");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 let corsOptions = {
-    origin: "*",
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  origin: "*",
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 let cors = require("cors");
 morgan.token("id", function getId(req) {
-    return req.id;
+  return req.id;
 });
 
 var loggerFormat = ':id [:date[web]] ":method :url" :status :response-time';
 
 app.use(
-    morgan(loggerFormat, {
-        skip: function(req, res) {
-            return res.statusCode < 400;
-        },
-        stream: process.stderr
-    })
+  morgan(loggerFormat, {
+    skip: function (req, res) {
+      return res.statusCode < 400;
+    },
+    stream: process.stderr,
+  })
 );
 
 app.use(
-    morgan(loggerFormat, {
-        skip: function(req, res) {
-            return res.statusCode >= 400;
-        },
-        stream: process.stdout
-    })
+  morgan(loggerFormat, {
+    skip: function (req, res) {
+      return res.statusCode >= 400;
+    },
+    stream: process.stdout,
+  })
 );
 
 app.use((req, res, next) => {
-    var log = logger.loggerInstance.child({
-            id: req.id,
-            body: req.body
-        },
-        true
-    );
-    log.info({
-        req: req
-    });
-    next();
+  var log = logger.loggerInstance.child(
+    {
+      id: req.id,
+      body: req.body,
+    },
+    true
+  );
+  log.info({
+    req: req,
+  });
+  next();
 });
 
-app.use(function(req, res, next) {
-    function afterResponse() {
-        res.removeListener("finish", afterResponse);
-        res.removeListener("close", afterResponse);
-        var log = logger.loggerInstance.child({
-                id: req.id
-            },
-            true
-        );
-        log.info({ res: res }, "response");
-    }
+app.use(function (req, res, next) {
+  function afterResponse() {
+    res.removeListener("finish", afterResponse);
+    res.removeListener("close", afterResponse);
+    var log = logger.loggerInstance.child(
+      {
+        id: req.id,
+      },
+      true
+    );
+    log.info({ res: res }, "response");
+  }
 
-    res.on("finish", afterResponse);
-    res.on("close", afterResponse);
-    next();
+  res.on("finish", afterResponse);
+  res.on("close", afterResponse);
+  next();
 });
 
 app.use(cors(corsOptions));
 
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
+  let stringified = err.body;
+  stringified = stringified.replace(/	/g, "").replace(//g, "");
+  stringified = JSON.parse(stringified);
+  req.body = stringified;
 
-    let stringified = err.body;
-    stringified = stringified.replace(/	/g,'').replace(//g,'');
-    stringified = JSON.parse(stringified)
-    req.body = stringified
-
-    // ⚙️ our function to catch errors from body-parser
-    if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
+  // ⚙️ our function to catch errors from body-parser
+  if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
     //   // do your own thing here 👍
-      logger.loggerInstance.error("error el ruta", req.protocol + '://' + req.get('host') + req.originalUrl)
-      logger.loggerInstance.error(err.body)
-      logger.loggerInstance.error("Error message: ",err.message)
-      next();
+    logger.loggerInstance.error(
+      "error el ruta",
+      req.protocol + "://" + req.get("host") + req.originalUrl
+    );
+    logger.loggerInstance.error(err.body);
+    logger.loggerInstance.error("Error message: ", err.message);
+    next();
     //   res.status(400).send({ code: 400, message: "bad request" });
-    } else next();
-    
-  });
+  } else next();
+});
 
 app.use(person);
 app.use(diagnoses);
@@ -809,47 +813,48 @@ app.use(nurse_sheet);
 app.use(reference);
 app.use(surgery_sheet);
 app.use(intern_evaluation);
-app.use(pediatrics_sheet)
-app.use(nutritionist_sheet)
-app.use(anesthesiology_sheet)
-app.use(master)
-app.use(report)
-app.use(psiProcess)
+app.use(pediatrics_sheet);
+app.use(nutritionist_sheet);
+app.use(anesthesiology_sheet);
+app.use(master);
+app.use(report);
+app.use(psiProcess);
+app.use(medicines);
 
 mongoose.connect(dbConfig.url, dbConfig.options).then(
-    async () => {
-        let model = require(__dirname + "/model/database_schemas.js");
-        const countConsumed = await model.consumedMaster.find({}).count()
-        if(countConsumed==0){
-            await model.consumedMaster.insertMany([
-                {description:"Tabaco"},
-                {description:"Café"},
-                {description:"Agua"},
-                {description:"Alcohol"},
-                {description:"Actividad Fisica"},
-            ])
-        }
-        const countActyvity = await model.activityMaster.find({}).count()
-        if(countActyvity==0){
-            await model.activityMaster.insertMany([
-                {description:"Despertarse"},
-                {description:"Desayuno"},
-                {description:"Merienda antes de almuerzo"},
-                {description:"Almuerzo"},
-                {description:"Merienda despues de almuerzo"},
-                {description:"Cena"},
-                {description:"Merienda despues de cena"},
-            ])
-        }
-
-        let msConfig = require(__dirname + "/config/ms_config.js");
-        let listen = app.listen(msConfig.port, function() {
-            console.log("api_viewmed: is listening on port " + msConfig.port);
-        });
-        listen.setTimeout(3.6e+6)
-    },
-    err => {
-        // error in the connection to the database
-        console.log("api_viewmed: " + err);
+  async () => {
+    let model = require(__dirname + "/model/database_schemas.js");
+    const countConsumed = await model.consumedMaster.find({}).count();
+    if (countConsumed == 0) {
+      await model.consumedMaster.insertMany([
+        { description: "Tabaco" },
+        { description: "Café" },
+        { description: "Agua" },
+        { description: "Alcohol" },
+        { description: "Actividad Fisica" },
+      ]);
     }
+    const countActyvity = await model.activityMaster.find({}).count();
+    if (countActyvity == 0) {
+      await model.activityMaster.insertMany([
+        { description: "Despertarse" },
+        { description: "Desayuno" },
+        { description: "Merienda antes de almuerzo" },
+        { description: "Almuerzo" },
+        { description: "Merienda despues de almuerzo" },
+        { description: "Cena" },
+        { description: "Merienda despues de cena" },
+      ]);
+    }
+
+    let msConfig = require(__dirname + "/config/ms_config.js");
+    let listen = app.listen(msConfig.port, function () {
+      console.log("api_viewmed: is listening on port " + msConfig.port);
+    });
+    listen.setTimeout(3.6e6);
+  },
+  (err) => {
+    // error in the connection to the database
+    console.log("api_viewmed: " + err);
+  }
 );

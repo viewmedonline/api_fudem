@@ -538,6 +538,8 @@ let consultationSchema = new Schema(
     observationsOphthalmology: String,
     sucursalId: { type: Schema.Types.ObjectId, ref: "branchOffice" },
     receta: String,
+    prescription: { type: Schema.Types.ObjectId, ref: "Prescription" },
+    prescription_of: { type: Schema.Types.ObjectId, ref: "Prescription" },
     control: { type: controlSchema, required: true, default: {} },
   },
   { versionKey: false }
@@ -905,6 +907,39 @@ let lensSchema = new Schema(
   },
   { versionKey: false, collection: "type_lenses" }
 );
+
+let prescriptionSchema = new Schema(
+  {
+    prescription: [
+      {
+        medicine: String,
+        active_ingredient: String,
+        doses: String,
+        recomendation: String,
+      },
+    ],
+    place: String,
+    patient: { type: Schema.Types.ObjectId, ref: "Person" },
+    responsible: { type: Schema.Types.ObjectId, ref: "Person" },
+    control: { type: controlSchema, required: true, default: {} },
+  },
+  {
+    versionKey: false,
+  }
+);
+
+let medicinesSchema = new Schema(
+  {
+    description: String,
+    generic: { type: String, default: null },
+    recomendation: { type: String, default: null },
+    active: { type: Boolean, default: true },
+  },
+  {
+    versionKey: false,
+  }
+);
+
 module.exports = {
   Person: mongoose.model("Person", personSchema),
   User: mongoose.model("User", userSchema),
@@ -943,4 +978,6 @@ module.exports = {
     psyInterviewAdultsSchema
   ),
   Lens: mongoose.model("lenses_type", lensSchema),
+  Prescription: mongoose.model("Prescription", prescriptionSchema),
+  Medicines: mongoose.model("Medicines", medicinesSchema),
 };
