@@ -935,6 +935,7 @@ let medicinesSchema = new Schema(
     generic: { type: String, default: null },
     recomendation: { type: String, default: null },
     active: { type: Boolean, default: true },
+    type: Number,
   },
   {
     versionKey: false,

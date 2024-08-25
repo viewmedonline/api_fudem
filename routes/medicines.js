@@ -24,12 +24,12 @@ router.post("/medicines", (request, response) => {
 });
 
 //get all medicines
-router.get("/medicines/:type", (request, response) => {
-  model.Medicines.find()
-    .where("active")
-    .equals(true)
-    .where("type")
-    .equals(parseInt(request.params.type))
+router.get("/medicines/:type/:all?", (request, response) => {
+  let obj = { type: parseInt(request.params.type) };
+  if (!request.params.all) {
+    obj.active = true;
+  }
+  model.Medicines.find(obj)
     .then((result) => {
       response.json({
         status: "OK",
