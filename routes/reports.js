@@ -56,6 +56,7 @@ router.get(
         "Chagas",
         "Cancer",
         "Diabetes",
+        "Hemoglutest",
         "Hepatitis",
         "Cardiopatia",
         "Nefropatia",
@@ -64,22 +65,6 @@ router.get(
         "Lesion/Fractura",
         "Tabaquismo",
         "Alcoholismo",
-        "Cirugia OD Cataratas",
-        "Cirugia OD Glaucoma",
-        "Cirugia OD Estrabismo",
-        "Cirugia OD Retina",
-        "Cirugia OD Plastica",
-        "Cirugia OD Pterigion",
-        "Cirugia OD Cornea",
-        "Cirugia OD Otro",
-        "Cirugia OI Cataratas",
-        "Cirugia OI Glaucoma",
-        "Cirugia OI Estrabismo",
-        "Cirugia OI Retina",
-        "Cirugia OI Plastica",
-        "Cirugia OI Pterigion",
-        "Cirugia OI Cornea",
-        "Cirugia OI Otro",
         "Tipo de lentes",
         "Alergico a",
         "Medicamentos actuales",
@@ -88,32 +73,11 @@ router.get(
         "Agudeza visual OI CC",
         "Agudeza visual OI SC",
         "Agudeza Visual Observaciones",
-        "Autorefraccion OD Esfera",
-        "Autorefraccion OD Cilindro",
-        "Autorefraccion OD Eje",
-        "Autorefraccion OI Esfera",
-        "Autorefraccion OI Cilindro",
-        "Autorefraccion OI Eje",
-        "Queratometría OD K1",
-        "Queratometría OD Eje",
-        "Queratometría OD K2",
-        "Queratometría OD Eje",
-        "Queratometría OI K1",
-        "Queratometría OI Eje",
-        "Queratometría OI K2",
-        "Queratometría OI Eje",
-        "Lensometria OD Esfera",
-        "Lensometria OD Cilindro",
-        "Lensometria OD Eje",
-        "Lensometria OD Prisma",
-        "Lensometria OD Adicion",
-        "Lensometria OI Esfera",
-        "Lensometria OI Cilindro",
-        "Lensometria OI Eje",
-        "Lensometria OI Prisma",
-        "Lensometria OI Adicion",
+        "Optotipo OI",
+        "Optotipo OD",
         "Tonometria OD",
         "Tonometria OI",
+        "No colabora",
         "Foto de Retina",
         "Hallazgos",
         "Observaciones",
@@ -183,11 +147,12 @@ router.get(
           "Ha ocurrido un error en la busqueda de consultas: " + error
         );
       }
-      datos = [];
+
       for (const x of results) {
         try {
-          const { antecedent, cirugias, otrosDatos } =
-            await model.Record.findById(x.person.record);
+          const { antecedent, otrosDatos } = await model.Record.findById(
+            x.person.record
+          );
           let typeConsultation = (type) => {
             if (!type) {
               return "";
@@ -223,6 +188,7 @@ router.get(
             antecedent.antecedentes[1].value ? "SI" : "NO",
             antecedent.antecedentes[2].value ? "SI" : "NO",
             antecedent.antecedentes[3].value ? "SI" : "NO",
+            x.objPreliminary.data.record.antecedent.hemoglutest,
             antecedent.antecedentes[4].value ? "SI" : "NO",
             antecedent.antecedentes[5].value ? "SI" : "NO",
             antecedent.antecedentes[6].value ? "SI" : "NO",
@@ -231,50 +197,7 @@ router.get(
             antecedent.antecedentes[9].value ? "SI" : "NO",
             antecedent.antecedentes[10].value ? "SI" : "NO",
             antecedent.antecedentes[11].value ? "SI" : "NO",
-            cirugias.cirugias.length > 0 && cirugias.cirugias[0].eyeRight
-              ? "SI"
-              : "NO",
-            cirugias.cirugias.length > 0 && cirugias.cirugias[1].eyeRight
-              ? "SI"
-              : "NO",
-            cirugias.cirugias.length > 0 && cirugias.cirugias[2].eyeRight
-              ? "SI"
-              : "NO",
-            cirugias.cirugias.length > 0 && cirugias.cirugias[3].eyeRight
-              ? "SI"
-              : "NO",
-            cirugias.cirugias.length > 0 && cirugias.cirugias[4].eyeRight
-              ? "SI"
-              : "NO",
-            cirugias.cirugias.length > 0 && cirugias.cirugias[5].eyeRight
-              ? "SI"
-              : "NO",
-            cirugias.cirugias.length > 0 && cirugias.cirugias[6].eyeRight
-              ? "SI"
-              : "NO",
-            cirugias.othersEyeRigth || "NO",
-            cirugias.cirugias.length > 0 && cirugias.cirugias[0].eyeLeft
-              ? "SI"
-              : "NO",
-            cirugias.cirugias.length > 0 && cirugias.cirugias[1].eyeLeft
-              ? "SI"
-              : "NO",
-            cirugias.cirugias.length > 0 && cirugias.cirugias[2].eyeLeft
-              ? "SI"
-              : "NO",
-            cirugias.cirugias.length > 0 && cirugias.cirugias[3].eyeLeft
-              ? "SI"
-              : "NO",
-            cirugias.cirugias.length > 0 && cirugias.cirugias[4].eyeLeft
-              ? "SI"
-              : "NO",
-            cirugias.cirugias.length > 0 && cirugias.cirugias[5].eyeLeft
-              ? "SI"
-              : "NO",
-            cirugias.cirugias.length > 0 && cirugias.cirugias[6].eyeLeft
-              ? "SI"
-              : "NO",
-            cirugias.cirugias.othersEyeLeft || "NO",
+
             x.objPreliminary.data.generalData
               ? x.objPreliminary.data.generalData.typeLense
               : "",
@@ -295,77 +218,11 @@ router.get(
             x.objPreliminary.data.agudezaVisual
               ? x.objPreliminary.data.agudezaVisual.observation
               : "",
-            x.objPreliminary.data.autorefraccionA
-              ? x.objPreliminary.data.autorefraccionA.ojoDer.esfera
+            x.objPreliminary.data.agudezaVisual
+              ? x.objPreliminary.data.agudezaVisual.ojoIzq.optotipo
               : "",
-            x.objPreliminary.data.autorefraccionA
-              ? x.objPreliminary.data.autorefraccionA.ojoDer.cilindro
-              : "",
-            x.objPreliminary.data.autorefraccionA
-              ? x.objPreliminary.data.autorefraccionA.ojoDer.eje
-              : "",
-            x.objPreliminary.data.autorefraccionA
-              ? x.objPreliminary.data.autorefraccionA.ojoIzq.esfera
-              : "",
-            x.objPreliminary.data.autorefraccionA
-              ? x.objPreliminary.data.autorefraccionA.ojoIzq.cilindro
-              : "",
-            x.objPreliminary.data.autorefraccionA
-              ? x.objPreliminary.data.autorefraccionA.ojoIzq.eje
-              : "",
-            x.objPreliminary.data.queratometria
-              ? x.objPreliminary.data.queratometria.ojoDer.esfera
-              : "",
-            x.objPreliminary.data.queratometria
-              ? x.objPreliminary.data.queratometria.ojoDer.ejeEs
-              : "",
-            x.objPreliminary.data.queratometria
-              ? x.objPreliminary.data.queratometria.ojoDer.cilindro
-              : "",
-            x.objPreliminary.data.queratometria
-              ? x.objPreliminary.data.queratometria.ojoDer.ejeCil
-              : "",
-            x.objPreliminary.data.queratometria
-              ? x.objPreliminary.data.queratometria.ojoIzq.esfera
-              : "",
-            x.objPreliminary.data.queratometria
-              ? x.objPreliminary.data.queratometria.ojoIzq.ejeEs
-              : "",
-            x.objPreliminary.data.queratometria
-              ? x.objPreliminary.data.queratometria.ojoIzq.cilindro
-              : "",
-            x.objPreliminary.data.queratometria
-              ? x.objPreliminary.data.queratometria.ojoIzq.ejeCil
-              : "",
-            x.objPreliminary.data.lensometria
-              ? x.objPreliminary.data.lensometria.ojoDer.esfera
-              : "",
-            x.objPreliminary.data.lensometria
-              ? x.objPreliminary.data.lensometria.ojoDer.cilindro
-              : "",
-            x.objPreliminary.data.lensometria
-              ? x.objPreliminary.data.lensometria.ojoDer.eje
-              : "",
-            x.objPreliminary.data.lensometria
-              ? x.objPreliminary.data.lensometria.ojoDer.prisma
-              : "",
-            x.objPreliminary.data.lensometria
-              ? x.objPreliminary.data.lensometria.ojoDer.adicion
-              : "",
-            x.objPreliminary.data.lensometria
-              ? x.objPreliminary.data.lensometria.ojoIzq.esfera
-              : "",
-            x.objPreliminary.data.lensometria
-              ? x.objPreliminary.data.lensometria.ojoIzq.cilindro
-              : "",
-            x.objPreliminary.data.lensometria
-              ? x.objPreliminary.data.lensometria.ojoIzq.eje
-              : "",
-            x.objPreliminary.data.lensometria
-              ? x.objPreliminary.data.lensometria.ojoIzq.prisma
-              : "",
-            x.objPreliminary.data.lensometria
-              ? x.objPreliminary.data.lensometria.ojoIzq.adicion
+            x.objPreliminary.data.agudezaVisual
+              ? x.objPreliminary.data.agudezaVisual.ojoDer.optotipo
               : "",
             x.objPreliminary.data.tonometria
               ? x.objPreliminary.data.tonometria.ojoDer
@@ -373,6 +230,7 @@ router.get(
             x.objPreliminary.data.tonometria
               ? x.objPreliminary.data.tonometria.ojoIzq
               : "",
+            x.objPreliminary.data.reason,
             x.objPreliminary.data.retinal_photo,
             x.objPreliminary.data.retinal_findings,
             x.objPreliminary.data.retinal_observation,
@@ -391,9 +249,12 @@ router.get(
         encoding: "utf-8",
         mode: 0o666,
       });
+      datos = [];
     }
-    if(countResults==0){
-      response.status(404).send("No se encontraron resultados para la busqueda")
+    if (countResults == 0) {
+      response
+        .status(404)
+        .send("No se encontraron resultados para la busqueda");
       return;
     }
     response.setHeader("Content-Type", "text/csv");
@@ -408,7 +269,6 @@ router.get(
     const fileDataRead = await fs.readFileSync(tempFileName, "utf8");
     await fs.unlinkSync(tempFileName);
     response.send(fileDataRead);
-
   }
 );
 
@@ -468,6 +328,7 @@ router.get(
         "Lensometria OI Eje",
         "Lensometria OI Prisma",
         "Lensometria OI Adicion",
+        "Lensometria tipo de lentes",
         "Refraccion OD Esfera",
         "Refraccion OD Cilindro",
         "Refraccion OD Eje",
@@ -479,6 +340,11 @@ router.get(
         "Refraccion Ciclopejia",
         "Refraccion Estatica",
         "Refraccion Dinamica",
+        "Refraccion OD Adicion",
+        "Refraccion OI Adicion",
+        "PPC",
+        "CT",
+        "Reflejos pupilares",
         "RX Final Gafas OD Esfera",
         "RX Final Gafas OD Cilindro",
         "RX Final Gafas OD Eje",
@@ -491,6 +357,8 @@ router.get(
         "RX Final Gafas OI Prisma",
         "RX Final Gafas OI Adicion",
         "RX Final Gafas OI Agudeza V",
+        "RX Final Gafas Ocupacion",
+        "RX Final Gafas Tipo de lente",
         "RX Final Lentes de Contacto OD Esfera",
         "RX Final Lentes de Contacto OD Cilindro",
         "RX Final Lentes de Contacto OD Eje",
@@ -515,6 +383,7 @@ router.get(
         "RX Final Visión Lejana OI Eje",
         "RX Final Visión Lejana OI Prisma",
         "RX Final Visión Lejana OI Agudeza V",
+        "RX Final Visión Lejana tipo de lente",
         "RX Final Visión Proxima OD Esfera",
         "RX Final Visión Proxima OD Cilindro",
         "RX Final Visión Proxima OD Eje",
@@ -525,6 +394,7 @@ router.get(
         "RX Final Visión Proxima OI Eje",
         "RX Final Visión Proxima OI Prisma",
         "RX Final Visión Proxima OI Agudeza V",
+        "RX Final Visión Proxima tipo de lente",
         "RX Final Visión Intermedia OD Esfera",
         "RX Final Visión Intermedia OD Cilindro",
         "RX Final Visión Intermedia OD Eje",
@@ -535,9 +405,12 @@ router.get(
         "RX Final Visión Intermedia OI Eje",
         "RX Final Visión Intermedia OI Prisma",
         "RX Final Visión Intermedia OI Agudeza V",
+        "RX Final Visión Intermedia tipo de lente",
         "Diagnostico OD",
         "Diagnostico OI",
         "Observaciones",
+        "Refiere oftalmologo",
+        "Receta Medica",
       ],
     ];
     const dateFrom = moment(request.params.dateFrom, "DD-MM-YYYY")
@@ -592,6 +465,7 @@ router.get(
             sucursalId: 1,
             typeConsultation: 1,
             reasonConsultation: 1,
+            prescription: 1,
           }
         )
           .limit(limit)
@@ -616,7 +490,6 @@ router.get(
         };
         return objName[name];
       };
-      datos = [];
       for (const x of results) {
         try {
           let nameOpto = await searchNameDoctor(
@@ -627,6 +500,22 @@ router.get(
             ojoDer: [],
             ojoIzq: [],
           };
+
+          let receta = x.prescription
+            ? await model.Prescription.findById(x.prescription)
+            : null;
+          let medicines = receta ? receta.prescription : "";
+          if (medicines) {
+            medicines = medicines.map((x) => {
+              return {
+                medicine: x.medicine,
+                doses: x.doses,
+                active_ingredient: x.active_ingredient,
+                recomendation: x.recomendation,
+              };
+            });
+          }
+
           x.objOptometrist.data.diagnosticoObservaciones.diagnostico.forEach(
             (x) => {
               if (x.eyeRight) {
@@ -718,6 +607,7 @@ router.get(
             x.objOptometrist.data.lensometria.ojoIzq.eje,
             x.objOptometrist.data.lensometria.ojoIzq.prisma,
             x.objOptometrist.data.lensometria.ojoIzq.adicion,
+            x.objOptometrist.data.lensometria.typeLenses,
             x.objOptometrist.data.refraccion.ojoDer.esfera,
             x.objOptometrist.data.refraccion.ojoDer.cilindro,
             x.objOptometrist.data.refraccion.ojoDer.eje,
@@ -729,6 +619,11 @@ router.get(
             x.objOptometrist.data.refraccion.ciclo,
             x.objOptometrist.data.refraccion.est,
             x.objOptometrist.data.refraccion.dinm,
+            x.objOptometrist.data.refraccion.ojoDer.add,
+            x.objOptometrist.data.refraccion.ojoIzq.add,
+            x.objOptometrist.data.refraccion.ppc,
+            x.objOptometrist.data.refraccion.ct,
+            x.objOptometrist.data.refraccion.rp,
             x.objOptometrist.data.rxFinalGafas.ojoDer.esfera,
             x.objOptometrist.data.rxFinalGafas.ojoDer.cilindro,
             x.objOptometrist.data.rxFinalGafas.ojoDer.eje,
@@ -738,9 +633,11 @@ router.get(
             x.objOptometrist.data.rxFinalGafas.ojoIzq.esfera,
             x.objOptometrist.data.rxFinalGafas.ojoIzq.cilindro,
             x.objOptometrist.data.rxFinalGafas.ojoIzq.eje,
-            x.objOptometrist.data.rxFinalGafas.ojoIzq.prisma,
+            x.objOptometrist.data.rxFinalGafas.ojoIzq.prismasalariado,
             x.objOptometrist.data.rxFinalGafas.ojoIzq.ADD,
             x.objOptometrist.data.rxFinalGafas.ojoIzq.av,
+            x.objOptometrist.data.rxFinalGafas.ocupation,
+            x.objOptometrist.data.rxFinalGafas.type_lenses,
             x.objOptometrist.data.rxFinalLentesContacto.ojoDer.esfera,
             x.objOptometrist.data.rxFinalLentesContacto.ojoDer.cilindro,
             x.objOptometrist.data.rxFinalLentesContacto.ojoDer.eje,
@@ -765,6 +662,7 @@ router.get(
             x.objOptometrist.data.rxFinalVisionLejano.ojoIzq.eje,
             x.objOptometrist.data.rxFinalVisionLejano.ojoIzq.prisma,
             x.objOptometrist.data.rxFinalVisionLejano.ojoIzq.av,
+            x.objOptometrist.data.rxFinalVisionLejano.type_lenses,
             x.objOptometrist.data.rxFinalVisionProxima.ojoDer.esfera,
             x.objOptometrist.data.rxFinalVisionProxima.ojoDer.cilindro,
             x.objOptometrist.data.rxFinalVisionProxima.ojoDer.eje,
@@ -775,6 +673,7 @@ router.get(
             x.objOptometrist.data.rxFinalVisionProxima.ojoIzq.eje,
             x.objOptometrist.data.rxFinalVisionProxima.ojoIzq.prisma,
             x.objOptometrist.data.rxFinalVisionProxima.ojoIzq.av,
+            x.objOptometrist.data.rxFinalVisionProxima.type_lenses,
             x.objOptometrist.data.rxFinalVisionIntermedia.ojoDer.esfera,
             x.objOptometrist.data.rxFinalVisionIntermedia.ojoDer.cilindro,
             x.objOptometrist.data.rxFinalVisionIntermedia.ojoDer.eje,
@@ -785,9 +684,12 @@ router.get(
             x.objOptometrist.data.rxFinalVisionIntermedia.ojoIzq.eje,
             x.objOptometrist.data.rxFinalVisionIntermedia.ojoIzq.prisma,
             x.objOptometrist.data.rxFinalVisionIntermedia.ojoIzq.av,
+            x.objOptometrist.data.rxFinalVisionIntermedia.type_lenses,
             objDiagnoses.ojoDer.join(),
             objDiagnoses.ojoIzq.join(),
             x.objOptometrist.data.diagnosticoObservaciones.observaciones,
+            x.objOptometrist.data.refer_to_ofta,
+            medicines,
           ]);
         } catch (error) {
           console.log("Ha ocurrido un error el for: " + error);
@@ -803,10 +705,13 @@ router.get(
         encoding: "utf-8",
         mode: 0o666,
       });
+      datos = [];
     }
 
-    if(countResults==0){
-      response.status(404).send("No se encontraron resultados para la busqueda")
+    if (countResults == 0) {
+      response
+        .status(404)
+        .send("No se encontraron resultados para la busqueda");
       return;
     }
 
@@ -839,7 +744,6 @@ router.get(
         "Responsable",
         "Motivo de consulta",
         "Historia Clinica",
-        "Dio receta",
         "Sucursal",
         "HTA",
         "Chagas",
@@ -854,6 +758,22 @@ router.get(
         "Tabaquismo",
         "Alcoholismo",
         "Medicamento actual",
+        "Cirugia OD Cataratas",
+        "Cirugia OD Glaucoma",
+        "Cirugia OD Estrabismo",
+        "Cirugia OD Retina",
+        "Cirugia OD Plastica",
+        "Cirugia OD Pterigion",
+        "Cirugia OD Cornea",
+        "Cirugia OD Otro",
+        "Cirugia OI Cataratas",
+        "Cirugia OI Glaucoma",
+        "Cirugia OI Estrabismo",
+        "Cirugia OI Retina",
+        "Cirugia OI Plastica",
+        "Cirugia OI Pterigion",
+        "Cirugia OI Cornea",
+        "Cirugia OI Otro",
         "Posición p mirada OD",
         "Posición p mirada OI",
         "Agudeza visual OD CC",
@@ -874,9 +794,10 @@ router.get(
         "Tonometría OI",
         // "Procedimientos T",
         "Diagnostico",
+        "Receta Medica",
         // "Plan",
-        "Observaciones",
-        "Medicamentos",
+        // "Observaciones",
+        // "Medicamentos",
       ],
     ];
     const dateFrom = moment(request.params.dateFrom, "DD-MM-YYYY")
@@ -932,6 +853,7 @@ router.get(
             sucursalId: 1,
             typeConsultation: 1,
             reasonConsultation: 1,
+            prescription_of: 1,
           }
         )
           .limit(limit)
@@ -943,9 +865,10 @@ router.get(
           "Ha ocurrido un error en la busqueda de consultas: " + error
         );
       }
-      datos = [];
       for (const x of results) {
         try {
+          const { cirugias } = await model.Record.findById(x.person.record);
+
           let nameOpto = await searchNameDoctor(
             x.objOphthalmology.data.responsableConsultation
           );
@@ -954,6 +877,20 @@ router.get(
             "Name"
           );
           const nameSucursal = sucursalResponse ? sucursalResponse.Name : "";
+          let receta = x.prescription_of
+            ? await model.Prescription.findById(x.prescription_of)
+            : null;
+          let medicines = receta ? receta.prescription : "";
+          if (medicines) {
+            medicines = medicines.map((x) => {
+              return {
+                medicine: x.medicine,
+                doses: x.doses,
+                active_ingredient: x.active_ingredient,
+                recomendation: x.recomendation,
+              };
+            });
+          }
           datos.push([
             moment(x.objOphthalmology.control.created_at).format("DD/MM/YYYY"),
             x.person.forename,
@@ -964,9 +901,9 @@ router.get(
             `${nameOpto.forename} ${nameOpto.surname}`,
             x.reasonConsultation,
             x.objOphthalmology.data.historyClinic,
-            x.objOphthalmology.data.observaciones.recetas.length > 0
-              ? "SI"
-              : "NO",
+            // x.objOphthalmology.data.observaciones.recetas.length > 0
+            //   ? "SI"
+            //   : "NO",
             nameSucursal,
             x.objOphthalmology.data.record.antecedent.antecedentes[0].value
               ? "SI"
@@ -1005,6 +942,50 @@ router.get(
               ? "SI"
               : "NO",
             x.objOphthalmology.data.record.antecedent.medicamentosAntecedent,
+            cirugias.cirugias.length > 0 && cirugias.cirugias[0].eyeRight
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[1].eyeRight
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[2].eyeRight
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[3].eyeRight
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[4].eyeRight
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[5].eyeRight
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[6].eyeRight
+              ? "SI"
+              : "NO",
+            cirugias.othersEyeRigth || "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[0].eyeLeft
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[1].eyeLeft
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[2].eyeLeft
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[3].eyeLeft
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[4].eyeLeft
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[5].eyeLeft
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.length > 0 && cirugias.cirugias[6].eyeLeft
+              ? "SI"
+              : "NO",
+            cirugias.cirugias.othersEyeLeft || "NO",
             `${x.objOphthalmology.data.datapreliminar.ppm.ojoDer.data || ""} ${
               x.objOphthalmology.data.datapreliminar.ppm.ojoDer.otro || ""
             }`,
@@ -1032,8 +1013,9 @@ router.get(
             filterDuplicate(x.objOphthalmology.data.diagnostic)
               .map((x) => x.diagnostic.es)
               .join(),
-            x.objOphthalmology.data.observaciones.observacion,
-            x.objOphthalmology.data.observaciones.medicamentos.join(),
+            medicines,
+            // x.objOphthalmology.data.observaciones.observacion,
+            // x.objOphthalmology.data.observaciones.medicamentos.join(),
           ]);
         } catch (error) {
           console.log("Ha ocurrido un error el for: " + error);
@@ -1049,10 +1031,13 @@ router.get(
         encoding: "utf-8",
         mode: 0o666,
       });
+      datos = [];
     }
 
-    if(countResults==0){
-      response.status(404).send("No se encontraron resultados para la busqueda")
+    if (countResults == 0) {
+      response
+        .status(404)
+        .send("No se encontraron resultados para la busqueda");
       return;
     }
     response.setHeader("Content-Type", "text/csv");
@@ -1895,7 +1880,7 @@ router.get(
         "Capacidad funcional",
         "Predictores clinicos",
         "Clasificasion ASA",
-        "Plan"
+        "Plan",
       ];
       dataIternistArr.push(headers);
       for (const x of dataInterviewAdults) {

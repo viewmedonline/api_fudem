@@ -425,6 +425,7 @@ let consultationSchema = new Schema(
       },
     },
     rxFinalVisionLejano: {
+      type_lenses: String,
       ojoDer: {
         esfera: String,
         cilindro: String,
@@ -441,6 +442,7 @@ let consultationSchema = new Schema(
       },
     },
     rxFinalVisionProxima: {
+      type_lenses: String,
       ojoDer: {
         esfera: String,
         cilindro: String,
@@ -457,6 +459,7 @@ let consultationSchema = new Schema(
       },
     },
     rxFinalVisionIntermedia: {
+      type_lenses: String,
       ojoDer: {
         esfera: String,
         cilindro: String,
@@ -472,6 +475,7 @@ let consultationSchema = new Schema(
         av: String,
       },
     },
+    rx_doble_lenses: String,
     diagnosticoObservaciones: {
       diagnostico: [cirugiasSchema],
       Observaciones: String,
