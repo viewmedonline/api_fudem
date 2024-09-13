@@ -35,6 +35,15 @@ const filterDuplicate = (diagnostics) => {
   return uniqueDiagnostics;
 };
 
+const writeFiles = async (datos, tempFileName) => {
+  const output = await stringifyAsync(datos);
+  await writeFile(tempFileName, output, {
+    flag: "a",
+    encoding: "utf-8",
+    mode: 0o666,
+  });
+};
+
 router.get(
   "/report/preliminary/:dateFrom/:dateTo/:ext",
   async (request, response) => {
@@ -135,6 +144,7 @@ router.get(
       request.params.dateTo +
       ".csv";
     const tempFileName = os.tmpdir() + "/" + fileName;
+    await writeFiles(datos, tempFileName);
     let countResults = 0;
     try {
       countResults = await model.Consultation.find({
@@ -385,15 +395,12 @@ router.get(
 
       cicle += limit;
 
-      const output = await stringifyAsync(datos);
-      await writeFile(tempFileName, output, {
-        flag: "a",
-        encoding: "utf-8",
-        mode: 0o666,
-      });
+      await writeFiles(datos, tempFileName);
     }
-    if(countResults==0){
-      response.status(404).send("No se encontraron resultados para la busqueda")
+    if (countResults == 0) {
+      response
+        .status(404)
+        .send("No se encontraron resultados para la busqueda");
       return;
     }
     response.setHeader("Content-Type", "text/csv");
@@ -408,7 +415,6 @@ router.get(
     const fileDataRead = await fs.readFileSync(tempFileName, "utf8");
     await fs.unlinkSync(tempFileName);
     response.send(fileDataRead);
-
   }
 );
 
@@ -556,6 +562,7 @@ router.get(
       request.params.dateTo +
       ".csv";
     const tempFileName = os.tmpdir() + "/" + fileName;
+    await writeFiles(datos, tempFileName);
     let countResults = 0;
     try {
       countResults = await model.Consultation.find({
@@ -797,16 +804,13 @@ router.get(
 
       cicle += limit;
 
-      const output = await stringifyAsync(datos);
-      await writeFile(tempFileName, output, {
-        flag: "a",
-        encoding: "utf-8",
-        mode: 0o666,
-      });
+      await writeFiles(datos, tempFileName);
     }
 
-    if(countResults==0){
-      response.status(404).send("No se encontraron resultados para la busqueda")
+    if (countResults == 0) {
+      response
+        .status(404)
+        .send("No se encontraron resultados para la busqueda");
       return;
     }
 
@@ -895,6 +899,7 @@ router.get(
       request.params.dateTo +
       ".csv";
     const tempFileName = os.tmpdir() + "/" + fileName;
+    await writeFiles(datos, tempFileName);
     let countResults = 0;
     try {
       countResults = await model.Consultation.find({
@@ -1043,16 +1048,13 @@ router.get(
 
       cicle += limit;
 
-      const output = await stringifyAsync(datos);
-      await writeFile(tempFileName, output, {
-        flag: "a",
-        encoding: "utf-8",
-        mode: 0o666,
-      });
+      await writeFiles(datos, tempFileName);
     }
 
-    if(countResults==0){
-      response.status(404).send("No se encontraron resultados para la busqueda")
+    if (countResults == 0) {
+      response
+        .status(404)
+        .send("No se encontraron resultados para la busqueda");
       return;
     }
     response.setHeader("Content-Type", "text/csv");
@@ -1895,7 +1897,7 @@ router.get(
         "Capacidad funcional",
         "Predictores clinicos",
         "Clasificasion ASA",
-        "Plan"
+        "Plan",
       ];
       dataIternistArr.push(headers);
       for (const x of dataInterviewAdults) {
