@@ -304,8 +304,8 @@ let consultationSchema = new Schema(
     reasonConsultation: String,
     typeConsultation: String,
     agudezaVisual: {
-      ojoDer: { correccion: String, sinCorreccion: String },
-      ojoIzq: { correccion: String, sinCorreccion: String },
+      ojoDer: { correccion: String, sinCorreccion: String, optotipo: String },
+      ojoIzq: { correccion: String, sinCorreccion: String, optotipo: String },
       observation: String,
     },
     autorefraccionA: {
@@ -343,6 +343,7 @@ let consultationSchema = new Schema(
       },
     },
     tonometria: { ojoDer: String, ojoIzq: String },
+    reason: String,
     generalData: { typeLense: String },
     agudezaVisualOPT: {
       ojoDer: {
@@ -350,20 +351,38 @@ let consultationSchema = new Schema(
         sinCorreccion: String,
         ph: String,
         autoTonometria: String,
+        optotipo: String,
       },
       ojoIzq: {
         correccion: String,
         sinCorreccion: String,
         ph: String,
         autoTonometria: String,
+        optotipo: String,
       },
+      observation: String,
     },
     refraccion: {
       ciclo: { type: Boolean, default: false },
       est: { type: Boolean, default: false },
       dinm: { type: Boolean, default: false },
-      ojoDer: { esfera: String, cilindro: String, eje: String, av: String },
-      ojoIzq: { esfera: String, cilindro: String, eje: String, av: String },
+      ppc: String,
+      ct: String,
+      rp: String,
+      ojoDer: {
+        esfera: String,
+        cilindro: String,
+        eje: String,
+        av: String,
+        add: String,
+      },
+      ojoIzq: {
+        esfera: String,
+        cilindro: String,
+        eje: String,
+        av: String,
+        add: String,
+      },
     },
     rxFinalGafas: {
       ojoDer: {
@@ -382,6 +401,8 @@ let consultationSchema = new Schema(
         ADD: String,
         av: String,
       },
+      ocupation: String,
+      type_lenses: String,
     },
     rxFinalLentesContacto: {
       ojoDer: {
@@ -404,6 +425,7 @@ let consultationSchema = new Schema(
       },
     },
     rxFinalVisionLejano: {
+      type_lenses: String,
       ojoDer: {
         esfera: String,
         cilindro: String,
@@ -420,6 +442,7 @@ let consultationSchema = new Schema(
       },
     },
     rxFinalVisionProxima: {
+      type_lenses: String,
       ojoDer: {
         esfera: String,
         cilindro: String,
@@ -436,6 +459,7 @@ let consultationSchema = new Schema(
       },
     },
     rxFinalVisionIntermedia: {
+      type_lenses: String,
       ojoDer: {
         esfera: String,
         cilindro: String,
@@ -451,6 +475,7 @@ let consultationSchema = new Schema(
         av: String,
       },
     },
+    rx_doble_lenses: String,
     diagnosticoObservaciones: {
       diagnostico: [cirugiasSchema],
       Observaciones: String,
@@ -461,8 +486,19 @@ let consultationSchema = new Schema(
         ojoIzq: { dato: String, otro: String },
       },
       agudezavisual: {
-        ojoDer: { sc: String, cc: String, autocorreccion: String },
-        ojoIzq: { sc: String, cc: String, autocorreccion: String },
+        ojoDer: {
+          sc: String,
+          cc: String,
+          autocorreccion: String,
+          optotipo: String,
+        },
+        ojoIzq: {
+          sc: String,
+          cc: String,
+          autocorreccion: String,
+          optotipo: String,
+        },
+        observation: String,
       },
       examenexterno: { ojoder: String, ojoizq: String },
       biomicroscopio: { ojoder: String, ojoizq: String },
@@ -506,6 +542,9 @@ let consultationSchema = new Schema(
     observationsOphthalmology: String,
     sucursalId: { type: Schema.Types.ObjectId, ref: "branchOffice" },
     receta: String,
+    prescription: { type: Schema.Types.ObjectId, ref: "Prescription" },
+    prescription_of: { type: Schema.Types.ObjectId, ref: "Prescription" },
+    refer_to_ofta: String,
     control: { type: controlSchema, required: true, default: {} },
   },
   { versionKey: false }
@@ -866,6 +905,47 @@ let activitySchema = new Schema(
   { versionKey: false }
 );
 
+let lensSchema = new Schema(
+  {
+    active: { type: Boolean, default: true },
+    description: String,
+  },
+  { versionKey: false, collection: "type_lenses" }
+);
+
+let prescriptionSchema = new Schema(
+  {
+    prescription: [
+      {
+        medicine: String,
+        active_ingredient: String,
+        doses: String,
+        recomendation: String,
+      },
+    ],
+    place: String,
+    patient: { type: Schema.Types.ObjectId, ref: "Person" },
+    responsible: { type: Schema.Types.ObjectId, ref: "Person" },
+    control: { type: controlSchema, required: true, default: {} },
+  },
+  {
+    versionKey: false,
+  }
+);
+
+let medicinesSchema = new Schema(
+  {
+    description: String,
+    generic: { type: String, default: null },
+    recomendation: { type: String, default: null },
+    active: { type: Boolean, default: true },
+    type: Number,
+  },
+  {
+    versionKey: false,
+  }
+);
+
 module.exports = {
   Person: mongoose.model("Person", personSchema),
   User: mongoose.model("User", userSchema),
@@ -903,4 +983,7 @@ module.exports = {
     "PsyInterviewAdults",
     psyInterviewAdultsSchema
   ),
+  Lens: mongoose.model("lenses_type", lensSchema),
+  Prescription: mongoose.model("Prescription", prescriptionSchema),
+  Medicines: mongoose.model("Medicines", medicinesSchema),
 };

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Receta Medica</title>
+</head>
+
+<body id="document">
+    <main>
+        <header class="center">
+            <img src="data:image/jpeg;base64,{{logo}}" alt="fudem" id="logo" />
+        </header>
+        <section class="center color-text" style="margin-top: -50px">
+            <p>Flor Blanca | Merlict | Soyapango | San Miguel | Santa Ana</p>
+            <p>
+                Plaza Mundo Apopa | Lourdes | Escalón | Sonsonate Plaza Mundo
+                Soyapango
+            </p>
+            <p>Valle Dulce | Opico | Ahuachapán | Usuluán</p>
+        </section>
+        <section class="center spacing-50">
+            <h1 id="title"><i>Receta Medica</i></h1>
+        </section>
+        <section>
+            <div style="display: flex">
+                <span style="width: 45%" class="color-text">Lugar: <span style="color: black">{{place}}</span></span>
+                <span style="width: 25%" class="color-text">Fecha: <span style="color: black">{{date}}</span></span>
+                <span style="width: 30%" class="color-text">N° de Expediente:
+                    <span style="color: black">{{idQflow}}</span></span>
+            </div>
+            <div style="margin-top: 10px;">
+                <span class="color-text">Paciente: <span style="color: black">{{patient}}</span></span>
+            </div>
+
+        </section>
+        <section>
+            {{#each prescriptions}}
+            <table>
+
+                <tr>
+                    <th class="th1">Medicamento</th>
+                    <th style="background-color: #f2f2f2">{{medicine}}</th>
+                </tr>
+                <tr>
+                    <th class="th1">Nombre genérico</th>
+                    <th style="background-color: #9ecae1">{{active_ingredient}}</th>
+                </tr>
+                <tr>
+                    <th class="th1">Dosis</th>
+                    <th style="background-color: #f2f2f2">{{doses}}</th>
+                </tr>
+                <tr>
+                    <th class="th1">Recomendaciones</th>
+                    <th style="background-color: #9ecae1">{{recomendation}}</th>
+                </tr>
+
+            </table>
+            {{/each}}
+        </section>
+        <section>
+            <p class="color-text" style="margin-bottom: 10px">Aviso importante: Los medicamentos deben ser recetados por
+                profesionales de la salud autorizados y aplicarse de la forma indicada para evitar complicaciones. El
+                uso indebido de los medicamentos puede ocasionar problemas de salud.</p>
+        </section>
+
+        <div class="digital_signature">
+            <img src="{{digital_signature}}" alt="firma" style="width: 150px; height: 75px" />
+            <div>
+                <b>{{name_prof}}</b>
+            </div>
+            <div><b>{{type}}</b></div>
+        </div>
+
+    </main>
+</body>
+
+</html>
+<style>
+    html {
+        -webkit-print-color-adjust: exact;
+    }
+
+    .color-text {
+        color: #0062ad;
+        font-weight: 600;
+    }
+
+    .center {
+        text-align: center;
+    }
+
+    .spacing-30 {
+        margin-top: -30px;
+    }
+
+    .spacing-50 {
+        margin-top: 20px;
+    }
+
+    #title {
+        color: #0062ad;
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        display: inline-block;
+    }
+
+    body {
+        width: 100vw;
+        height: 100vh;
+        margin: 0;
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        display: flex;
+        flex-direction: column;
+        font-size: 14px;
+    }
+
+    #logo {
+        width: 40%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
+        margin: 0;
+        padding: 0;
+        margin: 0;
+        margin-top: -60px;
+    }
+
+    main {
+        padding: 20px;
+    }
+
+    #date {
+        width: 100%;
+        text-align: end;
+    }
+
+    #name {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .col2 {
+        display: grid;
+        grid-template-columns: 30% 70%;
+        /* Dividimos en dos columnas: 30% y 70% */
+        grid-gap: 10px;
+        /* Agregamos un espacio entre las columnas (opcional) */
+    }
+
+    .wrapper {
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+        grid-gap: 10px;
+    }
+
+    .wrapper2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 10px;
+    }
+
+    table {
+        width: 100%;
+        /* Ajusta el ancho según sea necesario */
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    table,
+    th,
+    td {
+        border: 0.5px solid white;
+    }
+
+    .th1 {
+        background-color: #1c6fa6;
+        width: 25%;
+        color: white;
+    }
+
+    .digital_signature {
+        text-align: center;
+        margin-top: 10px;
+        bottom: 0;
+        width: 100%;
+        position: fixed;
+    }
+</style>
