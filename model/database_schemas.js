@@ -719,6 +719,7 @@ let branchOfficeSchema = new Schema(
 let referenceSchema = new Schema(
   {
     patient: { type: Schema.Types.ObjectId, ref: "Person" },
+    content: String,
     pdf: { type: Schema.Types.ObjectId, ref: "fs.file", default: null },
     responsible: { type: Schema.Types.ObjectId, ref: "Person" },
     control: { type: controlSchema, required: true, default: {} },
