@@ -118,7 +118,15 @@ router.delete("/consultation/:consultationId", (request, response) => {
     });
 });
 router.post("/consultationsLast", (request, response) => {
-  log.info("Microservice[consultation_last]: " + JSON.stringify(request.body));
+  console.log("Microservice[consultationsLast]: " + request.body);
+  if (Object.keys(request.body).length === 0) {
+    response.status(400).json({
+      status: "KO",
+      message: "Missing parameters",
+      documents: [],
+    });
+    return;
+  }
   let currentConsultation = model.Consultation;
   request.body.name = { $exists: false };
   currentConsultation
