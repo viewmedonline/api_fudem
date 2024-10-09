@@ -780,25 +780,6 @@ app.use(function (req, res, next) {
 
 app.use(cors(corsOptions));
 
-app.use(function (err, req, res, next) {
-  // ⚙️ our function to catch errors from body-parser
-  if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
-    let stringified = err.body;
-    stringified = stringified.replace(/	/g, "").replace(//g, "");
-    stringified = JSON.parse(stringified);
-    req.body = stringified;
-    //   // do your own thing here 👍
-    logger.loggerInstance.error(
-      "error el ruta",
-      req.protocol + "://" + req.get("host") + req.originalUrl
-    );
-    logger.loggerInstance.error(err.body);
-    logger.loggerInstance.error("Error message: ", err.message);
-    next();
-    //   res.status(400).send({ code: 400, message: "bad request" });
-  } else next();
-});
-
 app.use(person);
 app.use(diagnoses);
 app.use(record);
