@@ -714,7 +714,7 @@ const report = require("./routes/reports");
 const psiProcess = require("./routes/psicology_sheet");
 const medicines = require("./routes/medicines");
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "100mb" }));
 app.use(bodyParser.urlencoded({ extended: false }));
 
 let corsOptions = {
