@@ -714,51 +714,9 @@ const report = require("./routes/reports");
 const psiProcess = require("./routes/psicology_sheet");
 const medicines = require("./routes/medicines");
 
-const requestSizeLimit = (limit) => {
-  return (req, res, next) => {
-    let data = "";
-    req.on("data", (chunk) => {
-      data += chunk;
-      if (data.length > limit) {
-        req.connection.destroy();
-        res.status(413).send("Payload Too Large");
-      }
-    });
-    req.on("end", () => {
-      console.log("Received raw data:", data);
-      req.rawBody = data; // Guarda el cuerpo sin parsear para referencia posterior
-      next();
-    });
-    req.on("error", (err) => {
-      console.error("Error reading data:", err);
-      res.status(400).send("Invalid JSON");
-    });
-  };
-};
-const limit = 100 * 1024 * 1024;
-app.use(requestSizeLimit(limit));
-
-app.use((req, res, next) => {
-  try {
-    req.body = JSON.parse(req.rawBody);
-    next();
-  } catch (err) {
-    console.error("Error parsing JSON:", err);
-    res.status(400).send("Invalid JSON");
-  }
-});
-
-// app.use(express.json({ limit: "100mb" }));
-
+app.use(bodyParser.json({ limit: "100mb" }));
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use((err, req, res, next) => {
-  if (err) {
-    console.error("Error parsing JSON:", err);
-    res.status(400).send("Invalid JSON");
-  } else {
-    next();
-  }
-});
+
 let corsOptions = {
   origin: "*",
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
