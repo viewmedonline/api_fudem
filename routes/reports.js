@@ -108,7 +108,7 @@ router.get(
       request.params.dateTo +
       ".csv";
     const tempFileName = os.tmpdir() + "/" + fileName;
-    // await writeFiles(datos, tempFileName);
+    await writeFiles(datos, tempFileName);
     let countResults = 0;
     try {
       countResults = await model.Consultation.find({
@@ -254,7 +254,6 @@ router.get(
       cicle += limit;
 
       await writeFiles(datos, tempFileName);
-      datos = [];
     }
     if (countResults == 0) {
       response
@@ -434,7 +433,7 @@ router.get(
       request.params.dateTo +
       ".csv";
     const tempFileName = os.tmpdir() + "/" + fileName;
-    // await writeFiles(datos, tempFileName);
+    await writeFiles(datos, tempFileName);
     let countResults = 0;
     try {
       countResults = await model.Consultation.find({
@@ -452,7 +451,6 @@ router.get(
     let cicle = 0;
     let limit = 1000;
     console.log("countResults", countResults);
-    let arr = [];
     while (countResults > cicle) {
       try {
         results = await model.Consultation.find(
@@ -477,9 +475,7 @@ router.get(
         )
           .limit(limit)
           .skip(cicle)
-          .sort({ "control.created_at": -1 })
           .populate("person");
-
       } catch (error) {
         console.log(
           "Ha ocurrido un error en la busqueda de consultas: " + error
@@ -709,7 +705,6 @@ router.get(
       cicle += limit;
 
       await writeFiles(datos, tempFileName);
-      datos = [];
     }
 
     if (countResults == 0) {
@@ -820,7 +815,7 @@ router.get(
       request.params.dateTo +
       ".csv";
     const tempFileName = os.tmpdir() + "/" + fileName;
-    // await writeFiles(datos, tempFileName);
+    await writeFiles(datos, tempFileName);
     let countResults = 0;
     try {
       countResults = await model.Consultation.find({
@@ -991,9 +986,11 @@ router.get(
               ? "SI"
               : "NO",
             cirugias.cirugias.othersEyeLeft || "NO",
-            `${x.objOphthalmology.data.datapreliminar.ppm.ojoDer.data || ""} ${x.objOphthalmology.data.datapreliminar.ppm.ojoDer.otro || ""
+            `${x.objOphthalmology.data.datapreliminar.ppm.ojoDer.data || ""} ${
+              x.objOphthalmology.data.datapreliminar.ppm.ojoDer.otro || ""
             }`,
-            `${x.objOphthalmology.data.datapreliminar.ppm.ojoIzq.data || ""} ${x.objOphthalmology.data.datapreliminar.ppm.ojoIzq.otro || ""
+            `${x.objOphthalmology.data.datapreliminar.ppm.ojoIzq.data || ""} ${
+              x.objOphthalmology.data.datapreliminar.ppm.ojoIzq.otro || ""
             }`,
             x.objOphthalmology.data.datapreliminar.agudezavisual.ojoDer.cc,
             x.objOphthalmology.data.datapreliminar.agudezavisual.ojoDer.sc,
@@ -1029,7 +1026,6 @@ router.get(
       cicle += limit;
 
       await writeFiles(datos, tempFileName);
-      datos = [];
     }
 
     if (countResults == 0) {
@@ -1521,8 +1517,8 @@ router.get(
           x.diagnostic.join(),
           x.descriptions.map((x) => x.description),
           x.responsableConsultation.forename +
-          " " +
-          x.responsableConsultation.surname,
+            " " +
+            x.responsableConsultation.surname,
           x.person.forename + " " + x.person.surname,
         ]);
       }
