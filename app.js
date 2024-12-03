@@ -725,8 +725,13 @@ const requestSizeLimit = (limit) => {
       }
     });
     req.on("end", () => {
-      req.rawBody = data;
+      console.log("Received raw data:", data);
+      req.rawBody = data; // Guarda el cuerpo sin parsear para referencia posterior
       next();
+    });
+    req.on("error", (err) => {
+      console.error("Error reading data:", err);
+      res.status(400).send("Invalid JSON");
     });
   };
 };
