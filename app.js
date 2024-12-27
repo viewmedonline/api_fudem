@@ -688,6 +688,7 @@ mongoose.set("useFindAndModify", false);
 let addRequestId = require("express-request-id")();
 let morgan = require("morgan");
 let logger = require("./logger");
+let jsonrepair = require("jsonrepair");
 
 let app = express();
 
@@ -779,6 +780,20 @@ app.use(function (req, res, next) {
 });
 
 app.use(cors(corsOptions));
+app.use(function (err, req, res, next) {
+  let stringified = err.body;
+  if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
+    req.body = JSON.parse(jsonrepair.jsonrepair(stringified));
+    //   // do your own thing here 👍
+    logger.loggerInstance.error(
+      "error el ruta",
+      req.protocol + "://" + req.get("host") + req.originalUrl
+    );
+    logger.loggerInstance.error(err.body);
+    logger.loggerInstance.error("Error message: ", err.message);
+    next();
+  } else next();
+});
 
 app.use(person);
 app.use(diagnoses);
