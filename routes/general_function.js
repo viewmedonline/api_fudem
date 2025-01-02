@@ -3,10 +3,11 @@ let mongoose = require("mongoose");
 let model = require("../model/database_schemas.js");
 const { readFileSync } = require("fs");
 const path = require("path");
-const pdf = require("html-pdf-node");
+// const pdf = require("html-pdf-node");
 const Handlebars = require("handlebars");
 const fs = require("fs").promises;
 let stream = require("stream");
+const puppeteer = require('puppeteer');
 
 Handlebars.registerHelper("or", function (v1, v2, options) {
   if (v1 || v2) {
@@ -97,20 +98,18 @@ const signatura_base64 = async (fileId) => {
 
 const create_report_pdf = async (name, data, bottom = "1cm") => {
   try {
+    // Launch a headless browser instance
+    const browser = await puppeteer.launch({
+      headless: 'new', // Use 'new' for improved security in headless mode
+    });
+    const page = await browser.newPage();
+
+    // Load the HTML template
     const templatePath = path.join(__dirname, "..", "template_report", name);
-    let file_html = await fs.readFile(templatePath, "utf8");
-    // const templateHtml = fs.readFileSync(templatePath, 'utf8');
-    let options = {
-      format: "letter",
-      orientation: "portrait", // portrait or landscape
-      margin: {
-        top: "1cm", // default is 0, units: mm, cm, in, px
-        right: "1cm",
-        bottom: bottom,
-        left: "1cm",
-      },
-    };
-    let template_handler = Handlebars.compile(file_html);
+    const templateHtml = await fs.readFile(templatePath, 'utf8');
+
+    // Render the template with data
+    const template_handler = Handlebars.compile(templateHtml);
     data.logo = logo_fudem_base64;
     if (name == "nutritionist_sheet.html") {
       data.logo_form_1 = logo_form_1;
@@ -119,11 +118,40 @@ const create_report_pdf = async (name, data, bottom = "1cm") => {
       data.logo_form_4 = logo_form_4;
       data.logo_form_5 = logo_form_5;
     }
+    const result_template = template_handler(data);
 
-    let result_template = template_handler(data);
-    return await pdf.generatePdf({ content: result_template }, options);
+    // Set the HTML content of the page
+    await page.setContent(result_template);
+
+    // Configure page margins
+    await page.setViewport({
+      width: 612, // Letter size in pixels
+      height: 792,
+      deviceScaleFactor: 1,
+    });
+    await page.evaluate(() => {
+      const { style } = document.body;
+      style.margin = '1cm'; // Set margins dynamically
+    });
+
+    // Generate PDF
+    const pdfBuffer = await page.pdf({
+      format: 'Letter',
+      margin: {
+        top: '1cm',
+        right: '1cm',
+        bottom: bottom,
+        left: '1cm',
+      },
+    });
+
+    // Close the browser
+    await browser.close();
+
+    return pdfBuffer;
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    throw error; // Re-throw the error for proper handling
   }
 };
 
