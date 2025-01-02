@@ -44,6 +44,17 @@ const writeFiles = async (datos, tempFileName) => {
   });
 };
 
+const replaceValues = async (datos) => {
+  return Promise.all(datos.map(async (x) => {
+    return Promise.all(x.map(async (y) => {
+      if (typeof y === "string") {
+        return y.replace(/;/g, ",");
+      }
+      return y;
+    }));
+  }));
+}
+
 router.get(
   "/report/preliminary/:dateFrom/:dateTo/:ext",
   async (request, response) => {
@@ -252,7 +263,8 @@ router.get(
       }
 
       cicle += limit;
-
+      //replace ; in values for ,
+      datos = await replaceValues(datos);
       await writeFiles(datos, tempFileName);
     }
     if (countResults == 0) {
@@ -703,7 +715,8 @@ router.get(
       }
 
       cicle += limit;
-
+      //replace ; in values for ,
+      datos = await replaceValues(datos);
       await writeFiles(datos, tempFileName);
     }
 
@@ -1024,7 +1037,8 @@ router.get(
       }
 
       cicle += limit;
-
+      //replace ; in values for ,
+      datos = await replaceValues(datos);
       await writeFiles(datos, tempFileName);
     }
 
@@ -1205,6 +1219,8 @@ router.get(
           x.plan,
         ]);
       });
+      //replace ; in values for ,
+      datos = await replaceValues(datos);
       stringify(datos, (err, output) => {
         if (err) {
           response.status(500).send("Error al generar CSV");
@@ -1454,6 +1470,8 @@ router.get(
           x.comments,
         ]);
       });
+      //replace ; in values for ,
+      datos = await replaceValues(datos);
       stringify(datos, (err, output) => {
         if (err) {
           response.status(500).send("Error al generar CSV");
@@ -1522,7 +1540,8 @@ router.get(
           x.person.forename + " " + x.person.surname,
         ]);
       }
-
+      //replace ; in values for ,
+      dataPsiArray = await replaceValues(dataPsiArray);
       stringify(dataPsiArray, (err, output) => {
         if (err) {
           response.status(500).send("Error al generar CSV");
@@ -1660,7 +1679,8 @@ router.get(
           x.responsablePhone,
         ]);
       }
-
+      //replace ; in values for ,
+      dataInterviewChildrenArray = await replaceValues(dataInterviewChildrenArray);
       stringify(dataInterviewChildrenArray, (err, output) => {
         if (err) {
           response.status(500).send("Error al generar CSV");
@@ -1800,7 +1820,8 @@ router.get(
           x.whatDidAfterSuicideAttempts,
         ]);
       }
-
+      //replace ; in values for ,
+      dataInterviewAdultsArray = await replaceValues(dataInterviewAdultsArray);
       stringify(dataInterviewAdultsArray, (err, output) => {
         if (err) {
           response.status(500).send("Error al generar CSV");
@@ -1911,7 +1932,8 @@ router.get(
           x.plan,
         ]);
       }
-
+      //replace ; in values for ,
+      dataIternistArr = await replaceValues(dataIternistArr);
       stringify(dataIternistArr, (err, output) => {
         if (err) {
           response.status(500).send("Error al generar CSV");
