@@ -103,6 +103,7 @@ router.get(
         "Observaciones",
       ],
     ];
+
     const dateFrom = moment(request.params.dateFrom, "DD-MM-YYYY")
       .utc()
       .startOf("day")
@@ -119,7 +120,9 @@ router.get(
       request.params.dateTo +
       ".csv";
     const tempFileName = os.tmpdir() + "/" + fileName;
+
     await writeFiles(datos, tempFileName);
+    datos = [];
     let countResults = 0;
     try {
       countResults = await model.Consultation.find({
@@ -256,16 +259,16 @@ router.get(
             x.objPreliminary.data.retinal_findings,
             x.objPreliminary.data.retinal_observation,
           ]);
+          //replace ; in values for ,
+          datos = await replaceValues(datos);
+          await writeFiles(datos, tempFileName);
+          datos = [];
         } catch (error) {
           console.log("Ha ocurrido un error el for: " + error);
           console.log(x._id);
         }
       }
-
       cicle += limit;
-      //replace ; in values for ,
-      datos = await replaceValues(datos);
-      await writeFiles(datos, tempFileName);
     }
     if (countResults == 0) {
       response
@@ -446,6 +449,7 @@ router.get(
       ".csv";
     const tempFileName = os.tmpdir() + "/" + fileName;
     await writeFiles(datos, tempFileName);
+    datos = [];
     let countResults = 0;
     try {
       countResults = await model.Consultation.find({
@@ -829,6 +833,7 @@ router.get(
       ".csv";
     const tempFileName = os.tmpdir() + "/" + fileName;
     await writeFiles(datos, tempFileName);
+    datos = [];
     let countResults = 0;
     try {
       countResults = await model.Consultation.find({
@@ -1030,16 +1035,15 @@ router.get(
             // x.objOphthalmology.data.observaciones.observacion,
             // x.objOphthalmology.data.observaciones.medicamentos.join(),
           ]);
+          //replace ; in values for ,
+          datos = await replaceValues(datos);
+          await writeFiles(datos, tempFileName);
         } catch (error) {
           console.log("Ha ocurrido un error el for: " + error);
           console.log(x._id);
         }
       }
-
       cicle += limit;
-      //replace ; in values for ,
-      datos = await replaceValues(datos);
-      await writeFiles(datos, tempFileName);
     }
 
     if (countResults == 0) {
