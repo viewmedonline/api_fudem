@@ -722,6 +722,7 @@ router.get(
       //replace ; in values for ,
       datos = await replaceValues(datos);
       await writeFiles(datos, tempFileName);
+      datos = [];
     }
 
     if (countResults == 0) {
@@ -1038,6 +1039,7 @@ router.get(
           //replace ; in values for ,
           datos = await replaceValues(datos);
           await writeFiles(datos, tempFileName);
+          datos = [];
         } catch (error) {
           console.log("Ha ocurrido un error el for: " + error);
           console.log(x._id);
