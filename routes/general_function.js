@@ -101,6 +101,7 @@ const create_report_pdf = async (name, data, bottom = "1cm") => {
     // Launch a headless browser instance
     const browser = await puppeteer.launch({
       headless: 'new', // Use 'new' for improved security in headless mode
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     const page = await browser.newPage();
 
