@@ -47,12 +47,32 @@ router.post("/evaluation", async (request, response) => {
   }
 });
 
-router.get("/internist/recreate/pdf/:idPat?", async (request, response) => {
+router.get("/internist/recreate/pdf/:dateInit/:dateEnd", async (request, response) => {
   try {
-    const internistEvaluation = model.InternEvaluation;
-    let obj = request.params.idPat ? {person:request.params.idPat} : {}
+    const internistEvaluation = model.InternEvaluation;   
+    let dataList = await internistEvaluation.aggregate(
+      [
+        {
+        $addFields: {
+          fechaConvertida: {
+            $dateFromString: {
+              dateString: "$date",
+              format: "%d/%m/%Y"
+            }
+          }
+        }
+      },
+      {
+        $match: {
+          fechaConvertida: {
+            $gte: moment(request.params.dateInit,"DDMMYYYY").toDate(),
+            $lte: moment(request.params.dateEnd,"DDMMYYYY").toDate()
+          }
+        }
+      }
+    ]
+    ).exec();
     
-    let dataList = await internistEvaluation.find(obj)
     for (const x of dataList) {
       let dataMed = await model.Person.findOne({ _id: x.responsible }) || {};
       let dataPat = await model.Person.findOne({ _id: x.person }) || {};
