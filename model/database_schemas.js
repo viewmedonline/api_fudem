@@ -212,7 +212,7 @@ const surgerySchema = new Schema(
 
 const internEvaluationSchema = new Schema(
   {
-    date: String,
+    date: Date,
     preoperative_diagnosis: String,
     history_clinic: String,
     personal_record: String,

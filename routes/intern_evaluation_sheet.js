@@ -29,6 +29,7 @@ router.post("/evaluation", async (request, response) => {
     );
     request.body.data.pdf = report_id;
     //save colletion
+    request.body.data.date = moment().utc().toDate();
     const surgery_sheet = new model.InternEvaluation(request.body.data);
     await surgery_sheet.save();
 

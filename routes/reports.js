@@ -1527,6 +1527,7 @@ router.get(
         "Descripciones de sesiones",
         "Responsable",
         "Paciente",
+        "ID QFlow",
       ];
       dataPsiArray.push(headers);
       for (const x of dataPsi) {
@@ -1544,6 +1545,7 @@ router.get(
             " " +
             x.responsableConsultation.surname,
           x.person.forename + " " + x.person.surname,
+          x.person.idQflow,
         ]);
       }
       //replace ; in values for ,
@@ -1592,6 +1594,7 @@ router.get(
       let dataInterviewChildrenArray = [];
       const headers = [
         "paciente",
+        "ID QFlow",
         "responsable de la consulta",
         "fecha de inicio",
         "hora de consulta",
@@ -1640,6 +1643,7 @@ router.get(
       for (const x of dataInterviewChildren) {
         dataInterviewChildrenArray.push([
           `${x.person.forename} ${x.person.surname}`,
+          x.person.idQflow,
           `${x.responsableConsultation.forename} ${x.responsableConsultation.surname}`,
           x.dateInit,
           x.timeConsultation,
@@ -1731,6 +1735,7 @@ router.get(
 
       const headers = [
         "paciente",
+        "ID QFlow",
         "responsable de consulta",
         "fecha de inicio",
         "hora de consulta",
@@ -1780,6 +1785,7 @@ router.get(
       for (const x of dataInterviewAdults) {
         dataInterviewAdultsArray.push([
           `${x.person.forename} ${x.person.surname}`,
+          x.person.idQflow,
           `${x.responsableConsultation.forename} ${x.responsableConsultation.surname}`,
           x.dateInit,
           x.timeConsultation,
@@ -1856,12 +1862,8 @@ router.get(
   "/report/internist/:dateFrom/:dateTo/:ext",
   async (request, response) => {
     try {
-      const dateFrom = moment(request.params.dateFrom, "DD-MM-YYYY").format(
-        "DD/MM/YYYY"
-      );
-      const dateTo = moment(request.params.dateTo, "DD-MM-YYYY").format(
-        "DD/MM/YYYY"
-      );
+      const dateFrom = moment(request.params.dateFrom, "DD-MM-YYYY").toDate();
+      const dateTo = moment(request.params.dateTo, "DD-MM-YYYY").toDate();
 
       let dataInterviewAdults = await model.InternEvaluation.find({
         date: { $gte: dateFrom, $lte: dateTo },
@@ -1873,6 +1875,7 @@ router.get(
 
       const headers = [
         "Paciente",
+        "ID QFlow",
         "Responsable de consulta",
         "Fecha",
         "Tipo de consulta",
@@ -1907,6 +1910,7 @@ router.get(
       for (const x of dataInterviewAdults) {
         dataIternistArr.push([
           `${x.person.forename} ${x.person.surname}`,
+          x.person.idQflow,
           `${x.responsible.forename} ${x.responsible.surname}`,
           x.date,
           x.appointmentType,
