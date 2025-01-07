@@ -1912,7 +1912,7 @@ router.get(
           `${x.person.forename} ${x.person.surname}`,
           x.person.idQflow,
           `${x.responsible.forename} ${x.responsible.surname}`,
-          x.date,
+          moment(x.date).format("DD/MM/YYYY"),
           x.appointmentType,
           x.preoperative_diagnosis,
           x.history_clinic,
