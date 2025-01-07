@@ -61,16 +61,21 @@ router.post("/pediatrics_sheet", async (request, response) => {
   }
 });
 
-router.get("/pediatrics_sheet/recreate/pdf", async (request, response) => {
+router.get("/pediatrics_sheet/recreate/pdf/:dateInit/:dateEnd", async (request, response) => {
   try {
-    const dataJson = JSON.parse(await fs.readFile(__dirname+"/pediatrics.json", 'utf8'));
+    // const dataJson = JSON.parse(await fs.readFile(__dirname+"/pediatrics.json", 'utf8'));
     const pediatrisModel = model.PediatricEvaluation;
 
-    for (const item of dataJson) {
-        await pediatrisModel.updateOne({_id:mongoose.Types.ObjectId(item._id)},{$set:{diagnosis:item.diagnoses}})
-    }
+    // for (const item of dataJson) {
+    //     await pediatrisModel.updateOne({_id:mongoose.Types.ObjectId(item._id)},{$set:{diagnosis:item.diagnoses}})
+    // }
     
-    let PediatricEvaluation = await pediatrisModel.find({})
+    let PediatricEvaluation = await pediatrisModel.find({date:{
+      $gte: moment(request.params.dateInit, "DDMMYYYY").toDate(),
+      $lte: moment(request.params.dateEnd, "DDMMYYYY").toDate(),
+    }})
+
+    
     for (const x of PediatricEvaluation) {
       let dataMed = await model.Person.findOne({ _id: x.responsible }) || {};
       let dataPat = await model.Person.findOne({ _id: x.patient }) || {};
