@@ -205,7 +205,8 @@ const surgerySchema = new Schema(
     history_id: { type: Schema.Types.ObjectId, ref: "Consultation" },
     patient: { type: Schema.Types.ObjectId, ref: "Person" },
     responsible: { type: Schema.Types.ObjectId, ref: "Person" },
-    date_surgery: String,
+    date_surgery: Date,
+    date: Date,
   },
   { versionKey: false }
 );

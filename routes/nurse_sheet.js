@@ -1,7 +1,7 @@
 let express = require('express');
 let router = express.Router();
 let model = require('../model/database_schemas.js')
-const { signatura_base64, create_report_pdf, save_file } = require('./general_function.js')
+const { signatura_base64, create_report_pdf, save_file, deleteFile } = require('./general_function.js')
 const moment = require('moment')
 
 router.post('/nurse_sheet', async (request, response) => {
@@ -176,6 +176,62 @@ router.put('/nurse_sheet/close/:idSheet', async (request, response) => {
     })
   } catch (error) {
     console.log('Microservice[close_sheet]: ' + error)
+
+  }
+})
+
+router.get('/nurse_sheet/recreate/pdf/:dateInit/:dateEnd', async (request, response) => {
+  try {
+    let dataList = await model.nurseSheet.find({date_sheet:{
+      $gte: moment(request.params.dateInit,"DDMMYYYY").utc().toDate(),
+      $lte: moment(request.params.dateEnd,"DDMMYYYY").utc().toDate(),
+    }}).populate("patient", "forename surname id_document idQflow birthdate").populate("notes_nurses.responsible", 'forename surname digital_signature')
+
+    
+    for (let x of dataList) {
+    x = x.toObject()
+    // let data_sheet = (await model.nurseSheet.findById(request.params.idSheet).populate("patient", "forename surname id_document idQflow birthdate").populate("notes_nurses.responsible", 'forename surname digital_signature')).toObject()
+    x.notes_nurses = await Promise.all(x.notes_nurses.map(async item => {
+      let newItem = { ...item };
+      newItem = newItem
+      newItem.responsible.digital_signature = await signatura_base64(item.responsible.digital_signature)
+      newItem.date = moment(item.date).format('DD/MM/YYYY hh:mm a')
+      return newItem
+    }))
+
+    
+
+    let age = moment().diff(moment(x.patient.birthdate), 'years')
+    ///creacion de reporte pdf
+    let data_report = {
+      name: `${x.patient.forename} ${x.patient.surname}`,
+      age: age,
+      date: moment(x.date_sheet).format('DD/MM/YYYY'),
+      exp: x.patient.idQflow,
+      dui: x.patient.id_document,
+      heart_rate: x.heart_rate,
+      blood_pressure: x.blood_pressure,
+      hgt: x.hgt,
+      notes_nurses: x.notes_nurses,
+    }
+
+    const report_pdf = await create_report_pdf('nurse_sheet.html', data_report)
+    const report_id = await save_file(`nurse_sheet_${x.patient.idQflow}.pdf`, report_pdf)
+    await deleteFile(x.pdf)
+    await model.nurseSheet.updateOne({ _id: x._id }, { $set: { pdf: report_id } })
+}
+    response.json({
+      'status': 'OK',
+      'message': null,
+      'documents': true
+    })
+  } catch (error) {
+    console.log('Microservice[close_sheet]: ' + error)
+    response.status(400).json({
+      'status': 'KO',
+      'message': null,
+      'documents': false
+    })
 
   }
 })

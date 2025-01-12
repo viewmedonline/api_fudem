@@ -191,7 +191,7 @@ router.get(
           }
         );
 
-        // await deleteFile(x.pdf);
+        await deleteFile(x.pdf);
         // console.log("old id", x.pdf);
         // console.log("new id", report_id);
         // console.log("type", typeof x.pdf);
