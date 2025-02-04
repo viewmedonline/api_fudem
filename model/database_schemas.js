@@ -393,6 +393,7 @@ let consultationSchema = new Schema(
         Prisma: String,
         ADD: String,
         av: String,
+        adicion: String,
       },
       ojoIzq: {
         esfera: String,
@@ -401,9 +402,11 @@ let consultationSchema = new Schema(
         Prisma: String,
         ADD: String,
         av: String,
+        adicion: String,
       },
       ocupation: String,
-      type_lenses: String,
+      type_lenses: [String],
+      observation: String,
     },
     rxFinalLentesContacto: {
       ojoDer: {
@@ -426,7 +429,8 @@ let consultationSchema = new Schema(
       },
     },
     rxFinalVisionLejano: {
-      type_lenses: String,
+      type_lenses: [String],
+      observation: String,
       ojoDer: {
         esfera: String,
         cilindro: String,
@@ -443,7 +447,8 @@ let consultationSchema = new Schema(
       },
     },
     rxFinalVisionProxima: {
-      type_lenses: String,
+      type_lenses: [String],
+      observation: String,
       ojoDer: {
         esfera: String,
         cilindro: String,
@@ -460,7 +465,8 @@ let consultationSchema = new Schema(
       },
     },
     rxFinalVisionIntermedia: {
-      type_lenses: String,
+      type_lenses: [String],
+      observation: String,
       ojoDer: {
         esfera: String,
         cilindro: String,
