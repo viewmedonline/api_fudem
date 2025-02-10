@@ -954,6 +954,17 @@ let medicinesSchema = new Schema(
   }
 );
 
+let masterColsultationSchema = new Schema(
+  {
+    description: String,
+    active: { type: Boolean, default: true },
+  },
+  {
+    versionKey: false,
+    collection: "master_consultation"
+  }
+);
+
 module.exports = {
   Person: mongoose.model("Person", personSchema),
   User: mongoose.model("User", userSchema),
@@ -994,4 +1005,5 @@ module.exports = {
   Lens: mongoose.model("lenses_type", lensSchema),
   Prescription: mongoose.model("Prescription", prescriptionSchema),
   Medicines: mongoose.model("Medicines", medicinesSchema),
+  MasterConsultation: mongoose.model("MasterConsultation", masterColsultationSchema),
 };

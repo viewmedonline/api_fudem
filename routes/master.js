@@ -63,4 +63,25 @@ router.get("/master/lenses", async (request, response) => {
   }
 });
 
-module.exports = router;
+router.get("/master/consultations", async (request, response) => {
+  try {
+    let consultations = await model.MasterConsultation
+      .find({ active: true })
+      .sort({ _id: 1 });
+    response.json({
+      status: "OK",
+      message: null,
+      documents: consultations,
+    });
+
+  } catch (error) {
+    console.log(error);
+    response.status(400).json({
+      status: "KO",
+      message: "Error query",
+      documents: [],
+    });
+  }
+});
+
+  module.exports = router;
