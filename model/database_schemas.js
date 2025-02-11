@@ -704,6 +704,7 @@ let constancyShema = new Schema(
     person: { type: Schema.Types.ObjectId, ref: "Person" },
     description: String,
     date: Date,
+    constancyType: { type: String },
     pdf: { type: Schema.Types.ObjectId, ref: "fs.file" },
     responsableconstancy: { type: Schema.Types.ObjectId, ref: "Person" },
     control: { type: controlSchema, required: true, default: {} },

@@ -32,6 +32,17 @@ router.post("/reference", async (request, response) => {
   currentReferenceSheet
     .save()
     .then((result) => {
+      let currentConsultation = new model.Consultation({
+        person: request.body.data.patient,
+        name: "Hoja de Referencia",
+        control: {
+          active: false,
+        },
+         dateUpload: moment().format("YYYY-MM-DD HH:mm:ss"),
+        file: report_id,
+        responsableConsultation: request.body.data.responsible,
+      });
+      currentConsultation.save();
       response.json({
         status: "OK",
         message: null,
