@@ -135,6 +135,7 @@ let personSchema = new Schema(
     idQflow: { type: String, required: true },
     brandLenses: { ojoDer: String, ojoIzq: String },
     historyClinic: String,
+    reportAccess: { type: Boolean, default: false },
     control: { type: controlSchema, required: true, default: {} },
   },
   { collection: "persons", versionKey: false }
