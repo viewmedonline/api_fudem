@@ -950,6 +950,8 @@ let medicinesSchema = new Schema(
     recomendation: { type: String, default: null },
     active: { type: Boolean, default: true },
     type: Number,
+    presentation: [String],
+    administration: [String],
   },
   {
     versionKey: false,
@@ -964,6 +966,28 @@ let masterColsultationSchema = new Schema(
   {
     versionKey: false,
     collection: "master_consultation"
+  }
+);
+
+let presentationSchema = new Schema(
+  {
+    active: { type: Boolean, default: true },
+    description: String,
+  },
+  {
+    versionKey: false,
+    collection: "medicine_presentation"
+  }
+);
+
+let administrationSchema = new Schema(
+  {
+    active: { type: Boolean, default: true },
+    description: String,
+  },
+  {
+    versionKey: false,
+    collection: "medicine_administration"
   }
 );
 
@@ -1008,4 +1032,6 @@ module.exports = {
   Prescription: mongoose.model("Prescription", prescriptionSchema),
   Medicines: mongoose.model("Medicines", medicinesSchema),
   MasterConsultation: mongoose.model("MasterConsultation", masterColsultationSchema),
+  MedicinePresentation: mongoose.model("MedicinePresentation", presentationSchema),
+  MedicineAdministration: mongoose.model("MedicineAdministration", administrationSchema)
 };

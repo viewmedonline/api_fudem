@@ -65,15 +65,14 @@ router.get("/master/lenses", async (request, response) => {
 
 router.get("/master/consultations", async (request, response) => {
   try {
-    let consultations = await model.MasterConsultation
-      .find({ active: true })
-      .sort({ _id: 1 });
+    let consultations = await model.MasterConsultation.find({
+      active: true,
+    }).sort({ _id: 1 });
     response.json({
       status: "OK",
       message: null,
       documents: consultations,
     });
-
   } catch (error) {
     console.log(error);
     response.status(400).json({
@@ -84,4 +83,44 @@ router.get("/master/consultations", async (request, response) => {
   }
 });
 
-  module.exports = router;
+router.get("/master/medicine_presentation", async (request, response) => {
+  try {
+    let presentations = await model.MedicinePresentation.find({
+      active: true,
+    }).sort({ _id: 1 });
+    response.json({
+      status: "OK",
+      message: null,
+      documents: presentations,
+    });
+  } catch (error) {
+    console.log(error);
+    response.status(400).json({
+      status: "KO",
+      message: "Error query",
+      documents: [],
+    });
+  }
+});
+
+router.get("/master/medicine_administration", async (request, response) => {
+  try {
+    let administrations = await model.MedicineAdministration.find({
+      active: true,
+    }).sort({ _id: 1 });
+    response.json({
+      status: "OK",
+      message: null,
+      documents: administrations,
+    });
+  } catch (error) {
+    console.log(error);
+    response.status(400).json({
+      status: "KO",
+      message: "Error query",
+      documents: [],
+    });
+  }
+});
+
+module.exports = router;
