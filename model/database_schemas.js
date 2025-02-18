@@ -135,6 +135,7 @@ let personSchema = new Schema(
     idQflow: { type: String, required: true },
     brandLenses: { ojoDer: String, ojoIzq: String },
     historyClinic: String,
+    reportAccess: { type: Boolean, default: false },
     control: { type: controlSchema, required: true, default: {} },
   },
   { collection: "persons", versionKey: false }
@@ -393,6 +394,7 @@ let consultationSchema = new Schema(
         Prisma: String,
         ADD: String,
         av: String,
+        adicion: String,
       },
       ojoIzq: {
         esfera: String,
@@ -401,9 +403,11 @@ let consultationSchema = new Schema(
         Prisma: String,
         ADD: String,
         av: String,
+        adicion: String,
       },
       ocupation: String,
-      type_lenses: String,
+      type_lenses: [String],
+      observation: String,
     },
     rxFinalLentesContacto: {
       ojoDer: {
@@ -426,7 +430,8 @@ let consultationSchema = new Schema(
       },
     },
     rxFinalVisionLejano: {
-      type_lenses: String,
+      type_lenses: [String],
+      observation: String,
       ojoDer: {
         esfera: String,
         cilindro: String,
@@ -443,7 +448,8 @@ let consultationSchema = new Schema(
       },
     },
     rxFinalVisionProxima: {
-      type_lenses: String,
+      type_lenses: [String],
+      observation: String,
       ojoDer: {
         esfera: String,
         cilindro: String,
@@ -460,7 +466,8 @@ let consultationSchema = new Schema(
       },
     },
     rxFinalVisionIntermedia: {
-      type_lenses: String,
+      type_lenses: [String],
+      observation: String,
       ojoDer: {
         esfera: String,
         cilindro: String,
@@ -698,6 +705,7 @@ let constancyShema = new Schema(
     person: { type: Schema.Types.ObjectId, ref: "Person" },
     description: String,
     date: Date,
+    constancyType: { type: String },
     pdf: { type: Schema.Types.ObjectId, ref: "fs.file" },
     responsableconstancy: { type: Schema.Types.ObjectId, ref: "Person" },
     control: { type: controlSchema, required: true, default: {} },
@@ -866,12 +874,12 @@ let anesthesiologytSchema = new Schema(
     anesthesiaTechnique: String,
     asaClassification: String,
     VitalSigns: {
-      ta: [],
-      fc: [],
-      fr: [],
-      temp: [],
-      pso2: [],
-      pco2: [],
+      ta: [String],
+      fc: [String],
+      fr: [String],
+      temp: [String],
+      pso2: [String],
+      pco2: [String],
     },
     medicines: [
       {
@@ -942,9 +950,44 @@ let medicinesSchema = new Schema(
     recomendation: { type: String, default: null },
     active: { type: Boolean, default: true },
     type: Number,
+    presentation: [String],
+    administration: [String],
   },
   {
     versionKey: false,
+  }
+);
+
+let masterColsultationSchema = new Schema(
+  {
+    description: String,
+    active: { type: Boolean, default: true },
+  },
+  {
+    versionKey: false,
+    collection: "master_consultation"
+  }
+);
+
+let presentationSchema = new Schema(
+  {
+    active: { type: Boolean, default: true },
+    description: String,
+  },
+  {
+    versionKey: false,
+    collection: "medicine_presentation"
+  }
+);
+
+let administrationSchema = new Schema(
+  {
+    active: { type: Boolean, default: true },
+    description: String,
+  },
+  {
+    versionKey: false,
+    collection: "medicine_administration"
   }
 );
 
@@ -988,4 +1031,7 @@ module.exports = {
   Lens: mongoose.model("lenses_type", lensSchema),
   Prescription: mongoose.model("Prescription", prescriptionSchema),
   Medicines: mongoose.model("Medicines", medicinesSchema),
+  MasterConsultation: mongoose.model("MasterConsultation", masterColsultationSchema),
+  MedicinePresentation: mongoose.model("MedicinePresentation", presentationSchema),
+  MedicineAdministration: mongoose.model("MedicineAdministration", administrationSchema)
 };

@@ -88,6 +88,18 @@ router.post("/psi_process/closed", async (request, response) => {
       pdf_data
     );
 
+    let currentConsultation = new model.Consultation({
+      person: request.body.data.patient,
+      name: "Formulario del desarrollo y seguimiento del proceso psicoterapeutico",
+      control: {
+        active: false,
+      },
+       dateUpload: moment().format("YYYY-MM-DD HH:mm:ss"),
+      file: report_id,
+      responsableConsultation: request.body.data.responsableConsultation,
+    });
+    currentConsultation.save()
+
     response.json({
       status: "OK",
       message: null,
@@ -136,7 +148,7 @@ router.post("/interview/children", async (request, response) => {
       control: {
         active: false,
       },
-      dateUpload: moment().format("YYYY-MM-DD"),
+       dateUpload: moment().format("YYYY-MM-DD HH:mm:ss"),
       file: report_id,
       responsableConsultation: request.body.data.responsableConsultation,
     });
@@ -187,7 +199,7 @@ router.post("/interview/adults", async (request, response) => {
       control: {
         active: false,
       },
-      dateUpload: moment().format("YYYY-MM-DD"),
+       dateUpload: moment().format("YYYY-MM-DD HH:mm:ss"),
       file: report_id,
       responsableConsultation: request.body.data.responsableConsultation,
     });
