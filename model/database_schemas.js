@@ -874,12 +874,12 @@ let anesthesiologytSchema = new Schema(
     anesthesiaTechnique: String,
     asaClassification: String,
     VitalSigns: {
-      ta: [],
-      fc: [],
-      fr: [],
-      temp: [],
-      pso2: [],
-      pco2: [],
+      ta: [String],
+      fc: [String],
+      fr: [String],
+      temp: [String],
+      pso2: [String],
+      pco2: [String],
     },
     medicines: [
       {
