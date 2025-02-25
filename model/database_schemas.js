@@ -135,7 +135,6 @@ let personSchema = new Schema(
     idQflow: { type: String, required: true },
     brandLenses: { ojoDer: String, ojoIzq: String },
     historyClinic: String,
-    reportAccess: { type: Boolean, default: false },
     control: { type: controlSchema, required: true, default: {} },
   },
   { collection: "persons", versionKey: false }
@@ -149,6 +148,7 @@ let userSchema = new Schema(
     role: { type: String, required: true },
     idUserFudem: { type: String, required: true },
     token: String,
+    reportAccess: { type: Boolean, default: false },
     control: { type: controlSchema, required: true, default: {} },
   },
   { versionKey: false }
@@ -950,8 +950,8 @@ let medicinesSchema = new Schema(
     recomendation: { type: String, default: null },
     active: { type: Boolean, default: true },
     type: Number,
-    presentation: [String],
-    administration: [String],
+    presentation:String,
+    administration:String,
   },
   {
     versionKey: false,
