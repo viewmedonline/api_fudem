@@ -33,6 +33,18 @@ router.post("/anesthesiology_sheet", async (request, response) => {
     );
     await anesthesiology_sheet.save();
 
+    let currentConsultation = new model.Consultation({
+      person: request.body.data.patient,
+      name: "Hoja de Anestesiologia",
+      control: {
+        active: false,
+      },
+       dateUpload: moment().format("YYYY-MM-DD HH:mm:ss"),
+      file: report_id,
+      responsableConsultation: request.body.data.responsible,
+    });
+    currentConsultation.save()
+
     response.json({
       status: "OK",
       message: null,

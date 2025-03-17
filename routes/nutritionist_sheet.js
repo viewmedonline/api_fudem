@@ -52,7 +52,7 @@ router.post("/nutritionist_sheet", async (request, response) => {
       control: {
         active: false,
       },
-      dateUpload: moment().format("YYYY-MM-DD"),
+       dateUpload: moment().format("YYYY-MM-DD HH:mm:ss"),
       file: report_id,
       responsableConsultation: request.body.data.responsible,
     });

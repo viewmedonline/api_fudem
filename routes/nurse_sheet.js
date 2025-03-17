@@ -169,6 +169,17 @@ router.put('/nurse_sheet/close/:idSheet', async (request, response) => {
     const report_pdf = await create_report_pdf('nurse_sheet.html', data_report)
     const report_id = await save_file(`nurse_sheet_${data_sheet.patient.idQflow}.pdf`, report_pdf)
     await model.nurseSheet.updateOne({ _id: request.params.idSheet }, { $set: { pdf: report_id } })
+    let currentConsultation = new model.Consultation({
+      person: data_sheet.patient,
+      name: "Hoja de Enfermeria",
+      control: {
+        active: false,
+      },
+       dateUpload: moment().format("YYYY-MM-DD HH:mm:ss"),
+      file: report_id,
+      // responsableConsultation: request.body.data.responsible,
+    });
+    currentConsultation.save(); 
     response.json({
       'status': 'OK',
       'message': null,

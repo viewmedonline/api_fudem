@@ -33,6 +33,18 @@ router.post("/evaluation", async (request, response) => {
     const surgery_sheet = new model.InternEvaluation(request.body.data);
     await surgery_sheet.save();
 
+    let currentConsultation = new model.Consultation({
+      person: request.body.data.person,
+      name: "Hoja de Evaluacion Internista",
+      control: {
+        active: false,
+      },
+       dateUpload: moment().format("YYYY-MM-DD HH:mm:ss"),
+      file: report_id,
+      responsableConsultation: request.body.data.responsible,
+    });
+    currentConsultation.save()
+
     response.json({
       status: "OK",
       message: null,
@@ -50,30 +62,30 @@ router.post("/evaluation", async (request, response) => {
 
 router.get("/internist/recreate/pdf/:dateInit/:dateEnd", async (request, response) => {
   try {
-    const internistEvaluation = model.InternEvaluation;   
+    const internistEvaluation = model.InternEvaluation;
     let dataList = await internistEvaluation.aggregate(
       [
         {
-        $addFields: {
-          fechaConvertida: {
-            $dateFromString: {
-              dateString: "$date",
-              format: "%d/%m/%Y"
+          $addFields: {
+            fechaConvertida: {
+              $dateFromString: {
+                dateString: "$date",
+                format: "%d/%m/%Y"
+              }
+            }
+          }
+        },
+        {
+          $match: {
+            fechaConvertida: {
+              $gte: moment(request.params.dateInit, "DDMMYYYY").toDate(),
+              $lte: moment(request.params.dateEnd, "DDMMYYYY").toDate()
             }
           }
         }
-      },
-      {
-        $match: {
-          fechaConvertida: {
-            $gte: moment(request.params.dateInit,"DDMMYYYY").toDate(),
-            $lte: moment(request.params.dateEnd,"DDMMYYYY").toDate()
-          }
-        }
-      }
-    ]
+      ]
     ).exec();
-    
+
     for (const x of dataList) {
       let dataMed = await model.Person.findOne({ _id: x.responsible }) || {};
       let dataPat = await model.Person.findOne({ _id: x.person }) || {};
@@ -86,33 +98,33 @@ router.get("/internist/recreate/pdf/:dateInit/:dateEnd", async (request, respons
           pat_name: `${dataPat.forename} ${dataPat.surname}`,
           pat_age: moment().diff(moment(dataPat.birthdate), "years"),
           pat_gender: dataPat.gender,
-          preoperative_diagnosis:x.preoperative_diagnosis,
-          history_clinic:x.history_clinic,
-          personal_record:x.personal_record,
-          pa:x.pa,
-          fc:x.fc,
-          fr:x.fr,
-          oxygen_saturation:x.oxygen_saturation,
-          physical_state:x.physical_state,
-          ht:x.ht,
-          hb:x.hb,
-          platelets:x.platelets,
-          tp:x.tp,
-          tpt:x.tpt,
-          inr:x.inr,
-          glucose:x.glucose,
-          vih:x.vih,
-          ego:x.ego,
-          hba1c:x.hba1c,
-          radiography:x.radiography,
-          electrocardiogram:x.electrocardiogram,
-          comments:x.comments,
-          surgical_risk:x.surgical_risk,
-          functional_capacity:x.functional_capacity,
-          clinical_predictors:x.clinical_predictors,
-          clasification_asa:x.clasification_asa,
-          plan:x.plan,
-          physician_signature:dataMed.digital_signature,
+          preoperative_diagnosis: x.preoperative_diagnosis,
+          history_clinic: x.history_clinic,
+          personal_record: x.personal_record,
+          pa: x.pa,
+          fc: x.fc,
+          fr: x.fr,
+          oxygen_saturation: x.oxygen_saturation,
+          physical_state: x.physical_state,
+          ht: x.ht,
+          hb: x.hb,
+          platelets: x.platelets,
+          tp: x.tp,
+          tpt: x.tpt,
+          inr: x.inr,
+          glucose: x.glucose,
+          vih: x.vih,
+          ego: x.ego,
+          hba1c: x.hba1c,
+          radiography: x.radiography,
+          electrocardiogram: x.electrocardiogram,
+          comments: x.comments,
+          surgical_risk: x.surgical_risk,
+          functional_capacity: x.functional_capacity,
+          clinical_predictors: x.clinical_predictors,
+          clasification_asa: x.clasification_asa,
+          plan: x.plan,
+          physician_signature: dataMed.digital_signature,
           phy_name: `${dataMed.forename} ${dataMed.surname}`,
           responsible: x.responsible,
           person: x.person
@@ -134,14 +146,14 @@ router.get("/internist/recreate/pdf/:dateInit/:dateEnd", async (request, respons
         pdf_data
       );
       //save colletion
-      console.log("old id",x.pdf);
-      console.log("new id",report_id);
+      console.log("old id", x.pdf);
+      console.log("new id", report_id);
 
       await internistEvaluation.updateOne(
         { _id: mongoose.Types.ObjectId(x._id) },
         { $set: { pdf: report_id } }
       );
-      
+
       await deleteFile(x.pdf)
 
       await model.Consultation.updateOne(
