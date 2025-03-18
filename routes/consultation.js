@@ -82,12 +82,24 @@ router.post("/consultations/:active", (request, response) => {
     )
     .populate("digital_signature")
     .then((result) => {
+      const formattedResult = result.map((consultation) => {
+        const createdAtUTC = moment.utc(consultation.control.created_at);
+        const createdAtLocal = createdAtUTC.clone().tz("America/El_Salvador"); // Zona horaria de El Salvador
+
+        return {
+          ...consultation.toObject(),
+          control: {
+            ...consultation.control.toObject(),
+            created_at: createdAtLocal.format(),
+          },
+        };
+      });
+
       response.json({
         status: "OK",
         message: null,
-        documents: result,
+        documents: formattedResult,
       });
-      //mongoose.connection.close()
     })
     .catch((error) => {
       console.log("Microservice[consultation_query]: " + error);
@@ -96,7 +108,6 @@ router.post("/consultations/:active", (request, response) => {
         message: "ConsultationNotFound",
         documents: [],
       });
-      //mongoose.connection.close()
     });
 });
 router.delete("/consultation/:consultationId", (request, response) => {
