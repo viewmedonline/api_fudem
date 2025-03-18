@@ -93,7 +93,7 @@ router.post("/prescription", (request, response) => {
 
 // get prescription by _id
 router.get("/prescription/:id", (request, response) => {
-  model.Prescription.findById(request.params.id)
+  model.Prescription.findById(request.params.id).populate("responsible")
     .then((result) => {
       response.json({
         status: "OK",
