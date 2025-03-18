@@ -1,6 +1,7 @@
 let express = require("express");
 let router = express.Router();
 let model = require("../model/database_schemas.js");
+const moment = require('moment-timezone');
 
 router.post("/consultations/insert", (request, response) => {
   let currentConsultation = new model.Consultation(request.body);
