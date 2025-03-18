@@ -57,7 +57,7 @@
                 </tr>
 
             </table>
-            {{#if (indexModuloFour @index)}}
+            {{#if (indexModuloFour @index ../prescriptions.length)}}
             <div class="page-break"></div>
             {{/if}}
             {{/each}}
@@ -188,7 +188,7 @@
 
     .digital_signature {
         text-align: center;
-        margin-top: 10px;
+        margin-top: 5px;
         bottom: 0;
         width: 40%;
         position: fixed;

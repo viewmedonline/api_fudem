@@ -28,10 +28,14 @@ Handlebars.registerHelper("ifNotEquals", function (arg1, arg2, options) {
   return arg1 != arg2 ? options.fn(this) : options.inverse(this);
 });
 
-Handlebars.registerHelper('indexModuloFour', function (index) {
-  // This correctly checks if we've completed a set of 4 items (e.g., indices 3, 7, 11...)
-  // and returns true if we should add a page break
-  return (index + 1) % 4 === 0;
+Handlebars.registerHelper('indexModuloFour', function (index, total) {
+  // Solo aplicar saltos de página si hay 5 o más elementos
+  if (total >= 5) {
+    // Verifica si hemos completado un conjunto de 4 elementos (índices 3, 7, 11...)
+    // y devuelve true si debemos agregar un salto de página
+    return (index + 1) % 4 === 0;
+  }
+  return false; // No aplicar saltos de página si hay menos de 5 elementos
 });
 
 const logo_fudem_base64 = readFileSync(
