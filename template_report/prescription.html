@@ -57,7 +57,7 @@
                 </tr>
 
             </table>
-            {{#if @indexGreaterThanFour}}
+            {{#if (indexModuloFour @index)}}
             <div class="page-break"></div>
             {{/if}}
             {{/each}}
@@ -83,6 +83,7 @@
 <style>
     html {
         -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
 
     .color-text {

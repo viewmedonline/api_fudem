@@ -28,8 +28,10 @@ Handlebars.registerHelper("ifNotEquals", function (arg1, arg2, options) {
   return arg1 != arg2 ? options.fn(this) : options.inverse(this);
 });
 
-Handlebars.registerHelper('indexGreaterThanFour', function (options) {
-  return this['@index'] > 4;
+Handlebars.registerHelper('indexModuloFour', function (index) {
+  // This correctly checks if we've completed a set of 4 items (e.g., indices 3, 7, 11...)
+  // and returns true if we should add a page break
+  return (index + 1) % 4 === 0;
 });
 
 const logo_fudem_base64 = readFileSync(
