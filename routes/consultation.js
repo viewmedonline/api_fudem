@@ -1,7 +1,6 @@
 let express = require("express");
 let router = express.Router();
 let model = require("../model/database_schemas.js");
-const moment = require('moment-timezone');
 
 router.post("/consultations/insert", (request, response) => {
   let currentConsultation = new model.Consultation(request.body);
@@ -83,24 +82,12 @@ router.post("/consultations/:active", (request, response) => {
     )
     .populate("digital_signature")
     .then((result) => {
-      const formattedResult = result.map((consultation) => {
-        const createdAtUTC = moment.utc(consultation.control.created_at);
-        const createdAtLocal = createdAtUTC.clone().tz("America/El_Salvador"); // Zona horaria de El Salvador
-
-        return {
-          ...consultation.toObject(),
-          control: {
-            ...consultation.control.toObject(),
-            created_at: createdAtLocal.format(),
-          },
-        };
-      });
-
       response.json({
         status: "OK",
         message: null,
-        documents: formattedResult,
+        documents: result,
       });
+      //mongoose.connection.close()
     })
     .catch((error) => {
       console.log("Microservice[consultation_query]: " + error);
@@ -109,6 +96,7 @@ router.post("/consultations/:active", (request, response) => {
         message: "ConsultationNotFound",
         documents: [],
       });
+      //mongoose.connection.close()
     });
 });
 router.delete("/consultation/:consultationId", (request, response) => {
