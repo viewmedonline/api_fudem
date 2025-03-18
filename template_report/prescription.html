@@ -57,6 +57,9 @@
                 </tr>
 
             </table>
+            {{#if @indexGreaterThanFour}}
+            <div class="page-break"></div>
+            {{/if}}
             {{/each}}
         </section>
         <section>
@@ -188,5 +191,9 @@
         bottom: 0;
         width: 100%;
         position: fixed;
+    }
+
+    .page-break {
+        page-break-after: always;
     }
 </style>

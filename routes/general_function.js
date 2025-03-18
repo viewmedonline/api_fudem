@@ -28,6 +28,10 @@ Handlebars.registerHelper("ifNotEquals", function (arg1, arg2, options) {
   return arg1 != arg2 ? options.fn(this) : options.inverse(this);
 });
 
+Handlebars.registerHelper('indexGreaterThanFour', function (options) {
+  return this['@index'] > 4;
+});
+
 const logo_fudem_base64 = readFileSync(
   path.join(__dirname, "..", "template_report", "logoFudem.jpg"),
   "base64"
