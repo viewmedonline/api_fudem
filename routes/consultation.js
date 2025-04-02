@@ -168,6 +168,8 @@ router.post("/consultationsReport", (request, response) => {
       "forename surname idQflow gender birthdate housinglocation"
     )
     .populate("responsableConsultation", "forename surname role")
+    .populate("prescription")
+    .populate("prescription_of")
     .then((result) => {
       response.json({
         status: "OK",
