@@ -203,7 +203,11 @@ const surgerySchema = new Schema(
     surgeon_name: String,
     observations: String,
     pdf: { type: Schema.Types.ObjectId, ref: "fs.file", default: null },
-    history_id: { type: Schema.Types.ObjectId, ref: "Consultation" },
+    history_id: {
+      type: Schema.Types.ObjectId,
+      ref: "Consultation",
+      default: null,
+    },
     patient: { type: Schema.Types.ObjectId, ref: "Person" },
     responsible: { type: Schema.Types.ObjectId, ref: "Person" },
     date_surgery: Date,
@@ -950,8 +954,8 @@ let medicinesSchema = new Schema(
     recomendation: { type: String, default: null },
     active: { type: Boolean, default: true },
     type: Number,
-    presentation:String,
-    administration:String,
+    presentation: String,
+    administration: String,
   },
   {
     versionKey: false,
@@ -965,7 +969,7 @@ let masterColsultationSchema = new Schema(
   },
   {
     versionKey: false,
-    collection: "master_consultation"
+    collection: "master_consultation",
   }
 );
 
@@ -976,7 +980,7 @@ let presentationSchema = new Schema(
   },
   {
     versionKey: false,
-    collection: "medicine_presentation"
+    collection: "medicine_presentation",
   }
 );
 
@@ -987,7 +991,7 @@ let administrationSchema = new Schema(
   },
   {
     versionKey: false,
-    collection: "medicine_administration"
+    collection: "medicine_administration",
   }
 );
 
@@ -1031,7 +1035,16 @@ module.exports = {
   Lens: mongoose.model("lenses_type", lensSchema),
   Prescription: mongoose.model("Prescription", prescriptionSchema),
   Medicines: mongoose.model("Medicines", medicinesSchema),
-  MasterConsultation: mongoose.model("MasterConsultation", masterColsultationSchema),
-  MedicinePresentation: mongoose.model("MedicinePresentation", presentationSchema),
-  MedicineAdministration: mongoose.model("MedicineAdministration", administrationSchema)
+  MasterConsultation: mongoose.model(
+    "MasterConsultation",
+    masterColsultationSchema
+  ),
+  MedicinePresentation: mongoose.model(
+    "MedicinePresentation",
+    presentationSchema
+  ),
+  MedicineAdministration: mongoose.model(
+    "MedicineAdministration",
+    administrationSchema
+  ),
 };
