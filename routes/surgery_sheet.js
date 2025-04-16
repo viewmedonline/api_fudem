@@ -118,7 +118,7 @@ router.get(
           patient: x.patient._id,
           physician_signature: x.responsible.digital_signature,
           physician_specialty: x.responsible.role,
-          date_surgery: moment(x.date_surgery).utc().format("DD/MM/YYYY"),
+          date_surgery: moment(x.date_surgery).utc().toDate(),
         };
 
         const signature = await signatura_base64(data.physician_signature);
