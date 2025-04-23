@@ -3,6 +3,7 @@ let express = require("express");
 let router = express.Router();
 let model = require("../model/database_schemas.js");
 let moment = require("moment");
+const mongoose = require("mongoose");
 const {
   create_report_pdf,
   signatura_base64,
@@ -134,6 +135,18 @@ router.get(
         await model.ReportAnesthesiology.updateOne(
           { _id: x._id },
           { pdf: report_id }
+        );
+
+        await model.Consultation.updateOne(
+          {
+            file: mongoose.Types.ObjectId(x.pdf),
+          },
+          {
+            $set: {
+              file: report_id,
+              dateUpload: x.operationDateFormat,
+            },
+          }
         );
       }
 
