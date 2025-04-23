@@ -32,18 +32,17 @@ router.post("/anesthesiology_sheet", async (request, response) => {
       request.body.data
     );
     await anesthesiology_sheet.save();
-
     let currentConsultation = new model.Consultation({
       person: request.body.data.patient,
       name: "Hoja de Anestesiologia",
       control: {
         active: false,
       },
-       dateUpload: moment().format("YYYY-MM-DD HH:mm:ss"),
+      dateUpload: request.body.data.operationDateFormat,
       file: report_id,
       responsableConsultation: request.body.data.responsible,
     });
-    currentConsultation.save()
+    currentConsultation.save();
 
     response.json({
       status: "OK",
@@ -90,7 +89,9 @@ router.get(
           $gte: moment(request.params.dateInit, "DDMMYYYY").utc().toDate(),
           $lte: moment(request.params.dateEnd, "DDMMYYYY").utc().toDate(),
         },
-      }).populate("patient responsible").lean();
+      })
+        .populate("patient responsible")
+        .lean();
 
       for (const x of dataList) {
         let data = {
@@ -113,7 +114,7 @@ router.get(
           asaClassification: x.asaClassification,
           VitalSigns: x.VitalSigns,
           medicines: x.medicines,
-          solutions: x.solutions
+          solutions: x.solutions,
         };
 
         if (data.digital_signature) {
