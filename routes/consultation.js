@@ -153,7 +153,7 @@ router.post("/consultationsLast", (request, response) => {
     });
 });
 
-router.get("/consultationsLast/:idUser/:type", (request, response) => {
+router.get("/lastPrescription/:idUser/:type", (request, response) => {
   console.log("Microservice[consultationsLast] type: " + request.params.type);
   const { idUser, type } = request.params;
   if (!idUser || !type) {
