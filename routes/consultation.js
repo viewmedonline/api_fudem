@@ -1,6 +1,7 @@
 let express = require("express");
 let router = express.Router();
 let model = require("../model/database_schemas.js");
+let mongoose = require("mongoose");
 
 router.post("/consultations/insert", (request, response) => {
   let currentConsultation = new model.Consultation(request.body);
@@ -151,6 +152,67 @@ router.post("/consultationsLast", (request, response) => {
       //mongoose.connection.close()
     });
 });
+
+router.get("/consultationsLast/:idUser/:type", (request, response) => {
+  console.log("Microservice[consultationsLast] type: " + request.params.type);
+  const { idUser, type } = request.params;
+  if (!idUser || !type) {
+    response.status(400).json({
+      status: "KO",
+      message: "Missing parameters",
+      documents: [],
+    });
+    return;
+  }
+  let currentConsultation = model.Consultation;
+  let objQuery = { person: mongoose.Types.ObjectId(idUser) };
+  objQuery.name = { $exists: false };
+  if (type == 1) {
+    objQuery.prescription = { $exists: true, $ne: null };
+  }
+  if (type == 2) {
+    objQuery.prescription_of = { $exists: true, $ne: null };
+  }
+  console.log(objQuery);
+
+  currentConsultation
+    .find(objQuery)
+    .where("control.active")
+    .equals(false)
+    .sort({ "control.created_at": -1 })
+    .then((result) => {
+      if (result.length === 0) {
+        response.json({
+          status: "OK",
+          message: null,
+          documents: { prescription: null },
+        });
+        return;
+      }
+      let prescription = null;
+      if (type == 1) {
+        prescription = result[0].prescription;
+      }
+      if (type == 2) {
+        prescription = result[0].prescription_of;
+      }
+      response.json({
+        status: "OK",
+        message: null,
+        documents: { prescription },
+      });
+    })
+    .catch((error) => {
+      console.log("Microservice[consultation_query]: " + error);
+      response.status(400).json({
+        status: "KO",
+        message: "ConsultationNotFound",
+        documents: [],
+      });
+      //mongoose.connection.close()
+    });
+});
+
 router.post("/consultationsReport", (request, response) => {
   let currentConsultation = model.Consultation;
 
