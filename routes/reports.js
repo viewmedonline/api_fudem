@@ -45,15 +45,19 @@ const writeFiles = async (datos, tempFileName) => {
 };
 
 const replaceValues = async (datos) => {
-  return Promise.all(datos.map(async (x) => {
-    return Promise.all(x.map(async (y) => {
-      if (typeof y === "string") {
-        return y.replace(/;/g, ",");
-      }
-      return y;
-    }));
-  }));
-}
+  return Promise.all(
+    datos.map(async (x) => {
+      return Promise.all(
+        x.map(async (y) => {
+          if (typeof y === "string") {
+            return y.replace(/;/g, ",");
+          }
+          return y;
+        })
+      );
+    })
+  );
+};
 
 router.get(
   "/report/preliminary/:dateFrom/:dateTo/:ext",
@@ -420,7 +424,7 @@ router.get(
         "RX Final Visión Proxima OI Adicion",
         "RX Final Visión Proxima OI Agudeza V",
         "RX Final Visión Proxima tipo de lente",
-        "RX Final Visión Proxima Observaciones",  
+        "RX Final Visión Proxima Observaciones",
         "RX Final Visión Intermedia OD Esfera",
         "RX Final Visión Intermedia OD Cilindro",
         "RX Final Visión Intermedia OD Eje",
@@ -464,7 +468,7 @@ router.get(
     try {
       countResults = await model.Consultation.find({
         "control.active": false,
-        "objOptometrist.data.person": { $exists: true },
+        "objOptometrist.data": { $exists: true },
         file: { $exists: false },
         "control.created_at": {
           $gte: dateFrom,
@@ -482,7 +486,7 @@ router.get(
         results = await model.Consultation.find(
           {
             "control.active": false,
-            "objOptometrist.data.person": { $exists: true },
+            "objOptometrist.data": { $exists: true },
             file: { $exists: false },
             "control.created_at": {
               $gte: dateFrom,
@@ -668,7 +672,10 @@ router.get(
             x.objOptometrist.data.rxFinalGafas.ojoIzq.add,
             x.objOptometrist.data.rxFinalGafas.ojoIzq.av,
             x.objOptometrist.data.rxFinalGafas.ocupation,
-            x.objOptometrist.data.rxFinalGafas.type_lenses.join(),
+            Array.isArray(x.objOptometrist.data.rxFinalGafas.type_lenses) &&
+            x.objOptometrist.data.rxFinalGafas.type_lenses.length > 0
+              ? x.objOptometrist.data.rxFinalGafas.type_lenses.join()
+              : "",
             x.objOptometrist.data.rxFinalGafas.observation,
             x.objOptometrist.data.rxFinalLentesContacto.ojoDer.esfera,
             x.objOptometrist.data.rxFinalLentesContacto.ojoDer.cilindro,
@@ -696,7 +703,12 @@ router.get(
             x.objOptometrist.data.rxFinalVisionLejano.ojoIzq.prisma,
             x.objOptometrist.data.rxFinalVisionLejano.ojoIzq.add,
             x.objOptometrist.data.rxFinalVisionLejano.ojoIzq.av,
-            x.objOptometrist.data.rxFinalVisionLejano.type_lenses.join(),
+            Array.isArray(
+              x.objOptometrist.data.rxFinalVisionLejano.type_lenses
+            ) &&
+            x.objOptometrist.data.rxFinalVisionLejano.type_lenses.length > 0
+              ? x.objOptometrist.data.rxFinalVisionLejano.type_lenses.join()
+              : "",
             x.objOptometrist.data.rxFinalVisionLejano.observation,
             x.objOptometrist.data.rxFinalVisionProxima.ojoDer.esfera,
             x.objOptometrist.data.rxFinalVisionProxima.ojoDer.cilindro,
@@ -710,7 +722,12 @@ router.get(
             x.objOptometrist.data.rxFinalVisionProxima.ojoIzq.prisma,
             x.objOptometrist.data.rxFinalVisionProxima.ojoIzq.add,
             x.objOptometrist.data.rxFinalVisionProxima.ojoIzq.av,
-            x.objOptometrist.data.rxFinalVisionProxima.type_lenses.join(),
+            Array.isArray(
+              x.objOptometrist.data.rxFinalVisionProxima.type_lenses
+            ) &&
+            x.objOptometrist.data.rxFinalVisionProxima.type_lenses.length > 0
+              ? x.objOptometrist.data.rxFinalVisionProxima.type_lenses.join()
+              : "",
             x.objOptometrist.data.rxFinalVisionProxima.observation,
             x.objOptometrist.data.rxFinalVisionIntermedia.ojoDer.esfera,
             x.objOptometrist.data.rxFinalVisionIntermedia.ojoDer.cilindro,
@@ -724,7 +741,12 @@ router.get(
             x.objOptometrist.data.rxFinalVisionIntermedia.ojoIzq.prisma,
             x.objOptometrist.data.rxFinalVisionIntermedia.ojoIzq.add,
             x.objOptometrist.data.rxFinalVisionIntermedia.ojoIzq.av,
-            x.objOptometrist.data.rxFinalVisionIntermedia.type_lenses.join(),
+            Array.isArray(
+              x.objOptometrist.data.rxFinalVisionIntermedia.type_lenses
+            ) &&
+            x.objOptometrist.data.rxFinalVisionIntermedia.type_lenses.length > 0
+              ? x.objOptometrist.data.rxFinalVisionIntermedia.type_lenses.join()
+              : "",
             x.objOptometrist.data.rxFinalVisionIntermedia.observation,
             objDiagnoses.ojoDer.join(),
             objDiagnoses.ojoIzq.join(),
@@ -857,6 +879,8 @@ router.get(
     datos = [];
     let countResults = 0;
     try {
+      console.log("dateFrom ", dateFrom);
+      console.log("dateTo", dateTo);
       countResults = await model.Consultation.find({
         "control.active": false,
         "objOphthalmology.data": { $exists: true },
@@ -1710,7 +1734,9 @@ router.get(
         ]);
       }
       //replace ; in values for ,
-      dataInterviewChildrenArray = await replaceValues(dataInterviewChildrenArray);
+      dataInterviewChildrenArray = await replaceValues(
+        dataInterviewChildrenArray
+      );
       stringify(dataInterviewChildrenArray, (err, output) => {
         if (err) {
           response.status(500).send("Error al generar CSV");
