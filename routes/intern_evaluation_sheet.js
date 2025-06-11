@@ -33,17 +33,17 @@ router.post("/evaluation", async (request, response) => {
     const surgery_sheet = new model.InternEvaluation(request.body.data);
     await surgery_sheet.save();
 
-    let currentConsultation = new model.Consultation({
-      person: request.body.data.person,
-      name: "Hoja de Evaluacion Internista",
-      control: {
-        active: false,
-      },
-       dateUpload: moment().format("YYYY-MM-DD HH:mm:ss"),
-      file: report_id,
-      responsableConsultation: request.body.data.responsible,
-    });
-    currentConsultation.save()
+    // let currentConsultation = new model.Consultation({
+    //   person: request.body.data.person,
+    //   name: "Hoja de Evaluacion Internista",
+    //   control: {
+    //     active: false,
+    //   },
+    //    dateUpload: moment().format("YYYY-MM-DD HH:mm:ss"),
+    //   file: report_id,
+    //   responsableConsultation: request.body.data.responsible,
+    // });
+    // currentConsultation.save()
 
     response.json({
       status: "OK",
