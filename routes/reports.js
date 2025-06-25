@@ -541,14 +541,17 @@ router.get(
             : null;
           let medicines = receta ? receta.prescription : "";
           if (medicines) {
-            medicines = medicines.map((x) => {
-              return {
-                medicine: x.medicine,
-                doses: x.doses,
-                active_ingredient: x.active_ingredient,
-                recomendation: x.recomendation,
-              };
-            });
+            medicines = medicines
+              .map((x) => {
+                const medicine = x.medicine || "";
+                const doses = x.doses || "";
+                const activeIngredient = x.active_ingredient || "";
+                const recommendation = x.recomendation || "";
+                return [medicine, doses, activeIngredient, recommendation]
+                  .filter((field) => field.trim() !== "")
+                  .join(" - ");
+              })
+              .join("; ");
           }
 
           x.objOptometrist.data.diagnosticoObservaciones.diagnostico.forEach(
@@ -945,14 +948,17 @@ router.get(
             : null;
           let medicines = receta ? receta.prescription : "";
           if (medicines) {
-            medicines = medicines.map((x) => {
-              return {
-                medicine: x.medicine,
-                doses: x.doses,
-                active_ingredient: x.active_ingredient,
-                recomendation: x.recomendation,
-              };
-            });
+            medicines = medicines
+              .map((x) => {
+                const medicine = x.medicine || "";
+                const doses = x.doses || "";
+                const activeIngredient = x.active_ingredient || "";
+                const recommendation = x.recomendation || "";
+                return [medicine, doses, activeIngredient, recommendation]
+                  .filter((field) => field.trim() !== "")
+                  .join(" - ");
+              })
+              .join("; ");
           }
           datos.push([
             moment(x.objOphthalmology.control.created_at).format("DD/MM/YYYY"),
