@@ -208,7 +208,7 @@ router.get(
             x.person.idQflow,
             x.person.readWrtite ? "SI" : "NO",
             x.person.lenses ? "SI" : "NO",
-            typeConsultation(x.typeConsultation),
+            x.typeConsultation,
             x.reasonConsultation,
             x.responsablePreliminar,
             nameSucursal,
