@@ -1,5 +1,5 @@
 module.exports = {
-  url: process.env.URL_BD || "mongodb://localhost:27017/fudem?authSource=admin",
+  url: process.env.URL_BD || "mongodb://localhost:27017/viewmedFudem?authSource=admin",
   // url: process.env.URL_BD ||'mongodb://35.237.55.120:27017/viewmed',
   options: {
     autoIndex: false, // Don't build indexes
@@ -10,7 +10,7 @@ module.exports = {
     bufferMaxEntries: 0,
     useNewUrlParser: true,
     user: "root",
-    pass: "123456",
+    pass: "router2022*",
     useNewUrlParser: true,
   },
 };

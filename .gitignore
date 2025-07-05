@@ -15,4 +15,4 @@ npm-debug.log*
 #_ _ _ _ _ _ _ _ _ _ _  #
 
 node_modules/
-
+.env
