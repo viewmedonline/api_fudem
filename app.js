@@ -714,6 +714,7 @@ const master = require("./routes/master");
 const report = require("./routes/reports");
 const psiProcess = require("./routes/psicology_sheet");
 const medicines = require("./routes/medicines");
+const digital_signature = require("./routes/digital_signature");
 
 app.use(bodyParser.json({ limit: "100mb" }));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -815,6 +816,7 @@ app.use(master);
 app.use(report);
 app.use(psiProcess);
 app.use(medicines);
+app.use(digital_signature);
 
 mongoose.connect(dbConfig.url, dbConfig.options).then(
   async () => {

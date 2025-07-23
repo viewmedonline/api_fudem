@@ -2,6 +2,14 @@ let mongoose = require("mongoose");
 let mongoosePaginate = require("mongoose-paginate");
 let Schema = mongoose.Schema;
 
+let digitalSignatureSchema = new Schema(
+  {
+    digital_signature: { type: Schema.Types.ObjectId, ref: "fs.file" },
+    person: { type: Schema.Types.ObjectId, ref: "Person" },
+  },
+  { timestamps: { createdAt: false, updatedAt: "updated_at" }, versionKey: false }
+);
+
 let controlSchema = new Schema(
   {
     _id: false,
@@ -557,6 +565,8 @@ let consultationSchema = new Schema(
     prescription: { type: Schema.Types.ObjectId, ref: "Prescription" },
     prescription_of: { type: Schema.Types.ObjectId, ref: "Prescription" },
     refer_to_ofta: String,
+    digital_signature_ofta: { type: Schema.Types.ObjectId },
+    digital_signature_opto: { type: Schema.Types.ObjectId },
     control: { type: controlSchema, required: true, default: {} },
   },
   { versionKey: false }
@@ -1047,4 +1057,5 @@ module.exports = {
     "MedicineAdministration",
     administrationSchema
   ),
+  DigitalSignature: mongoose.model("DigitalSignature", digitalSignatureSchema),
 };
