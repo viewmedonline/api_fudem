@@ -165,6 +165,26 @@ router.get("/get_file/:fileId", (request, response) => {
           let readstream = gfs.createReadStream({
             _id: fileId,
           });
+          
+          // Manejar errores del stream (archivos corruptos)
+          readstream.on('error', (streamError) => {
+            console.log("Error al leer archivo (posiblemente corrupto):", streamError.message);
+            
+            if (!response.headersSent) {
+              response.status(500).json({
+                status: "KO",
+                message: "Archivo corrupto o incompleto",
+                error: streamError.message,
+                fileId: fileId
+              });
+            }
+          });
+          
+          // Establecer headers apropiados
+          response.on('error', (responseError) => {
+            console.log("Error en la respuesta:", responseError.message);
+          });
+          
           // Establish a tunnel between the source file and the destination file
           readstream.pipe(response);
         }
