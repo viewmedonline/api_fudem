@@ -195,11 +195,6 @@ let nurseSheet = new Schema(
 const surgerySchema = new Schema(
   {
     surgery: String,
-    resumen_history: String,
-    biometrics_od: String,
-    biometrics_oi: String,
-    anesthesia: String,
-    supplies_special: String,
     eye_operated: String,
     time_surgery: String,
     lens_placed: String,
