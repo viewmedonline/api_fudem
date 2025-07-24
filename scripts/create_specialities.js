@@ -30,6 +30,7 @@ async function main() {
     await mongoose.connect(dbConfig.url, dbConfig.options);
     const specialities = [
       { name: "Retinólogo" },
+      { name: "General" },
       { name: "Glaucomatólogo" },
       { name: "Oftalmólogo Pediatra o Estrabólogo" },
       { name: "Especialista en Córnea o Corneólogo" },

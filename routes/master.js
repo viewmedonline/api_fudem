@@ -123,4 +123,23 @@ router.get("/master/medicine_administration", async (request, response) => {
   }
 });
 
+//get de especialidades
+router.get("/master/specialties", async (request, response) => {
+  try {
+    let specialties = await model.Specialty.find({}).sort({ _id: 1 });
+    response.json({
+      status: "OK",
+      message: null,
+      documents: specialties,
+    });
+  } catch (error) {
+    console.log(error);
+    response.status(400).json({
+      status: "KO",
+      message: "Error query",
+      documents: [],
+    });
+  }
+});
+
 module.exports = router;
