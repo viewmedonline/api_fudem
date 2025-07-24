@@ -8,28 +8,51 @@ async function main() {
       .find({ search_name: { $exists: false } })
       .count();
     console.log("Total de personas a procesar: " + personsCount);
+
+    if (personsCount === 0) {
+      console.log("No hay personas para procesar");
+      return;
+    }
+
     let limit = 100;
-    let skip = 0;
     let processed = 0;
-    while (processed < personsCount) {
+
+    while (true) {
+      // Siempre buscar desde el inicio ya que los documentos se van actualizando
       const persons = await personSchema
         .find({ search_name: { $exists: false } })
-        .limit(limit)
-        .skip(skip);
+        .limit(limit);
+
+      // Si no hay más documentos que procesar, salir del bucle
+      if (persons.length === 0) {
+        console.log("No hay más documentos para procesar");
+        break;
+      }
+
       for (const person of persons) {
-        person.search_name =
-          person.forename.toLowerCase() + " " + person.surname.toLowerCase();
-        await person.save();
-        processed++;
-        if (processed % 100 === 0) {
-          console.log(`Personas procesadas: ${processed}/${personsCount}`);
+        try {
+          person.search_name =
+            person.forename.toLowerCase() + " " + person.surname.toLowerCase();
+          await person.save();
+          processed++;
+
+          if (processed % 100 === 0) {
+            console.log(`Personas procesadas: ${processed}`);
+          }
+        } catch (saveError) {
+          console.error(`Error procesando persona ${person._id}:`, saveError);
         }
       }
-      skip += limit;
+
+      console.log(`Lote completado. Total procesadas: ${processed}`);
     }
-    console.log("Terminado");
+
+    console.log(`Terminado. Total de personas procesadas: ${processed}`);
   } catch (error) {
-    console.log(error);
+    console.error("Error en el proceso principal:", error);
+    throw error;
+  } finally {
+    await mongoose.connection.close();
   }
 }
 

@@ -157,7 +157,7 @@ const specialtySchema = new Schema(
   {
     name: String,
   },
-  { versionKey: false }
+  { versionKey: false, collection: "specialities" }
 );
 
 let userSchema = new Schema(
