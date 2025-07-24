@@ -7,7 +7,10 @@ let digitalSignatureSchema = new Schema(
     digital_signature: { type: Schema.Types.ObjectId, ref: "fs.file" },
     person: { type: Schema.Types.ObjectId, ref: "Person" },
   },
-  { timestamps: { createdAt: false, updatedAt: "updated_at" }, versionKey: false }
+  {
+    timestamps: { createdAt: false, updatedAt: "updated_at" },
+    versionKey: false,
+  }
 );
 
 let controlSchema = new Schema(
@@ -89,6 +92,7 @@ let personSchema = new Schema(
   {
     forename: String,
     surname: String,
+    search_name: { type: String, default: "" },
     birthdate: Date,
     type_document: String,
     id_document: String,
@@ -143,9 +147,17 @@ let personSchema = new Schema(
     idQflow: { type: String, required: true },
     brandLenses: { ojoDer: String, ojoIzq: String },
     historyClinic: String,
+    specialty: { type: String, default: "S/E" },
     control: { type: controlSchema, required: true, default: {} },
   },
   { collection: "persons", versionKey: false }
+);
+
+const specialtySchema = new Schema(
+  {
+    name: String,
+  },
+  { versionKey: false }
 );
 
 let userSchema = new Schema(
@@ -1053,4 +1065,5 @@ module.exports = {
     administrationSchema
   ),
   DigitalSignature: mongoose.model("DigitalSignature", digitalSignatureSchema),
+  Specialty: mongoose.model("Specialty", specialtySchema),
 };
