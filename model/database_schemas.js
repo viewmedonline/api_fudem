@@ -957,6 +957,7 @@ let prescriptionSchema = new Schema(
     place: String,
     patient: { type: Schema.Types.ObjectId, ref: "Person" },
     responsible: { type: Schema.Types.ObjectId, ref: "Person" },
+    digital_signature: { type: Schema.Types.ObjectId, ref: "fs.file" },
     control: { type: controlSchema, required: true, default: {} },
   },
   {
